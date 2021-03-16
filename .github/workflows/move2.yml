@@ -10,5 +10,5 @@ jobs:
       - uses: alex-page/github-project-automation-plus@v0.3.0
         with:
           project: d3
-          column: c2
+          column: c3
           repo-token: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
