@@ -1,8 +1,6 @@
 name: Move assigned card
 on:
-  issues:
-    types:
-      - assigned
+  commit_comment
 jobs:
   move-assigned-card:
     runs-on: ubuntu-latest
