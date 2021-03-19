@@ -11,6 +11,8 @@ jobs:
 #           COMMAND_CONTEXT: ${{ toJSON(github.event.client_payload) }}
 #         run: echo "$COMMAND_CONTEXT"
       - name: Enable auto-merge for new PRs
-        run: gh issue edit 1 --body "updated from wf"
+        run: gh issue edit "$PR_URL" 1 --body "updated from wf"
         env:
           GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
+#           PR_URL: ${{github.event.pull_request.html_url}}
+          PR_URL: https://github.com/apm-pub-org/d3-1/issues/1
