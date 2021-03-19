@@ -11,4 +11,6 @@ jobs:
           COMMAND_CONTEXT: ${{ toJSON(github.event.client_payload) }}
         run: echo "$COMMAND_CONTEXT"
       - name: make gh call
-        run: gh issue edit 1 --body "updated from wf"
+        run: |
+          gh auth login
+          gh issue edit 1 --body "updated from wf"
