@@ -6,13 +6,13 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-#       - name: Output command context
-#         env:
-#           COMMAND_CONTEXT: ${{ toJSON(github.event.client_payload) }}
-#         run: echo "$COMMAND_CONTEXT"
-      - name: Enable auto-merge for new PRs
-        run: gh issue edit "$PR_URL" --body "updated from wf"
+      - name: Output command context
         env:
-          GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
-#           PR_URL: ${{github.event.pull_request.html_url}}
-          PR_URL: https://github.com/apm-pub-org/d3-1/issues/1
+          COMMAND_CONTEXT: ${{ toJSON(github.event) }}
+        run: echo "$COMMAND_CONTEXT"
+#       - name: Enable auto-merge for new PRs
+#         run: gh issue edit "$PR_URL" --body "updated from wf"
+#         env:
+#           GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
+# #           PR_URL: ${{ github.event.client_payload.command.resource.id }}
+#           PR_URL: https://github.com/apm-pub-org/d3-1/issues/1 
