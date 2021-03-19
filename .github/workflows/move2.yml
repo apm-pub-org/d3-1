@@ -12,5 +12,5 @@ jobs:
 #         run: echo "$COMMAND_CONTEXT"
       - name: make gh call
         run: |
-          gh auth login --with-token < ${{ secrets.PERSONAL_ACCESS_TOKEN }}
+          gh auth login --with-token process.env.GITHUB_TOKEN
           gh issue edit 1 --body "updated from wf"
