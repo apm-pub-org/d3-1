@@ -1,5 +1,5 @@
-trigger: remove-from-fr-board
-title: Remove from FR board
+trigger: test-remove
+title: Test remove
 description: Remove the current issue or pull request from the project board for the docs content first responder
 surfaces:
   - issue
@@ -7,4 +7,4 @@ surfaces:
   - discussion
 steps:
   - type: repository_dispatch
-    eventType: remove_from_FR_board
+    eventType: test_rd
