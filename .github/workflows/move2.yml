@@ -16,3 +16,4 @@ jobs:
 #           GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
 # #           PR_URL: ${{ github.event.client_payload.command.resource.id }}
 #           PR_URL: https://github.com/apm-pub-org/d3-1/issues/1 
+# TODO: need to get URL of triggering issue/PR instad of hardcoding, need to make sure works from diff repos, also add repo flag back in to command file
