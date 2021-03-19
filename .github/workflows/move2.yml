@@ -1,11 +1,12 @@
-name: Test remove from board
-
+name: CI
 on:
   repository_dispatch:
-    types: test_rd
-
+    types: special_merge
 jobs:
-  remove_from_board:
+  build:
     runs-on: ubuntu-latest
     steps:
-      - run: echo yey
+      - name: Output command context
+        env:
+          COMMAND_CONTEXT: ${{ toJSON(github.event.client_payload) }}
+        run: echo "$COMMAND_CONTEXT"
