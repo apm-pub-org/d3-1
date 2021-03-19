@@ -1,12 +1,11 @@
-name: Remove card from FR board
+name: Test remove from board
 
 on:
   repository_dispatch:
-    types: remove_from_docs_FR_board
+    types: test_rd
 
 jobs:
-  remove_from_FR_board:
-    if: github.repository == 'github/docs-internal'
+  remove_from_board:
     runs-on: ubuntu-latest
     steps:
       - run: echo yey
