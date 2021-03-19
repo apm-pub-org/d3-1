@@ -1,12 +1,12 @@
-name: Move assigned card
+name: Remove card from FR board
+
 on:
-  commit_comment
+  repository_dispatch:
+    types: remove_from_docs_FR_board
+
 jobs:
-  move-assigned-card:
+  remove_from_FR_board:
+    if: github.repository == 'github/docs-internal'
     runs-on: ubuntu-latest
     steps:
-      - uses: alex-page/github-project-automation-plus@v0.3.0
-        with:
-          project: d3
-          column: c3
-          repo-token: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
+      - run: echo yey
