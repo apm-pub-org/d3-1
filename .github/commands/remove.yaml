@@ -4,4 +4,4 @@ description: An example of how to use the repository_dispatch step
 steps:
 - type: repository_dispatch
   eventType: special_merge
-#  repository: monalisa/octo-demo
+  repository: apm-pub-org/d3-1
