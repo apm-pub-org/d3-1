@@ -14,13 +14,13 @@ jobs:
         run: echo ${{ github.event.client_payload.command.resource.type }}
       - name: Remove issue from board
         if: ${{ github.event.client_payload.command.resource.type == 'Issue' }}
-        run: gh issue edit "$PR_URL" --body "updated 6"
+        run: gh issue edit "$PR_URL" --remove-project "p1"
         env:
           GITHUB_TOKEN: ${{secrets.PERSONAL_ACCESS_TOKEN}}
           PR_URL: https://github.com/${{ github.event.client_payload.command.repository.full_name }}/issues/${{ github.event.client_payload.command.resource.number }}
       - name: Remove PR from board
         if: ${{ github.event.client_payload.command.resource.type == 'PullRequest' }}
-        run: gh pr comment "$PR_URL" --body "updated 6"
+        run: gh pr edit "$PR_URL" --remove-project "p1"
         env:
           GITHUB_TOKEN: ${{secrets.PERSONAL_ACCESS_TOKEN}}
           PR_URL: https://github.com/${{ github.event.client_payload.command.repository.full_name }}/pull/${{ github.event.client_payload.command.resource.number }}
