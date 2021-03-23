@@ -6,8 +6,12 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - name: print context
-        run: echo ${{ github.event }}
+      - name: Output command context
+        env:
+          COMMAND_CONTEXT: ${{ toJSON(github.event) }}
+        run: echo "$COMMAND_CONTEXT"
+      - name: print conditional
+        run: echo ${{ github.event.client_payload.command.resource.type }}
       - name: Remove issue from board
         if: ${{ github.event.client_payload.command.resource.type }} == 'Issue'
         run: gh issue edit "$PR_URL" --body "updated 6"
