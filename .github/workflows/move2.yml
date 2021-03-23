@@ -9,7 +9,7 @@ jobs:
       - name: Output command context
         env:
           COMMAND_CONTEXT: ${{ toJSON(github.event) }}
-          CAT: ${{ github.event.action }} ${{ github.event.action }}
+          CAT: ${{ github.event.action }} ${{ github.event.action }}https://github.com/apm-pub-org/d3-2/issues/1
         run: echo "$CAT"
 #       - name: Enable auto-merge for new PRs
 #         run: gh issue edit "$PR_URL" --body "updated from wf"
