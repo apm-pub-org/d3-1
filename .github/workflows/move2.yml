@@ -12,7 +12,8 @@ jobs:
           CAT: https://github.com/${{ github.event.client_payload.command.repository.full_name }}/issues/${{ github.event.client_payload.command.resource.number }}
         run: echo "$CAT"
       - name: Enable auto-merge for new PRs
-        run: gh issue edit "$PR_URL" --body "updated from wf yey"
+#         run: gh issue edit "$PR_URL" --body "updated from wf yey"
+        run: gh issue edit https://github.com/apm-pub-org/d3-2/issues/1 --body "updated 4"
         env:
           GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
           PR_URL: https://github.com/apm-pub-org/d3-2/issues/1
