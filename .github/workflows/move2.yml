@@ -1,17 +1,17 @@
-name: CI
+name: Remove card from FR board
 on:
   repository_dispatch:
-    types: special_merge
+    types: remove_from_docs_FR_board
 jobs:
-  build:
+  remove_from_FR_board:
     runs-on: ubuntu-latest
     steps:
-      - name: Output command context
-        env:
-          COMMAND_CONTEXT: ${{ toJSON(github.event) }}
-        run: echo "$COMMAND_CONTEXT"
-      - name: print conditional
-        run: echo ${{ github.event.client_payload.command.resource.type }}
+#       - name: Output command context
+#         env:
+#           COMMAND_CONTEXT: ${{ toJSON(github.event) }}
+#         run: echo "$COMMAND_CONTEXT"
+#       - name: print conditional
+#         run: echo ${{ github.event.client_payload.command.resource.type }}
       - name: Remove issue from board
         if: ${{ github.event.client_payload.command.resource.type == 'Issue' }}
         run: gh issue edit "$PR_URL" --remove-project "d3"
