@@ -14,17 +14,17 @@ jobs:
     name: Transfer issue
     runs-on: ubuntu-latest # TODO add conditional to check label
     steps:
-      - name: Create an issue in the open source repo
-        run: gh issue create --title "test" --body "test" --repo apm-pub-org/d3-1
-        env:
-          GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}} # todo change secret back to ${{secrets.DOCS_BOT_FR}}
 
-      - name: Create an issue in the open source repo
-        run: echo 'OUT='$(gh issue create --title "test2" --body "test2" --repo apm-pub-org/d3-1) >> $GITHUB_ENV
+      - name: Create an issue in the open source repo # todo change repo
+        run: echo 'NEW_ISSUE='$(gh issue create --title "test2" --body "test2" --repo apm-pub-org/d3-1) >> $GITHUB_ENV
 
         env:
           GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}} # todo change secret back to ${{secrets.DOCS_BOT_FR}}
-#           ISSUE_TITLE: ${{ github.event.issue.title }}
-#           ISSUE_BODY: ${{ github.event.issue.body }}
-      - name: echo test
-        run: echo ${{ env.OUT }}
+          ISSUE_TITLE: ${{ github.event.issue.title }}
+          ISSUE_BODY: ${{ github.event.issue.body }}
+      - name: Label new issue
+        run: gh issue edit ${{ env.NEW_ISSUE }} --add-label "help wanted"
+      - name: Comment on old issue
+        run: gh issue comment ${{ github.event.issue.html_url }} --body "This issue was transferred to the open source repo as ${{ env.NEW_ISSUE }}"
+      - name: Close old issue
+        run: gh issue close ${{ github.event.issue.html_url }}
