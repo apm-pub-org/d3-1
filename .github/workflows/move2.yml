@@ -30,7 +30,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}} # todo change secret back to ${{secrets.DOCS_BOT_FR}}
       - name: Store old issue
-        run: echo 'OLDE_ISSUE='${{ github.event.issue.html_url }}" --repo apm-pub-org/d3-1) >> $GITHUB_ENV
+        run: echo 'OLDE_ISSUE='${{ github.event.issue.html_url }} >> $GITHUB_ENV
         env:
           GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}} # todo change secret back to ${{secrets.DOCS_BOT_FR}}
           ISSUE_TITLE: ${{ github.event.issue.title }}
