@@ -58,12 +58,19 @@ jobs:
         env:
           GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}} # todo change secret back to ${{secrets.DOCS_BOT_FR}}
       - name: Comment on old issue
+        continue-on-error: true
         run: gh issue comment ${{ env.OLD_ISSUE }} --body "test"
         env:
           GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}} # todo change secret back to ${{secrets.DOCS_BOT_FR}}
           OLD_ISSUE: ${{ github.event.issue.html_url }}
 #           COMMENT: "This issue was transferred to the open source repo as ${{ env.NEW_ISSUE }}"
           COMMENT: "This issue was transferred to the open source repo as xxx"
+      - name: Add comment
+        uses: peter-evans/create-or-update-comment@v1
+        with:
+          issue-number: ${{ github.event.issue.number }}
+          body: |
+            This issue is available for anyone to work on. **Make sure to reference this issue in your pull request.** :sparkles: Thank you for your contribution! :sparkles:
       - name: Close old issue
         run: gh issue close ${{ github.event.issue.html_url }}
         env:
