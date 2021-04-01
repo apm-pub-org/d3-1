@@ -36,4 +36,3 @@ jobs:
         run: gh issue close ${{ github.event.issue.html_url }}
         env:
           GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}} # todo change secret back to ${{secrets.DOCS_BOT_FR}}
-
