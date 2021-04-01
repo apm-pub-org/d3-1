@@ -1,28 +1,26 @@
-name: Remove card from FR board
-on:
-  repository_dispatch:
-    types: remove_from_docs_FR_board
-jobs:
-  remove_from_FR_board:
-    runs-on: ubuntu-latest
-    steps:
-#       - name: Output command context
-#         env:
-#           COMMAND_CONTEXT: ${{ toJSON(github.event) }}
-#         run: echo "$COMMAND_CONTEXT"
-#       - name: print conditional
-#         run: echo ${{ github.event.client_payload.command.resource.type }}
-      - name: Remove issue from board
-        if: ${{ github.event.client_payload.command.resource.type == 'Issue' }}
-        run: gh issue edit "$ISSUE_URL" --remove-project "d3"
-        env:
-          GITHUB_TOKEN: ${{secrets.PERSONAL_ACCESS_TOKEN}}
-          ISSUE_URL: https://github.com/${{ github.event.client_payload.command.repository.full_name }}/issues/${{ github.event.client_payload.command.resource.number }}
-      - name: Remove PR from board
-        if: ${{ github.event.client_payload.command.resource.type == 'PullRequest' }}
-        run: gh pr edit "$PR_URL" --remove-project "d3"
-        env:
-          GITHUB_TOKEN: ${{secrets.PERSONAL_ACCESS_TOKEN}}
-          PR_URL: https://github.com/${{ github.event.client_payload.command.repository.full_name }}/pull/${{ github.event.client_payload.command.resource.number }}
+name: Transfer to Open Source Repo
 
-# need to make sure works from diff repos, for issues and PRs
+# **What it does**: Copies internal issues to the open source repo
+# **Why we have it**: To copy internal issues to the open source repo (since you can't transfer issues from our internal repo to the public repo)
+# **Who does it impact**: Open source and docs-content maintainers
+
+on:
+  issues:
+    types:
+      - labeled
+
+jobs:
+  transfer-issue:
+    name: Transfer issue
+    runs-on: ubuntu-latest # TODO add conditional to check label
+    steps:
+      # - name: Create an issue in the open source repo
+      #   run: gh issue create --title "$ISSUE_TITLE" --body "$ISSUE_BODY" --repo github/docs
+      #   env:
+      #     GITHUB_TOKEN: ${{secrets.DOCS_BOT_FR}}
+      #     ISSUE_TITLE: https://github.com/${{ github.event.client_payload.command.repository.full_name }}/pull/${{ github.event.client_payload.command.resource.number }}
+      #     ISSUE_BODY: https://github.com/${{ github.event.client_payload.command.repository.full_name }}/pull/${{ github.event.client_payload.command.resource.number }}
+      - name: Output command context
+        env:
+          COMMAND_CONTEXT: ${{ toJSON(github.event) }}
+        run: echo "$COMMAND_CONTEXT"
