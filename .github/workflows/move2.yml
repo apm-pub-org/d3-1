@@ -16,7 +16,7 @@ jobs:
     steps:
 
       - name: Create an issue in the open source repo # todo change repo # todo use issue body/title
-        run: echo 'NEW_ISSUE='$(gh issue create --title "${{ env.ISSUE_COMMENT }}" --body "${{ env.ISSUE_BODY }}" --repo apm-pub-org/d3-1) >> $GITHUB_ENV
+        run: echo 'NEW_ISSUE='$(gh issue create --title "${{ env.ISSUE_TITLE }}" --body "${{ env.ISSUE_BODY }}" --repo apm-pub-org/d3-1) >> $GITHUB_ENV
         env:
           GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}} # todo change secret back to ${{secrets.DOCS_BOT_FR}}
           ISSUE_TITLE: ${{ github.event.issue.title }}
