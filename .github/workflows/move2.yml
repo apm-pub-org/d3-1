@@ -30,39 +30,30 @@ jobs:
         env:
           GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}} # todo change secret back to ${{secrets.DOCS_BOT_FR}}
       - name: Store old issue
-        run: echo 'OLDE_ISSUE='${{ github.event.issue.html_url }} >> $GITHUB_ENV
+        run: echo 'OLD_ISSUE_GE='${{ github.event.issue.html_url }} >> $GITHUB_ENV
         env:
           GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}} # todo change secret back to ${{secrets.DOCS_BOT_FR}}
-          ISSUE_TITLE: ${{ github.event.issue.title }}
-          ISSUE_BODY: ${{ github.event.issue.body }}
-
-      - name: test comment issue 1
+      - name: test comment issue--new issue
         continue-on-error: true
         run: gh issue comment ${{ env.NEW_ISSUE }} --body "help wanted 1"
         env:
           GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}} # todo change secret back to ${{secrets.DOCS_BOT_FR}}
-      - name: test comment issue 2
+      - name: test comment issue--context
         continue-on-error: true
         run: gh issue comment ${{ github.event.issue.html_url }} --body "help wanted 2"
         env:
           GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}} # todo change secret back to ${{secrets.DOCS_BOT_FR}}
-      - name: test comment issue 3
+      - name: test comment issue--context dump
         continue-on-error: true
         run: gh issue comment ${{ env.OLD_ISSUE }} --body "help wanted 3"
         env:
           GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}} # todo change secret back to ${{secrets.DOCS_BOT_FR}}
           OLD_ISSUE: ${{ github.event.issue.html_url }}
-      - name: test comment issue 4
+      - name: test comment issue--github env
         continue-on-error: true
-        run: gh issue comment ${{ env.OLDE_ISSUE }} --body "help wanted 4"
+        run: gh issue comment ${{ env.OLD_ISSUE_GE }} --body "help wanted 4"
         env:
           GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}} # todo change secret back to ${{secrets.DOCS_BOT_FR}}
-      - name: Comment on old issue
-        continue-on-error: true
-        run: gh issue comment ${{ env.OLD_ISSUE }} --body "test"
-        env:
-          GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}} # todo change secret back to ${{secrets.DOCS_BOT_FR}}
-          OLD_ISSUE: ${{ github.event.issue.html_url }}
 #           COMMENT: "This issue was transferred to the open source repo as ${{ env.NEW_ISSUE }}"
           COMMENT: "This issue was transferred to the open source repo as xxx"
       - name: Add comment
@@ -70,7 +61,7 @@ jobs:
         with:
           issue-number: ${{ github.event.issue.number }}
           body: |
-            This issue is available for anyone to work on. **Make sure to reference this issue in your pull request.** :sparkles: Thank you for your contribution! :sparkles:
+            comment with action
       - name: Close old issue
         run: gh issue close ${{ github.event.issue.html_url }}
         env:
