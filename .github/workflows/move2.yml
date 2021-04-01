@@ -15,7 +15,7 @@ jobs:
     runs-on: ubuntu-latest # TODO add conditional to check label
     steps:
       - name: Create an issue in the open source repo
-        run: gh issue create --title "test" --body "test"
+        run: gh issue create --title "test" --body "test" --repo apm-pub-org/d3-1
         env:
           GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}} # todo change secret back to ${{secrets.DOCS_BOT_FR}}
 
