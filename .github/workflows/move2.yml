@@ -14,13 +14,14 @@ jobs:
     name: Transfer issue
     runs-on: ubuntu-latest # TODO add conditional to check label
     steps:
-      # - name: Create an issue in the open source repo
-      #   run: gh issue create --title "$ISSUE_TITLE" --body "$ISSUE_BODY" --repo github/docs
-      #   env:
-      #     GITHUB_TOKEN: ${{secrets.DOCS_BOT_FR}}
-      #     ISSUE_TITLE: https://github.com/${{ github.event.client_payload.command.repository.full_name }}/pull/${{ github.event.client_payload.command.resource.number }}
-      #     ISSUE_BODY: https://github.com/${{ github.event.client_payload.command.repository.full_name }}/pull/${{ github.event.client_payload.command.resource.number }}
-      - name: Output command context
+      - name: Create an issue in the open source repo
+        run: |
+          out = gh issue create --title "$ISSUE_TITLE" --body "$ISSUE_BODY"  # todo change repo back to github/docs
+          echo 'OUT='$out >> $GITHUB_ENV
+
         env:
-          COMMAND_CONTEXT: ${{ toJSON(github.event) }}
-        run: echo "$COMMAND_CONTEXT"
+          GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}} # todo change secret back to ${{secrets.DOCS_BOT_FR}}
+          ISSUE_TITLE: ${{ github.event.issue.title }}
+          ISSUE_BODY: ${{ github.event.issue.body }}
+      - name: echo test
+        run: echo ${{ env.FR_CARDS }}
