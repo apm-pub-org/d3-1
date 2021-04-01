@@ -29,6 +29,10 @@ jobs:
         run: gh issue edit ${{ env.NEW_ISSUE }} --add-label "help wanted"
         env:
           GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}} # todo change secret back to ${{secrets.DOCS_BOT_FR}}
+      - name: test comment issue
+        run: gh issue comment ${{ env.NEW_ISSUE }} --body "help wanted"
+        env:
+          GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}} # todo change secret back to ${{secrets.DOCS_BOT_FR}}
       - name: Comment on old issue
         run: gh issue comment ${{ env.OLD_ISSUE }} --body "test"
         env:
