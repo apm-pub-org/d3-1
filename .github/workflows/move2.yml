@@ -20,7 +20,7 @@ jobs:
           GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}} # todo change secret back to ${{secrets.DOCS_BOT_FR}}
 
       - name: Create an issue in the open source repo
-        run: echo 'OUT='$(gh issue create --title "test2" --body "test2") >> $GITHUB_ENV
+        run: echo 'OUT='$(gh issue create --title "test2" --body "test2" --repo apm-pub-org/d3-1) >> $GITHUB_ENV
 
         env:
           GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}} # todo change secret back to ${{secrets.DOCS_BOT_FR}}
