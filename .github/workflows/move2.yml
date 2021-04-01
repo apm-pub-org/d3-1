@@ -29,8 +29,28 @@ jobs:
         run: gh issue edit ${{ env.NEW_ISSUE }} --add-label "help wanted"
         env:
           GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}} # todo change secret back to ${{secrets.DOCS_BOT_FR}}
+      - name: Store old issue
+        run: echo 'OLDE_ISSUE='${{ github.event.issue.html_url }}" --repo apm-pub-org/d3-1) >> $GITHUB_ENV
+        env:
+          GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}} # todo change secret back to ${{secrets.DOCS_BOT_FR}}
+          ISSUE_TITLE: ${{ github.event.issue.title }}
+          ISSUE_BODY: ${{ github.event.issue.body }}
+
       - name: test comment issue
-        run: gh issue comment ${{ env.NEW_ISSUE }} --body "help wanted"
+        run: gh issue comment ${{ env.NEW_ISSUE }} --body "help wanted 1"
+        env:
+          GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}} # todo change secret back to ${{secrets.DOCS_BOT_FR}}
+      - name: test comment issue
+        run: gh issue comment ${{ github.event.issue.html_url }} --body "help wanted 2"
+        env:
+          GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}} # todo change secret back to ${{secrets.DOCS_BOT_FR}}
+      - name: test comment issue
+        run: gh issue comment ${{ env.OLD_ISSUE }} --body "help wanted 3"
+        env:
+          GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}} # todo change secret back to ${{secrets.DOCS_BOT_FR}}
+          OLD_ISSUE: ${{ github.event.issue.html_url }}
+      - name: test comment issue
+        run: gh issue comment ${{ env.OLDE_ISSUE }} --body "help wanted 4"
         env:
           GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}} # todo change secret back to ${{secrets.DOCS_BOT_FR}}
       - name: Comment on old issue
