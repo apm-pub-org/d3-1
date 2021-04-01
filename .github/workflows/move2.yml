@@ -26,9 +26,10 @@ jobs:
         env:
           GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}} # todo change secret back to ${{secrets.DOCS_BOT_FR}}
       - name: Comment on old issue
-        run: gh issue comment ${{ github.event.issue.html_url }} --body "${{ env.COMMENT }}"
+        run: gh issue comment ${{ env.OLD_ISSUE }} --body "test"
         env:
           GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}} # todo change secret back to ${{secrets.DOCS_BOT_FR}}
+          OLD_ISSUE: ${{ github.event.issue.html_url }}
 #           COMMENT: "This issue was transferred to the open source repo as ${{ env.NEW_ISSUE }}"
           COMMENT: "This issue was transferred to the open source repo as xxx"
       - name: Close old issue
