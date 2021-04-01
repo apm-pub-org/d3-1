@@ -15,8 +15,8 @@ jobs:
     runs-on: ubuntu-latest # TODO add conditional to check label
     steps:
 
-      - name: Create an issue in the open source repo # todo change repo
-        run: echo 'NEW_ISSUE='$(gh issue create --title "test2" --body "test2" --repo apm-pub-org/d3-1) >> $GITHUB_ENV
+      - name: Create an issue in the open source repo # todo change repo # todo use issue body/title
+        run: echo 'NEW_ISSUE='$(gh issue create --title "${{ env.ISSUE_COMMENT }}" --body "${{ env.ISSUE_BODY }}" --repo apm-pub-org/d3-1) >> $GITHUB_ENV
         env:
           GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}} # todo change secret back to ${{secrets.DOCS_BOT_FR}}
           ISSUE_TITLE: ${{ github.event.issue.title }}
@@ -26,9 +26,10 @@ jobs:
         env:
           GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}} # todo change secret back to ${{secrets.DOCS_BOT_FR}}
       - name: Comment on old issue
-        run: gh issue comment ${{ github.event.issue.html_url }} --body "This issue was transferred to the open source repo as ${{ env.NEW_ISSUE }}"
+        run: gh issue comment ${{ github.event.issue.html_url }} --body "${{ env.COMMENT }}"
         env:
           GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}} # todo change secret back to ${{secrets.DOCS_BOT_FR}}
+          COMMENT: "This issue was transferred to the open source repo as ${{ env.NEW_ISSUE }}"
       - name: Close old issue
         run: gh issue close ${{ github.event.issue.html_url }}
         env:
