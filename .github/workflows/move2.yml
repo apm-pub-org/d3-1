@@ -14,6 +14,10 @@ jobs:
     name: Transfer issue
     runs-on: ubuntu-latest # TODO add conditional to check label
     steps:
+      - name: version
+        run: echo $(gh --version)
+        env:
+          GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}} # todo change secret back to ${{secrets.DOCS_BOT_FR}}
 
       - name: Create an issue in the open source repo # todo change repo # todo use issue body/title
         run: echo 'NEW_ISSUE='$(gh issue create --title "${{ env.ISSUE_TITLE }}" --body "${{ env.ISSUE_BODY }}" --repo apm-pub-org/d3-1) >> $GITHUB_ENV
