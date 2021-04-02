@@ -14,63 +14,25 @@ jobs:
     name: Transfer issue
     runs-on: ubuntu-latest # TODO add conditional to check label
     steps:
-      - name: version
-        run: echo $(gh --version)
-        env:
-          GITHUB_TOKEN: ${{secrets.PERSONAL_ACCESS_TOKEN}} # todo change secret back to ${{secrets.DOCS_BOT_FR}}
-          
-
-      - name: Create an issue in the open source repo # todo change repo # todo use issue body/title
+      - name: Create an issue in the open source repo # todo change repo
         run: echo 'NEW_ISSUE='$(gh issue create --title "${{ env.ISSUE_TITLE }}" --body "${{ env.ISSUE_BODY }}" --repo apm-pub-org/d3-1) >> $GITHUB_ENV
         env:
           GITHUB_TOKEN: ${{secrets.PERSONAL_ACCESS_TOKEN}} # todo change secret back to ${{secrets.DOCS_BOT_FR}}
-          
           ISSUE_TITLE: ${{ github.event.issue.title }}
           ISSUE_BODY: ${{ github.event.issue.body }}
-      - name: Label new issue
-        run: gh issue edit ${{ env.NEW_ISSUE }} --add-label "help wanted"
-        env:
-          GITHUB_TOKEN: ${{secrets.PERSONAL_ACCESS_TOKEN}} # todo change secret back to ${{secrets.DOCS_BOT_FR}}
-          
-      - name: Store old issue
-        run: echo 'OLD_ISSUE_GE='${{ github.event.issue.html_url }} >> $GITHUB_ENV
-        env:
-          GITHUB_TOKEN: ${{secrets.PERSONAL_ACCESS_TOKEN}} # todo change secret back to ${{secrets.DOCS_BOT_FR}}
-          
-      - name: test comment issue--new issue
+
+      # - name: Label the new issue
+      #   run: gh issue edit ${{ env.NEW_ISSUE }} --add-label "help wanted"
+      #   env:
+      #     GITHUB_TOKEN: ${{secrets.PERSONAL_ACCESS_TOKEN}} # todo change secret back to ${{secrets.DOCS_BOT_FR}}
+
+      - name: Comment on the old issue
         continue-on-error: true
-        run: gh issue comment ${{ env.NEW_ISSUE }} --body "help wanted 1"
+        run: gh issue comment ${{ github.event.issue.html_url }} --body "This issue was transferred to the open source repo as ${{ env.NEW_ISSUE }}"
         env:
           GITHUB_TOKEN: ${{secrets.PERSONAL_ACCESS_TOKEN}} # todo change secret back to ${{secrets.DOCS_BOT_FR}}
-          
-      - name: test comment issue--context
-        continue-on-error: true
-        run: gh issue comment ${{ github.event.issue.html_url }} --body "help wanted 2"
-        env:
-          GITHUB_TOKEN: ${{secrets.PERSONAL_ACCESS_TOKEN}} # todo change secret back to ${{secrets.DOCS_BOT_FR}}
-          
-      - name: test comment issue--context dump
-        continue-on-error: true
-        run: gh issue comment ${{ env.OLD_ISSUE }} --body "help wanted 3"
-        env:
-          GITHUB_TOKEN: ${{secrets.PERSONAL_ACCESS_TOKEN}} # todo change secret back to ${{secrets.DOCS_BOT_FR}}
-          
-          OLD_ISSUE: ${{ github.event.issue.html_url }}
-      - name: test comment issue--github env
-        continue-on-error: true
-        run: gh issue comment ${{ env.OLD_ISSUE_GE }} --body "help wanted 4"
-        env:
-          GITHUB_TOKEN: ${{secrets.PERSONAL_ACCESS_TOKEN}} # todo change secret back to ${{secrets.DOCS_BOT_FR}}
-          
-#           COMMENT: "This issue was transferred to the open source repo as ${{ env.NEW_ISSUE }}"
-          COMMENT: "This issue was transferred to the open source repo as xxx"
-      - name: Add comment
-        uses: peter-evans/create-or-update-comment@v1
-        with:
-          issue-number: ${{ github.event.issue.number }}
-          body: |
-            comment with action
-      - name: Close old issue
+
+      - name: Close the old issue
         run: gh issue close ${{ github.event.issue.html_url }}
         env:
           GITHUB_TOKEN: ${{secrets.PERSONAL_ACCESS_TOKEN}} # todo change secret back to ${{secrets.DOCS_BOT_FR}}
