@@ -12,7 +12,8 @@ on:
 jobs:
   transfer-issue:
     name: Transfer issue
-    runs-on: ubuntu-latest # TODO add conditional to check label
+    runs-on: ubuntu-latest
+    if: github.event.label.name == 'ready for transfer to os'
     steps:
       - name: Create an issue in the open source repo # todo change repo
         run: echo 'NEW_ISSUE='$(gh issue create --title "${{ env.ISSUE_TITLE }}" --body "${{ env.ISSUE_BODY }}" --repo apm-pub-org/d3-1) >> $GITHUB_ENV
@@ -21,13 +22,12 @@ jobs:
           ISSUE_TITLE: ${{ github.event.issue.title }}
           ISSUE_BODY: ${{ github.event.issue.body }}
 
-      # - name: Label the new issue
-      #   run: gh issue edit ${{ env.NEW_ISSUE }} --add-label "help wanted"
-      #   env:
-      #     GITHUB_TOKEN: ${{secrets.PERSONAL_ACCESS_TOKEN}} # todo change secret back to ${{secrets.DOCS_BOT_FR}}
+      - name: Label the new issue
+        run: gh issue edit ${{ env.NEW_ISSUE }} --add-label "help wanted"
+        env:
+          GITHUB_TOKEN: ${{secrets.PERSONAL_ACCESS_TOKEN}} # todo change secret back to ${{secrets.DOCS_BOT_FR}}
 
       - name: Comment on the old issue
-        continue-on-error: true
         run: gh issue comment ${{ github.event.issue.html_url }} --body "This issue was transferred to the open source repo as ${{ env.NEW_ISSUE }}"
         env:
           GITHUB_TOKEN: ${{secrets.PERSONAL_ACCESS_TOKEN}} # todo change secret back to ${{secrets.DOCS_BOT_FR}}
@@ -36,4 +36,3 @@ jobs:
         run: gh issue close ${{ github.event.issue.html_url }}
         env:
           GITHUB_TOKEN: ${{secrets.PERSONAL_ACCESS_TOKEN}} # todo change secret back to ${{secrets.DOCS_BOT_FR}}
-          
