@@ -15,6 +15,26 @@ jobs:
     runs-on: ubuntu-latest
     if: github.event.label.name == 'ready for transfer to os'
     steps:
+
+      - name: Check if this run was triggered by a member of the docs team
+        uses: actions/github-script@626af12fe9a53dc2972b48385e7fe7dec79145c9
+        id: triggered-by-member
+        with:
+          github-token: ${{secrets.PERSONAL_ACCESS_TOKEN}}
+          result-encoding: string
+          script: |
+            const triggerer_login = context.user.login
+            const teamMembers = await github.request(
+              `/orgs/github/teams/docs/members?per_page=100`
+            )
+            const logins = teamMembers.data.map(member => member.login)
+            if (logins.includes(triggerer_login)) {
+              console.log(`This workflow was triggered by someone not on the docs team.`)
+              return 'true'
+            }
+            console.log(`This workflow was triggered by someone not on the docs team.`)
+            return 'false'
+
       - name: Create an issue in the open source repo
         run: echo 'NEW_ISSUE='$(gh issue create --title "${{ env.ISSUE_TITLE }}" --body "${{ env.ISSUE_BODY }}" --repo apm-pub-org/apm-pub-org-pub-repo) >> $GITHUB_ENV
         env:
