@@ -35,9 +35,11 @@ jobs:
             console.log(`This workflow was triggered by ${triggerer_login} (not on the docs team), so no action will be taken.`)
             return 'false'
 
-      - name: efalse
+      - name: Exit if not triggered by a docs team member
         if: steps.triggered-by-member.outputs.result == 'false'
-        run: exit 1
+        run: |
+          echo Aborting. This workflow must be triggered by a member of the docs team
+          exit 1
 
       - name: Create an issue in the open source repo
         run: echo 'NEW_ISSUE='$(gh issue create --title "${{ env.ISSUE_TITLE }}" --body "${{ env.ISSUE_BODY }}" --repo apm-pub-org/apm-pub-org-pub-repo) >> $GITHUB_ENV
