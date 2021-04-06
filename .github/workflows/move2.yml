@@ -23,20 +23,16 @@ jobs:
           github-token: ${{secrets.PERSONAL_ACCESS_TOKEN}}
           result-encoding: string
           script: |
-            console.log(`11111111111111111111`)
             const triggerer_login = context.payload.sender.login
-            console.log(`2222222222222222222222`)
             const teamMembers = await github.request(
               `/orgs/github/teams/docs/members?per_page=100`
             )
-            console.log(`33333333333333333`)
             const logins = teamMembers.data.map(member => member.login)
-            console.log(`444444444444444`)
             if (logins.includes(triggerer_login)) {
-              console.log(`This workflow was triggered by someone not on the docs team.`)
+              console.log(`This workflow was triggered by ${triggerer_login} (on the docs team).`)
               return 'true'
             }
-            console.log(`This workflow was triggered by someone not on the docs team.`)
+            console.log(`This workflow was triggered by ${triggerer_login} (not on the docs team), so no action will be taken.`)
             return 'false'
 
       - name: Create an issue in the open source repo
