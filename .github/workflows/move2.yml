@@ -20,7 +20,7 @@ jobs:
         uses: actions/github-script@626af12fe9a53dc2972b48385e7fe7dec79145c9
         id: triggered-by-member
         with:
-          github-token: ${{secrets.PERSONAL_ACCESS_TOKEN}}
+          github-token: ${{secrets.PERSONAL_ACCESS_TOKEN}} # todo change token
           result-encoding: string
           script: |
             const triggerer_login = context.payload.sender.login
@@ -30,10 +30,17 @@ jobs:
             const logins = teamMembers.data.map(member => member.login)
             if (logins.includes(triggerer_login)) {
               console.log(`This workflow was triggered by ${triggerer_login} (on the docs team).`)
-              return 'true'
+              return 'false' # todo 
             }
             console.log(`This workflow was triggered by ${triggerer_login} (not on the docs team), so no action will be taken.`)
             return 'false'
+
+      - name: etrue
+        if: steps.triggered-by-member.outputs.result == 'true'
+        run: echo true
+      - name: efalse
+        if: steps.triggered-by-member.outputs.result == 'false'
+        run: echo false
 
       - name: Create an issue in the open source repo
         run: echo 'NEW_ISSUE='$(gh issue create --title "${{ env.ISSUE_TITLE }}" --body "${{ env.ISSUE_BODY }}" --repo apm-pub-org/apm-pub-org-pub-repo) >> $GITHUB_ENV
