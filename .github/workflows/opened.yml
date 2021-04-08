@@ -10,16 +10,18 @@ on:
       - opened
 
 jobs:
-  transfer-issue:
+  person:
     name: person
     runs-on: ubuntu-latest
     if: github.actor == 'skedwards88'
     steps:
-
       - name: only if person
         run: echo it was me
+
+  not-person:
+    name: not person
+    runs-on: ubuntu-latest
     if: github.actor != 'skedwards88'
     steps:
-
       - name: only if not person
         run: echo should not print
