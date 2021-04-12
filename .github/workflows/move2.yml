@@ -42,7 +42,8 @@ jobs:
           exit 1
 
       - name: Escape code blocks
-        run: echo 'B2='${{ github.event.issue.body }}//[g]/t >> $GITHUB_ENV
+        run: echo 'B2='${{ github.event.issue.body }} | tr g t >> $GITHUB_ENV
+        
       - name: Create an issue in the open source repo
         run: echo 'NEW_ISSUE='$(gh issue create --title "${{ env.ISSUE_TITLE }}" --body "${{ env.B2 }}" --repo apm-pub-org/apm-pub-org-pub-repo) >> $GITHUB_ENV
         env:
