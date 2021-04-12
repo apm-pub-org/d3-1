@@ -46,7 +46,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{secrets.PERSONAL_ACCESS_TOKEN}}
           ISSUE_TITLE: ${{ github.event.issue.title }}
-          ISSUE_BODY: ${{ github.event.issue.body//[g]/t }}
+          ISSUE_BODY: ${{ github.event.issue.body }}//[g]/t
 
       - name: Label the new issue
         run: gh issue edit ${{ env.NEW_ISSUE }} --add-label "help wanted"
