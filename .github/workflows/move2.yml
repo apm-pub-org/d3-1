@@ -47,8 +47,8 @@ jobs:
       - name: Create an issue in the open source repo
 #         run: echo 'NEW_ISSUE='$(gh issue create --title "$ISSUE_TITLE" --body "$ISSUE_BODY" --repo apm-pub-org/apm-pub-org-pub-repo) >> $GITHUB_ENV
         run: |
-          url="$(gh issue create --title "$ISSUE_TITLE" --body "$ISSUE_BODY" --repo github/docs)"
-          printf 'NEW_ISSUE="%s"\n' "$url" >> $GITHUB_ENV
+          new_issue_url="$(gh issue create --title "$ISSUE_TITLE" --body "$ISSUE_BODY" --repo apm-pub-org/apm-pub-org-pub-repo)"
+          printf 'NEW_ISSUE="%s"\n' "$new_issue_url" >> $GITHUB_ENV
         env:
           GITHUB_TOKEN: ${{secrets.PERSONAL_ACCESS_TOKEN}}
           ISSUE_TITLE: ${{ github.event.issue.title }}
