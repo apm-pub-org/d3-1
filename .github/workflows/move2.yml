@@ -13,7 +13,7 @@ jobs:
   transfer-issue:
     name: Transfer issue
     runs-on: ubuntu-latest
-    if: github.event.label.name == 'ready for transfer to os'
+    if: github.event.label.name == 'aaa'
     steps:
 
       - name: Check if this run was triggered by a member of the docs team
@@ -41,14 +41,15 @@ jobs:
           echo Aborting. This workflow must be triggered by a member of the docs team
           exit 1
 
-      - name: Escape code blocks
-        run: echo "'ISSUE_BODY='${{ github.event.issue.body }} | tr g t" >> $GITHUB_ENV
+#       - name: Escape code blocks
+#         run: echo "'ISSUE_BODY='${{ github.event.issue.body }} | tr g t" >> $GITHUB_ENV
         
       - name: Create an issue in the open source repo
-        run: echo 'NEW_ISSUE='$(gh issue create --title "${{ env.ISSUE_TITLE }}" --body "${{ env.ISSUE_BODY }}" --repo apm-pub-org/apm-pub-org-pub-repo) >> $GITHUB_ENV
+        run: echo 'NEW_ISSUE='$(gh issue create --title "${{ env.ISSUE_TITLE }}" --body "$ISSUE_BODY" --repo apm-pub-org/apm-pub-org-pub-repo) >> $GITHUB_ENV
         env:
           GITHUB_TOKEN: ${{secrets.PERSONAL_ACCESS_TOKEN}}
           ISSUE_TITLE: ${{ github.event.issue.title }}
+          ISSUE_BODY: ${{ github.event.issue.body }}
 
       - name: Label the new issue
         run: gh issue edit ${{ env.NEW_ISSUE }} --add-label "help wanted"
