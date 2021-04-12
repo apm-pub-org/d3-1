@@ -41,8 +41,10 @@ jobs:
           echo Aborting. This workflow must be triggered by a member of the docs team
           exit 1
 
+      - name: Escape code blocks
+        run: echo 'B2='${{ github.event.issue.body }}//[g]/t >> $GITHUB_ENV
       - name: Create an issue in the open source repo
-        run: echo 'NEW_ISSUE='$(gh issue create --title "${{ env.ISSUE_TITLE }}" --body "${{ env.ISSUE_BODY }}" --repo apm-pub-org/apm-pub-org-pub-repo) >> $GITHUB_ENV
+        run: echo 'NEW_ISSUE='$(gh issue create --title "${{ env.ISSUE_TITLE }}" --body "${{ env.B2 }}" --repo apm-pub-org/apm-pub-org-pub-repo) >> $GITHUB_ENV
         env:
           GITHUB_TOKEN: ${{secrets.PERSONAL_ACCESS_TOKEN}}
           ISSUE_TITLE: ${{ github.event.issue.title }}
