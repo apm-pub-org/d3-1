@@ -43,7 +43,7 @@ jobs:
       - name: Create an issue in the docs-content repo
         run: |
           new_issue_url="$(gh issue create --title "$ISSUE_TITLE" --body "$ISSUE_BODY" --repo apm-pub-org/d3-2)"
-          printf 'NEW_ISSUE="%s"\n' $new_issue_url >> $GITHUB_ENV
+          echo 'NEW_ISSUE='$new_issue_url >> $GITHUB_ENV
         env:
           GITHUB_TOKEN: ${{secrets.PERSONAL_ACCESS_TOKEN}}
           ISSUE_TITLE: ${{ github.event.issue.title }}
