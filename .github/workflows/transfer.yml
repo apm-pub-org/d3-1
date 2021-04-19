@@ -48,7 +48,7 @@ jobs:
 
       - name: Transfer the issue to the rest-api-description repo
         run: |
-          new_issue_url="$(gh issue transfer $OLD_ISSUE apm-pub-org/d3-2)"
+          new_issue_url="$(gh issue transfer $OLD_ISSUE github/rest-api-description)"
           echo 'NEW_ISSUE='$new_issue_url >> $GITHUB_ENV
         env:
           GITHUB_TOKEN: ${{secrets.PERSONAL_ACCESS_TOKEN}}
