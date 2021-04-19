@@ -1,4 +1,4 @@
-name: Copy to Open Source Repo
+name: Copy to REST API issue to docs-content
 
 # **What it does**: Copies an issue in the open source repo to the docs-content repo, comments on and closes the original issue
 # **Why we have it**: REST API updates cannot be made in the open source repo. Instead, we copy the issue to an internal issue (we do not transfer so that the issue does not disappear for the contributor) and close the original issue.
@@ -19,7 +19,7 @@ jobs:
         uses: actions/github-script@626af12fe9a53dc2972b48385e7fe7dec79145c9
         id: triggered-by-member
         with:
-          GITHUB_TOKEN: ${{secrets.PERSONAL_ACCESS_TOKEN}}
+          github-token: ${{secrets.PERSONAL_ACCESS_TOKEN}}
           result-encoding: string
           script: |
             const triggerer_login = context.payload.sender.login
