@@ -40,8 +40,8 @@ jobs:
           echo Aborting. This workflow must be triggered by a member of the docs team.
           exit 1
 
-      - name: Comment on the issue
-        run: gh issue comment $ISSUE --body "yay"
+      - name: Comment on the PR
+        run: gh pr comment $PR --body "yay"
         env:
           GITHUB_TOKEN: ${{secrets.PERSONAL_ACCESS_TOKEN}}
-          ISSUE: ${{ github.event.issue.html_url }}
+          PR: ${{ github.event.pull_request.html_url }}
