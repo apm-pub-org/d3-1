@@ -15,6 +15,10 @@ jobs:
     runs-on: ubuntu-latest
     if: github.event.label.name == 'approved' # TODO sometimes also gate on repo
     steps:
+      - name: print context
+        env:
+          GITHUB_CONTEXT: ${{ toJSON(github) }}
+        run: echo "$GITHUB_CONTEXT"
       - name: Check if this run was triggered by a member of the docs team
         uses: actions/github-script@626af12fe9a53dc2972b48385e7fe7dec79145c9
         id: triggered-by-member
