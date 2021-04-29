@@ -23,7 +23,7 @@ jobs:
         uses: actions/github-script@626af12fe9a53dc2972b48385e7fe7dec79145c9
         id: triggered-by-member
         with:
-          github-token: ${{secrets.PERSONAL_ACCESS_TOKEN}}
+          github-token: ${{secrets.GITHUB_TOKEN}}
           result-encoding: string
           script: |
             const triggerer_login = context.payload.sender.login
@@ -50,5 +50,5 @@ jobs:
           
           second line"
         env:
-          GITHUB_TOKEN: ${{secrets.PERSONAL_ACCESS_TOKEN}}
+          GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
           PR: ${{ github.event.pull_request.html_url }}
