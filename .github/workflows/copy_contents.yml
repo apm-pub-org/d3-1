@@ -8,16 +8,29 @@ jobs:
     name: copy
     runs-on: ubuntu-latest
     steps:
-    - name: check out repo content
-      uses: actions/checkout@v2
+#     - name: check out repo content
+#       uses: actions/checkout@v2
 
-    - name: Read and assign
-      id: output_test
-      run: |
-        echo "MYVAR=$(cat .github/workflows/review-template.md)" >> $GITHUB_ENV
-    - name: use
-      run: |
-        echo $MYVAR
+#     - name: Read and assign
+#       id: output_test
+#       run: |
+#         echo "MYVAR=$(cat .github/workflows/review-template.md)" >> $GITHUB_ENV
+#     - name: use
+#       run: |
+#         echo $MYVAR
 
-    # test to see if done correctly - should echo "value"
-#     - run: echo ${{steps.output_test.outputs.new_value }}
+    - name: create string
+      run: |
+        MY_STRING=$(cat << EOF
+        first line
+        second line
+        third line
+        EOF
+        )
+        echo "MY_STRING<<EOF" >> $GITHUB_ENV
+        echo "$MY_STRING" >> $GITHUB_ENV
+        echo "EOF" >> $GITHUB_ENV
+      id: my_string
+    - name: display string
+      run: |
+        echo "The string is: ${{ env.MY_STRING }}"
