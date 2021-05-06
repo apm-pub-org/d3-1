@@ -15,11 +15,24 @@ jobs:
     runs-on: ubuntu-latest
 #     if: github.event.label.name == 'review' # TODO sometimes also gate on repo
     steps:
+      - name: check out repo content
+        uses: actions/checkout@v2
+
+      - name: Store review template into variable
+        run: |
+          TEMPLATE=$(cat .github/workflows/review-template.md)
+          echo "TEMPLATE<<EOF" >> $GITHUB_ENV
+          echo "$TEMPLATE" >> $GITHUB_ENV
+          echo "EOF" >> $GITHUB_ENV
+
+      - name: display string
+        run: |
+          echo "${{ env.TEMPLATE }}"
 
       - name: Comment on the PR
         run: |
-          gh pr comment $PR --body $COMMENT
+          gh pr comment $PR --body $TEMPLATE
         env:
           GITHUB_TOKEN: ${{secrets.PERSONAL_ACCESS_TOKEN}}
           PR: ${{ github.event.pull_request.html_url }}
-          COMMENT: "line 1\nline2"
+          TEMPLATE: ${{ env.TEMPLATE }}
