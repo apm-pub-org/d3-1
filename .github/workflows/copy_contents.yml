@@ -28,7 +28,7 @@ jobs:
     - name: create string
       run: |
         MY_STRING=$(cat .github/workflows/review-template.md)
-        echo "$MY_STRING" >> $GITHUB_ENV
+        echo "MY_STRING<<EOF" >> $GITHUB_ENV
       id: my_string
     - name: display string
       run: |
