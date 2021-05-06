@@ -1,39 +1,35 @@
-name: Add review table
+name: Add review template
 
-# **What it does**: 
-# **Why we have it**: 
-# **Who does it impact**: 
+# **What it does**: When a specific label is added to a PR, adds the contents of TODO as a comment in the PR
+# **Why we have it**: To help contributors ensure that PRs are ready for review
+# **Who does it impact**: docs-internal maintaners and contributors
 
 on:
-  push
-#   pull_request:
-#     types:
-#       - labeled
+  pull_request:
+    types:
+      - labeled
 
 jobs:
   comment-that-approved:
     name: Add review template
     runs-on: ubuntu-latest
-#     if: github.event.label.name == 'review' # TODO sometimes also gate on repo
+    if: github.event.label.name == 'ready-for-docs-review' && github.repository == 'apm-pub-org/d3-1' # TODO change repo and ask for label name
     steps:
       - name: check out repo content
         uses: actions/checkout@v2
 
-      - name: Store review template into variable
+      # Jump through some hoops to work with a multi-line file
+      - name: Store review template in variable
         run: |
           TEMPLATE=$(cat .github/workflows/review-template.md)
           echo "TEMPLATE<<EOF" >> $GITHUB_ENV
           echo "$TEMPLATE" >> $GITHUB_ENV
           echo "EOF" >> $GITHUB_ENV
 
-      - name: display string
-        run: |
-          echo "${{ env.TEMPLATE }}"
-
       - name: Comment on the PR
         run: |
-          gh pr comment https://github.com/apm-pub-org/d3-1/pull/2 --body "$TEMPLATE"
+          gh pr comment $PR --body "$TEMPLATE"
         env:
           GITHUB_TOKEN: ${{secrets.PERSONAL_ACCESS_TOKEN}}
-#           PR: ${{ github.event.pull_request.html_url }}
+          PR: ${{ github.event.pull_request.html_url }}
           TEMPLATE: ${{ env.TEMPLATE }}
