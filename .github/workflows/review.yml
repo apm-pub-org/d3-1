@@ -1,8 +1,8 @@
 name: Add review template
 
-# **What it does**: When a specific label is added to a PR, adds the contents of TODO as a comment in the PR
-# **Why we have it**: To help contributors ensure that PRs are ready for review
-# **Who does it impact**: docs-internal maintaners and contributors
+# **What it does**: When a specific label is added to a PR, adds the contents of .github/review_template.md as a comment in the PR
+# **Why we have it**: To help contributors ensure that their PR is ready for review
+# **Who does it impact**: docs-internal maintainers and contributors
 
 on:
   pull_request:
@@ -14,6 +14,7 @@ jobs:
     name: Add review template
     runs-on: ubuntu-latest
     if: github.event.label.name == 'ready-for-docs-review' && github.repository == 'apm-pub-org/d3-1' # TODO change repo and ask for label name
+
     steps:
       - name: check out repo content
         uses: actions/checkout@v2
