@@ -27,4 +27,4 @@ jobs:
 
     - name: display string
       run: |
-        echo ${{ env.MY_STRING }}
+        echo "${{ env.MY_STRING }}"
