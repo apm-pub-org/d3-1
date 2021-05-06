@@ -13,7 +13,7 @@ jobs:
   comment-that-approved:
     name: Add review template
     runs-on: ubuntu-latest
-    if: github.event.label.name == 'review' # TODO sometimes also gate on repo
+#     if: github.event.label.name == 'review' # TODO sometimes also gate on repo
     steps:
 
       - name: Comment on the PR
