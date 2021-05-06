@@ -15,6 +15,7 @@ jobs:
       id: output_test
       run: |
         echo $(cat new.txt)
+        echo "MYVAR=$(cat new.txt)" >> $GITHUB_ENV
 
     # test to see if done correctly - should echo "value"
-    - run: echo ${{steps.output_test.outputs.new_value }}
+#     - run: echo ${{steps.output_test.outputs.new_value }}
