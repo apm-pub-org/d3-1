@@ -8,10 +8,7 @@ jobs:
     name: copy
     runs-on: ubuntu-latest
     steps:
-  # write something in a file and create it
-    - run: echo "value" >> new.txt
 
-  # read from file and assign to outputs object
     - name: Read and assign
       id: output_test
       run: |
