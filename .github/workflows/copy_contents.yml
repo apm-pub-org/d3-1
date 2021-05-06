@@ -14,8 +14,7 @@ jobs:
     - name: Read and assign
       id: output_test
       run: |
-        contents = $(cat new.txt)
-        echo $contents
+        echo $(cat new.txt)
 
     # test to see if done correctly - should echo "value"
     - run: echo ${{steps.output_test.outputs.new_value }}
