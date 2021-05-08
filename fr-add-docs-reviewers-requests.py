@@ -1,7 +1,7 @@
-import requests
-import os
 import json
 import logging
+import os
+import requests
 
 # Constants
 endpoint = 'https://api.github.com/graphql'
@@ -157,7 +157,6 @@ def add_prs_to_board(prs_to_add: list, column_id: str):
 
     if 'errors' in json_response:
       logger.info(f"GraphQL error when adding {pr_id}: {json_response}")
-      # todo not throwing error, but could record error after
 
 def filter_prs(data, reviewer_id: str, project_id):
   """Given data about the draft state, reviewers, and project boards for PRs,
@@ -213,7 +212,7 @@ def filter_prs(data, reviewer_id: str, project_id):
 
   for pr in pr_data:
     if (
-      pr['isDraft'] and
+      not pr['isDraft'] and
       reviewer_id in [req_rev['requestedReviewer']['id'] for req_rev in pr['reviewRequests']['nodes'] if req_rev['requestedReviewer']] and
       project_id not in [proj_card['project']['id'] for proj_card in pr['projectCards']['nodes']]
     ):
@@ -228,10 +227,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
-
-
-
-# todo look at logging and error handling
-# todo remember to put not before draft
-# possible to force addition at top instead of bottom?
