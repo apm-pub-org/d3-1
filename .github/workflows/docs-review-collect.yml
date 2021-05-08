@@ -1,0 +1,35 @@
+name: Add docs-reviewers request to FR board
+
+# **What it does**: 
+# **Why we have it**: 
+# **Who does it impact**: 
+
+on:
+  workflow_dispatch
+  # todo also add schedule
+
+jobs:
+  add-requests-to-board:
+    name: Add requests to board
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out repo content
+        uses: actions/checkout@v2
+
+      - name: Set up Python 3.9
+        uses: actions/setup-python@v2
+        with:
+          python-version: '3.9'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install requests
+
+      - name: Run script
+        run: |
+          python fr-add-docs-reviewers-requests.py
+        env:
+          TOKEN: ${{ secrets.PERSONAL_ACCESS_TOKEN}}
+# todo remember to change token
