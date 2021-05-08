@@ -3,33 +3,82 @@ import os
 import json
 import logging
 
+# Constants
+endpoint = 'https://api.github.com/graphql'
+
+# ID of the github/github repo
+github_repo_id = "MDEwOlJlcG9zaXRvcnkz"
+
+# ID of the docs-reviewers team
+docs_reviewers_id = "MDQ6VGVhbTQzMDMxMzk="
+
+# ID of the "Docs content first responder" board
+docs_project_id = "MDc6UHJvamVjdDQ1NzI0ODI="
+
+# ID of the "OpenAPI review requests" column on the  "Docs content first responder" board
+docs_column_id = "PC_lAPNJr_OAEXFQs4A2OFq"
+
+# 100 is an educated guess of how many PRs are opened in a day on the github/github repo
+num_prs_to_search = 100
+
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-endpoint = 'https://api.github.com/graphql'
-github_repo_id = "MDEwOlJlcG9zaXRvcnkz"
-docs_reviewers_id = "MDQ6VGVhbTQzMDMxMzk="
-docs_project_id = "MDc6UHJvamVjdDQ1NzI0ODI="
-docs_column_id = "PC_lAPNJr_OAEXFQs4A2OFq"
 
-#todo decide how many PRs to return
+def find_open_prs_for_repo(repo_id: str, num_prs: int):
+  """Return data about a specified number of open PRs for a specified repo
 
-def find_open_prs_for_repo(repo_id, num_prs):
+  Arguments:
+  repo_id: The node ID of the repo to search
+  num_prs: The max number of PRs to return
+
+  Returns:
+  Returns a JSON object of this structure:
+  {
+    "data": {
+    "node": {
+      "pullRequests": {
+        "nodes": [
+            {
+              "id": str, 
+              "isDraft": bool, 
+              "reviewRequests": {
+                "nodes": [
+                  {
+                    "requestedReviewer": {
+                      "id": str
+                    }
+                  }...
+                ]
+              }, 
+              "projectCards": {
+                "nodes": [
+                  {
+                    "project": {
+                      "id": str
+                    }
+                  }...
+                ]
+              }
+            }...
+          ]
+        }
+      }
+    }
+  }
+  """
 
   query = """query ($repo_id: ID!, $num_prs: Int!) {
     node(id: $repo_id) {
       ... on Repository {
         pullRequests(last: $num_prs, states: OPEN) {
           nodes {
-            number
             id
-            title
             isDraft
             reviewRequests(first: 10) {
               nodes {
                 requestedReviewer {
                   ... on Team {
-                    name
                     id
                   }
                 }
@@ -38,7 +87,6 @@ def find_open_prs_for_repo(repo_id, num_prs):
             projectCards(first: 10) {
               nodes {
                 project {
-                  name
                   id
                 }
               }
@@ -68,24 +116,33 @@ def find_open_prs_for_repo(repo_id, num_prs):
   if 'errors' in json_response:
     raise RuntimeError(f'Error in GraphQL response: {json_response}')
 
-  print(f"p-found: {json_response}")
-  logger.info(f"l-found: {json_response}")
+  logger.info(f"found: {json_response}")
+
   return json_response
 
-def add_prs_to_board(prs_to_add, column_id):
-  print(f"p-adding: {prs_to_add}")
-  logger.info(f"l-adding: {prs_to_add}")
+def add_prs_to_board(prs_to_add: list, column_id: str):
+  """Adds PRs to a column of a project board
+
+  Arguments:
+  prs_to_add: A list of PR node IDs
+  column_id: The node ID of the column to add the PRs to
+
+  Returns:
+  Nothing
+  """
+
+  logger.info(f"adding: {prs_to_add}")
+
+  mutation = """mutation($pr_id: ID!, $column_id: ID!) {
+                  addProjectCard(input:{contentId: $pr_id, projectColumnId: $column_id}) {
+                    projectColumn {
+                      name
+                      }
+                    }
+  }"""
+
   for pr_id in prs_to_add:
     logger.info(f"Attempting to add {pr_id} to board")
-    print(f"Attempting to add {pr_id} to board")
-
-    mutation = """mutation($pr_id: ID!, $column_id: ID!) {
-                    addProjectCard(input:{contentId: $pr_id, projectColumnId: $column_id}) {
-                      projectColumn {
-                        name
-                        }
-                      }
-    }"""
 
     variables = {
       "pr_id": pr_id,
@@ -99,28 +156,74 @@ def add_prs_to_board(prs_to_add, column_id):
     )
 
     json_response = json.loads(response.text)
+
     if 'errors' in json_response:
-      logger.info(f"l-GraphQL error when adding {pr_id}: {json_response}")
-      print(f"p-GraphQL error when adding {pr_id}: {json_response}")
+      logger.info(f"GraphQL error when adding {pr_id}: {json_response}")
       # todo not throwing error, but could record error after
 
-def filter_prs(data):
+def filter_prs(data, reviewer_id: str, project_id):
+  """Given data about the draft state, reviewers, and project boards for PRs,
+  return just the PRs that are:
+  - not draft
+  - are requesting a review for the specified team
+  - are not already on the specified project board
+
+  Arguments:
+  data: A JSON object of this structure:
+    {
+      "data": {
+      "node": {
+        "pullRequests": {
+          "nodes": [
+              {
+                "id": str, 
+                "isDraft": bool, 
+                "reviewRequests": {
+                  "nodes": [
+                    {
+                      "requestedReviewer": {
+                        "id": str
+                      }
+                    }...
+                  ]
+                }, 
+                "projectCards": {
+                  "nodes": [
+                    {
+                      "project": {
+                        "id": str
+                      }
+                    }...
+                  ]
+                }
+              }...
+            ]
+          }
+        }
+      }
+    }
+  reviewer_id: The node ID of the reviewer to filter for
+  project_id: The project ID of the project to filter against
+
+  Returns:
+  A list of node IDs of the PRs that met the requirements
+  """
 
   pr_data = data['data']['node']['pullRequests']['nodes']
 
   prs_to_add = []
 
-  # todo remember to put not before draft
   for pr in pr_data:
     if (
       pr['isDraft'] and
-      docs_reviewers_id in [req_rev['requestedReviewer']['id'] for req_rev in pr['reviewRequests']['nodes'] if req_rev['requestedReviewer']] and
-      docs_project_id not in [proj_card['project']['id'] for proj_card in pr['projectCards']['nodes']]
+      reviewer_id in [req_rev['requestedReviewer']['id'] for req_rev in pr['reviewRequests']['nodes'] if req_rev['requestedReviewer']] and
+      project_id not in [proj_card['project']['id'] for proj_card in pr['projectCards']['nodes']]
     ):
       prs_to_add.append(pr['id'])
   
   return prs_to_add
 
-query_data = find_open_prs_for_repo(github_repo_id, 10)
-prs_to_add = filter_prs(query_data)
+# Execute
+query_data = find_open_prs_for_repo(github_repo_id, num_prs_to_search)
+prs_to_add = filter_prs(query_data, docs_reviewers_id, docs_project_id)
 add_prs_to_board(prs_to_add, docs_column_id)
