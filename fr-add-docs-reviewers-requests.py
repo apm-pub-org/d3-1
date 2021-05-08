@@ -68,11 +68,13 @@ def find_open_prs_for_repo(repo_id, num_prs):
   if 'errors' in json_response:
     raise RuntimeError(f'Error in GraphQL response: {json_response}')
 
-  print(f"found: {json_response}")
+  print(f"p-found: {json_response}")
+  logger.info(f"l-found: {json_response}")
   return json_response
 
 def add_prs_to_board(prs_to_add, column_id):
-  print(f"adding: {prs_to_add}")
+  print(f"p-adding: {prs_to_add}")
+  logger.info(f"l-adding: {prs_to_add}")
   for pr_id in prs_to_add:
     logger.info(f"Attempting to add {pr_id} to board")
     print(f"Attempting to add {pr_id} to board")
@@ -98,8 +100,8 @@ def add_prs_to_board(prs_to_add, column_id):
 
     json_response = json.loads(response.text)
     if 'errors' in json_response:
-      logger.info(f"GraphQL error when adding {pr_id}: {json_response}")
-      print(f"GraphQL error when adding {pr_id}: {json_response}")
+      logger.info(f"l-GraphQL error when adding {pr_id}: {json_response}")
+      print(f"p-GraphQL error when adding {pr_id}: {json_response}")
       # todo not throwing error, but could record error after
 
 def filter_prs(data):
