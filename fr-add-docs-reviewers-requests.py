@@ -116,8 +116,6 @@ def find_open_prs_for_repo(repo_id: str, num_prs: int):
   if 'errors' in json_response:
     raise RuntimeError(f'Error in GraphQL response: {json_response}')
 
-  logger.info(f"found: {json_response}")
-
   return json_response
 
 def add_prs_to_board(prs_to_add: list, column_id: str):
@@ -223,7 +221,17 @@ def filter_prs(data, reviewer_id: str, project_id):
   
   return prs_to_add
 
-# Execute
-query_data = find_open_prs_for_repo(github_repo_id, num_prs_to_search)
-prs_to_add = filter_prs(query_data, docs_reviewers_id, docs_project_id)
-add_prs_to_board(prs_to_add, docs_column_id)
+def main():
+  query_data = find_open_prs_for_repo(github_repo_id, num_prs_to_search)
+  prs_to_add = filter_prs(query_data, docs_reviewers_id, docs_project_id)
+  add_prs_to_board(prs_to_add, docs_column_id)
+
+if __name__ == "__main__":
+    main()
+
+
+
+
+# todo look at logging and error handling
+# todo remember to put not before draft
+# possible to force addition at top instead of bottom?
