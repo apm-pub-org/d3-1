@@ -10,7 +10,7 @@ github_repo_id = "MDEwOlJlcG9zaXRvcnkz"
 docs_reviewers_id = "MDQ6VGVhbTQzMDMxMzk="
 docs_project_id = "MDc6UHJvamVjdDQ1NzI0ODI="
 docs_column_id = "PC_lAPNJr_OAEXFQs4A2OFq"
-# todo use secret not PAT
+
 #todo decide how many PRs to return
 
 def find_open_prs_for_repo(repo_id, num_prs):
@@ -57,7 +57,7 @@ def find_open_prs_for_repo(repo_id, num_prs):
   response = requests.post(
     endpoint, 
     json={'query': query, 'variables': variables}, 
-    headers = {'Authorization': 'bearer PAT'}
+    headers = {'Authorization': f"bearer {os.environ['TOKEN']}"}
     )
 
   response.raise_for_status()
@@ -92,7 +92,7 @@ def add_prs_to_board(prs_to_add, column_id):
     response = requests.post(
       endpoint, 
       json={'query': mutation, 'variables': variables},
-      headers = {'Authorization': 'bearer PAT'}
+      headers = {'Authorization': f"bearer {os.environ['TOKEN']}"}
     )
 
     json_response = json.loads(response.text)
