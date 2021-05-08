@@ -1,4 +1,4 @@
-import requests
+ximport requests
 import os
 import json
 import logging
@@ -119,6 +119,6 @@ def filter_prs(data):
   
   return prs_to_add
 
-query_data = find_open_prs_for_repo(github_repo_id, 3)
+query_data = find_open_prs_for_repo(github_repo_id, 10)
 prs_to_add = filter_prs(query_data)
 add_prs_to_board(prs_to_add, docs_column_id)
