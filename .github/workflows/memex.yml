@@ -53,9 +53,9 @@ jobs:
       - name: Parse
         id: parse
         env:
-          DUMP: ${{ toJSON(env.RESPONSE) }}
-          DUMP2: ${{ toJSON(env.RESPONSE).data }}
-          DUMP3: ${{ toJSON(env.RESPONSE)['data'] }}
+          DUMP: ${{ fromJSON(env.RESPONSE) }}
+          DUMP2: ${{ fromJSON(env.RESPONSE).data }}
+          DUMP3: ${{ fromJSON(env.RESPONSE)['data'] }}
         run: |
           echo "1"
           echo ${{ env.RESPONSE }}
