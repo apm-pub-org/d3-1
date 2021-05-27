@@ -37,9 +37,9 @@ jobs:
       - name: Get project node ID
         id: get_project_id
         run: |
-          response="$( gh api graphql --header 'GraphQL-Features: projects_next_graphql' -f query='
+          response="$( gh api graphql --header 'GraphQL-Features: projects_next_graphql' -F org='$ORG' -f query='
             query{
-            organization(login:$ORG){
+            organization(login:$org){
               projectNext(number:5) {
                 id
               }
