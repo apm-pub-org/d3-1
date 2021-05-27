@@ -1,21 +1,19 @@
 name: Add PR to project
 on:
-  workflow_dispatch:
   pull_request:
     types:
       - ready_for_review
 jobs:
   add_pr:
     runs-on: ubuntu-latest
-    steps:
-                  
-      - name: Get project node ID
+    steps:      
+      - name: Get project ID
         id: get_project_id
         run: |
           response="$( gh api graphql --header 'GraphQL-Features: projects_next_graphql' -F org=$ORG -F number=$PROJECT_NUM -f query='
             query($org: String!, $number: Int!) {
-            organization(login:$org){
-              projectNext(number:$number) {
+            organization(login: $org){
+              projectNext(number: $number) {
                 id
               }
             }
@@ -28,11 +26,6 @@ jobs:
           ORG: "ske-test-org"
           PROJECT_NUM: 6
 
-      - name: Parse
-        id: parse
-        run: |
-          echo ${{ env.PROJECT_ID }}
-          
       - name: Add PR to project
         id: add_pr
         run: |
@@ -47,9 +40,7 @@ jobs:
           ')"
           
           echo 'ITEM_ID='$(jq '.data.addProjectNextItem.projectNextItem.id' <<< "$response") >> $GITHUB_ENV          
-
         env:
           GITHUB_TOKEN: ${{secrets.PERSONAL_ACCESS_TOKEN}}
           PROJECT_ID: ${{ env.PROJECT_ID }}
           PR_ID: ${{ github.event.pull_request.node_id }}
-
