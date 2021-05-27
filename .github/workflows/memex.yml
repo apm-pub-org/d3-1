@@ -39,18 +39,18 @@ jobs:
         run: |
           response="$( gh api graphql --header 'GraphQL-Features: projects_next_graphql' -f query='
             query{
-            organization(login:"ske-test-org"){
+            organization(login:$ORG){
               projectNext(number:5) {
                 id
               }
             }
           }
           ')"
-          echo 'PROJECT_ID='$(jq '.data.organization.projectNext.id' <<< "$response") >> $GITHUB_ENV
-
+          echo 'PROJECT_ID='$(jq '.data.organization.projectNext.id' <<< "$response") >> $GITHUB_ENV          
         env:
           GITHUB_TOKEN: ${{secrets.PERSONAL_ACCESS_TOKEN}}
-#           echo 'RESPONSE='$response >> $GITHUB_ENV
+          ORG: "ske-test-org"
+          NUM: 5
 
       - name: Parse
         id: parse
