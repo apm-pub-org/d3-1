@@ -65,3 +65,5 @@ jobs:
           echo "$DUMP2"
           echo "4"
           echo "$DUMP3"
+          echo "5"
+          echo ${{ env.RESPONSE.data }}
