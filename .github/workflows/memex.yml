@@ -32,6 +32,7 @@ jobs:
       - run: "echo 'Added: ${{ steps.add_pr.outputs.data }}'"
 
 
+      - run: "echo 'Added: ${{ steps.add_pr.outputs.data.addProjectNextItem.projectNextItem.id }}'"
 
         
 #       - name: Add PR to project
