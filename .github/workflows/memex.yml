@@ -25,6 +25,6 @@ jobs:
             }
           pr_node_id: ${{ github.event.pull_request.node_id }}
           headers: |
-            {"GraphQL-Features": "projects_next_graphql"}
+            {"GraphQL-Features: projects_next_graphql"}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
