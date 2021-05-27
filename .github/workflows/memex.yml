@@ -28,10 +28,7 @@ jobs:
           headers: '{"GraphQL-Features": "projects_next_graphql"}'
         env:
           GITHUB_TOKEN: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
-          
-      - name: Add PR to project
-        uses: octokit/graphql-action@v2.2.20
-        
+                  
       - run: "echo 'Added: ${{ steps.add_pr.outputs.data }}'"
 
 
