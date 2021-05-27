@@ -1,5 +1,6 @@
 name: Add PR to project
 on:
+  workflow_dispatch:
   pull_request:
     types:
       - ready_for_review
@@ -12,37 +13,10 @@ jobs:
       #     GITHUB_CONTEXT: ${{ toJSON(github) }}
       #   run: echo "$GITHUB_CONTEXT"
 
-      - name: Add PR to project
-        id: add_pr
-        uses: octokit/graphql-action@v2.2.20
-        with:
-          query: |
-            mutation($pr_node_id:ID!) {
-              addProjectNextItem(input: {projectId: "MDExOlByb2plY3ROZXh0MTU0OA==", contentId: $pr_node_id}) {
-                projectNextItem {
-                  id
-                }
-              }
-            }
-          pr_node_id: ${{ github.event.pull_request.node_id }}
-          headers: '{"GraphQL-Features": "projects_next_graphql"}'
-        env:
-          GITHUB_TOKEN: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
-                  
-      - run: "echo 'Added: ${{ steps.add_pr.outputs.data }}'"
-
-
-      - run: "echo 'Added: ${{ steps.add_pr.outputs.data.addProjectNextItem.projectNextItem.id }}'"
-
-        
 #       - name: Add PR to project
-#         uses: actions/github-script@626af12fe9a53dc2972b48385e7fe7dec79145c9
+#         id: add_pr
+#         uses: octokit/graphql-action@v2.2.20
 #         with:
-#           github-token: ${{secrets.PERSONAL_ACCESS_TOKEN}}
-#           result-encoding: string
-#           script: |
-#             const pr_node_id = context.payload.pull_request.node_id
-
 #           query: |
 #             mutation($pr_node_id:ID!) {
 #               addProjectNextItem(input: {projectId: "MDExOlByb2plY3ROZXh0MTU0OA==", contentId: $pr_node_id}) {
@@ -55,3 +29,34 @@ jobs:
 #           headers: '{"GraphQL-Features": "projects_next_graphql"}'
 #         env:
 #           GITHUB_TOKEN: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
+                  
+#       - run: "echo 'Added: ${{ steps.add_pr.outputs.data }}'"
+
+#       - run: "echo 'Added: ${{ steps.add_pr.outputs.data.addProjectNextItem.projectNextItem.id }}'"
+
+      - name: Get project node ID
+        id: get_project_id
+        run: |
+          response="$( gh api graphql --header 'GraphQL-Features: projects_next_graphql' -f query='
+            query{
+            organization(login:"ske-test-org"){
+              projectNext(number:5) {
+                id
+              }
+            }
+          }
+          ')"
+          echo 'RESPONSE='$response >> $GITHUB_ENV
+        env:
+          GITHUB_TOKEN: ${{secrets.PERSONAL_ACCESS_TOKEN}}
+
+      - name: Parse
+        id: parse
+        env:
+          DUMP: ${{ toJSON(env.RESPONSE) }}
+          DUMP2: ${{ toJSON(env.RESPONSE).data }}
+        run: |
+          echo "1"
+          echo ${{ env.RESPONSE }}
+          echo "$DUMP"
+          echo "$DUMP2"
