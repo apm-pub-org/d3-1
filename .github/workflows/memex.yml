@@ -13,6 +13,7 @@ jobs:
       #   run: echo "$GITHUB_CONTEXT"
 
       - name: Add PR to project
+        id: add_pr
         uses: octokit/graphql-action@v2.2.20
         with:
           query: |
@@ -27,3 +28,32 @@ jobs:
           headers: '{"GraphQL-Features": "projects_next_graphql"}'
         env:
           GITHUB_TOKEN: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
+          
+      - name: Add PR to project
+        uses: octokit/graphql-action@v2.2.20
+        
+      - run: "echo 'Added: ${{ steps.add_pr.outputs.data }}'"
+
+
+
+        
+#       - name: Add PR to project
+#         uses: actions/github-script@626af12fe9a53dc2972b48385e7fe7dec79145c9
+#         with:
+#           github-token: ${{secrets.PERSONAL_ACCESS_TOKEN}}
+#           result-encoding: string
+#           script: |
+#             const pr_node_id = context.payload.pull_request.node_id
+
+#           query: |
+#             mutation($pr_node_id:ID!) {
+#               addProjectNextItem(input: {projectId: "MDExOlByb2plY3ROZXh0MTU0OA==", contentId: $pr_node_id}) {
+#                 projectNextItem {
+#                   id
+#                 }
+#               }
+#             }
+#           pr_node_id: ${{ github.event.pull_request.node_id }}
+#           headers: '{"GraphQL-Features": "projects_next_graphql"}'
+#         env:
+#           GITHUB_TOKEN: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
