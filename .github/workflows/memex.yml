@@ -55,8 +55,13 @@ jobs:
         env:
           DUMP: ${{ toJSON(env.RESPONSE) }}
           DUMP2: ${{ toJSON(env.RESPONSE).data }}
+          DUMP3: ${{ toJSON(env.RESPONSE)['data'] }}
         run: |
           echo "1"
           echo ${{ env.RESPONSE }}
+          echo "2"
           echo "$DUMP"
+          echo "3"
           echo "$DUMP2"
+          echo "4"
+          echo "$DUMP3"
