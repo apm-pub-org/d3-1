@@ -47,4 +47,8 @@ jobs:
           ')"
           
           echo $response
+        env:
+          GITHUB_TOKEN: ${{secrets.PERSONAL_ACCESS_TOKEN}}
+          PROJECT_ID: ${{ env.PROJECT_ID }}
+          PR_ID: ${{ github.event.pull_request.node_id }}
 
