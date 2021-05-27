@@ -46,7 +46,7 @@ jobs:
             }
           }
           ')"
-          echo 'RESPONSE='$(jq '.data' <<< "$response") >> $GITHUB_ENV
+          echo 'PROJECT_ID='$(jq '.data.organization.projectNext.id' <<< "$response") >> $GITHUB_ENV
 
         env:
           GITHUB_TOKEN: ${{secrets.PERSONAL_ACCESS_TOKEN}}
@@ -54,18 +54,5 @@ jobs:
 
       - name: Parse
         id: parse
-        env:
-          DUMP: ${{ fromJSON(toJSON(env.RESPONSE)) }}
-          DUMP2: ${{ fromJSON(toJSON(env.RESPONSE)).data }}
-          DUMP3: ${{ fromJSON(toJSON(env.RESPONSE))['data'] }}
         run: |
-          echo "1"
-          echo ${{ env.RESPONSE }}
-          echo "2"
-          echo "$DUMP"
-          echo "3"
-          echo "$DUMP2"
-          echo "4"
-          echo "$DUMP3"
-          echo "5"
-          echo ${{ env.RESPONSE.data }}
+          echo ${{ env.PROJECT_ID }}
