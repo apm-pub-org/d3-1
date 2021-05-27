@@ -5,22 +5,26 @@ on:
       - ready_for_review
 jobs:
   add_pr:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-latest{% if currentVersion == "free-pro-team@latest" or currentVersion ver_gt "enterprise-server@3.1" or currentVersion == "github-ae@next" %}
     permissions:
-      pull-requests: write
+      pull-requests: write{% endif %}
     steps:
-      - name: print context
+      # - name: print context
+      #   env:
+      #     GITHUB_CONTEXT: ${{ toJSON(github) }}
+      #   run: echo "$GITHUB_CONTEXT"
+
+      - name: Add PR to project
+        uses: octokit/graphql-action@2.2.20
+        with:
+          query: |
+            mutation($pr_node_id:ID!) {
+              addProjectNextItem(input: {projectId: "MDExOlByb2plY3ROZXh0MTU0OA==", contentId: $pr_node_id}) {
+                projectNextItem {
+                  id
+                }
+              }
+            }
+          pr_node_id: ${{ github.event.pull_request.node_id }}
         env:
-          GITHUB_CONTEXT: ${{ toJSON(github) }}
-        run: echo "$GITHUB_CONTEXT"
-
-#       - name: Label issues
-#         uses: octokit/graphql-action@2.2.20
-#         with:
-#           query: |
-#             query(){
-
-#             }
-#           pr_node_id: ${{ github.event.client_payload.command.resource.id }}
-#         env:
-#           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
