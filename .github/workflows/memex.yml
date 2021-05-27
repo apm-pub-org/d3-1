@@ -40,7 +40,7 @@ jobs:
           response="$( gh api graphql --header 'GraphQL-Features: projects_next_graphql' -F org=$ORG -F number=$PROJECT_NUM -f query='
             query($org: String!, $number: Int!) {
             organization(login:$org){
-              projectNext(number:5) {
+              projectNext(number:$number) {
                 id
               }
             }
