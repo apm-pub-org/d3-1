@@ -46,9 +46,11 @@ jobs:
             }
           }
           ')"
-          echo 'RESPONSE='$response >> $GITHUB_ENV
+          echo 'RESPONSE='$(jq '.data' <<< "$response") >> $GITHUB_ENV
+
         env:
           GITHUB_TOKEN: ${{secrets.PERSONAL_ACCESS_TOKEN}}
+#           echo 'RESPONSE='$response >> $GITHUB_ENV
 
       - name: Parse
         id: parse
