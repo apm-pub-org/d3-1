@@ -46,7 +46,8 @@ jobs:
             }
           ')"
           
-          echo $response
+          echo 'ITEM_ID='$(jq '.data.addProjectNextItem.projectNextItem.id' <<< "$response") >> $GITHUB_ENV          
+
         env:
           GITHUB_TOKEN: ${{secrets.PERSONAL_ACCESS_TOKEN}}
           PROJECT_ID: ${{ env.PROJECT_ID }}
