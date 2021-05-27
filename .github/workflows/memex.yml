@@ -37,7 +37,7 @@ jobs:
         id: add_pr
         run: |
           response="$( gh api graphql --header 'GraphQL-Features: projects_next_graphql' -F proj=$PROJECT_ID -F pr=$PR_ID -f query='
-            mutation($pr_node_id:ID!) {
+            mutation($proj:ID!, $pr:ID!) {
               addProjectNextItem(input: {projectId: $proj, contentId: $pr}) {
                 projectNextItem {
                   id
