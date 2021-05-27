@@ -8,32 +8,7 @@ jobs:
   add_pr:
     runs-on: ubuntu-latest
     steps:
-      # - name: print context
-      #   env:
-      #     GITHUB_CONTEXT: ${{ toJSON(github) }}
-      #   run: echo "$GITHUB_CONTEXT"
-
-#       - name: Add PR to project
-#         id: add_pr
-#         uses: octokit/graphql-action@v2.2.20
-#         with:
-#           query: |
-#             mutation($pr_node_id:ID!) {
-#               addProjectNextItem(input: {projectId: "MDExOlByb2plY3ROZXh0MTU0OA==", contentId: $pr_node_id}) {
-#                 projectNextItem {
-#                   id
-#                 }
-#               }
-#             }
-#           pr_node_id: ${{ github.event.pull_request.node_id }}
-#           headers: '{"GraphQL-Features": "projects_next_graphql"}'
-#         env:
-#           GITHUB_TOKEN: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
                   
-#       - run: "echo 'Added: ${{ steps.add_pr.outputs.data }}'"
-
-#       - run: "echo 'Added: ${{ steps.add_pr.outputs.data.addProjectNextItem.projectNextItem.id }}'"
-
       - name: Get project node ID
         id: get_project_id
         run: |
@@ -57,3 +32,19 @@ jobs:
         id: parse
         run: |
           echo ${{ env.PROJECT_ID }}
+          
+      - name: Add PR to project
+        id: add_pr
+        run: |
+          response="$( gh api graphql --header 'GraphQL-Features: projects_next_graphql' -F proj=$PROJECT_ID -F pr=$PR_ID -f query='
+            mutation($pr_node_id:ID!) {
+              addProjectNextItem(input: {projectId: $proj, contentId: $pr}) {
+                projectNextItem {
+                  id
+                }
+              }
+            }
+          ')"
+          
+          echo $response
+
