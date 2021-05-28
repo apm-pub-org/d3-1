@@ -10,7 +10,7 @@ jobs:
       - name: Get project ID
         id: get_project_id
         run: |
-          project_id = "$( gh api graphql --header 'GraphQL-Features: projects_next_graphql' -f query='
+          project_id="$( gh api graphql --header 'GraphQL-Features: projects_next_graphql' -f query='
             query($org: String!, $number: Int!) {
             organization(login: $org){
               projectNext(number: $number) {
