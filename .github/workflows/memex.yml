@@ -11,7 +11,7 @@ jobs:
       - name: Get project ID
         id: get_project_id
         run: |
-          gh api graphql --header 'GraphQL-Features: projects_next_graphql' -f query='
+          (gh api graphql --header 'GraphQL-Features: projects_next_graphql' -f query='
             query($org: String!, $number: Int!) {
             organization(login: $org){
               projectNext(number: $number) {
@@ -19,7 +19,7 @@ jobs:
               }
             }
           }
-          ' -F org=$ORG -F number=$PROJECT_NUM --jq '.data.organization.projectNext.id' > project_data.json
+          ' -F org=$ORG -F number=$PROJECT_NUM) > project_data.json
           
           echo 'PROJECT_ID='$(cat project_data.json | jq '.data.organization.projectNext.id') >> $GITHUB_ENV          
         env:
