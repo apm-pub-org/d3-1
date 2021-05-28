@@ -8,40 +8,44 @@ jobs:
   add_pr:
     runs-on: ubuntu-latest
     steps:      
-      - name: Get project ID
-        id: get_project_id
+      - name: Get project data
+        id: get_project_data
         run: |
           (gh api graphql --header 'GraphQL-Features: projects_next_graphql' -f query='
             query($org: String!, $number: Int!) {
             organization(login: $org){
               projectNext(number: $number) {
-                id
+                id, fields(first:20) {nodes {id, name, settings}}
               }
             }
           }
           ' -F org=$ORG -F number=$PROJECT_NUM) > project_data.json
           
-          echo 'PROJECT_ID='$(cat project_data.json | jq '.data.organization.projectNext.id') >> $GITHUB_ENV          
+          echo 'PROJECT_ID='$(cat project_data.json | jq '.data.organization.projectNext.id') >> $GITHUB_ENV
+          echo 'DATE_ID='$(cat project_data.json | jq '.data.node.fields.nodes[] | select(.name== "Date posted") | .id') >> $GITHUB_ENV
+          echo 'STATUS_ID='$(cat project_data.json | jq '.data.node.fields.nodes[] | select(.name== "Status") | .id') >> $GITHUB_ENV
+          echo 'TODO_ID='$(cat project_data.json | jq '.data.node.fields.nodes[] | select(.name== "Status") |.settings | fromjson.options[] | select(.name=="Todo") |.id') >> $GITHUB_ENV
+
         env:
           GITHUB_TOKEN: ${{secrets.PERSONAL_ACCESS_TOKEN}}
           ORG: "ske-test-org"
           PROJECT_NUM: 6
 
-#       - name: Add PR to project
-#         id: add_pr
-#         run: |
-#           item_id="$( gh api graphql --header 'GraphQL-Features: projects_next_graphql' -f query='
-#             mutation($proj:ID!, $pr:ID!) {
-#               addProjectNextItem(input: {projectId: $proj, contentId: $pr}) {
-#                 projectNextItem {
-#                   id
-#                 }
-#               }
-#             }
-#           ' -F proj=$PROJECT_ID -F pr=$PR_ID --jq '.data.addProjectNextItem.projectNextItem.id')"
+      - name: Add PR to project
+        id: add_pr
+        run: |
+          item_id="$( gh api graphql --header 'GraphQL-Features: projects_next_graphql' -f query='
+            mutation($proj:ID!, $pr:ID!) {
+              addProjectNextItem(input: {projectId: $proj, contentId: $pr}) {
+                projectNextItem {
+                  id
+                }
+              }
+            }
+          ' -F proj=$PROJECT_ID -F pr=$PR_ID --jq '.data.addProjectNextItem.projectNextItem.id')"
           
-#           echo 'ITEM_ID='$item_id >> $GITHUB_ENV          
-#         env:
-#           GITHUB_TOKEN: ${{secrets.PERSONAL_ACCESS_TOKEN}}
-#           PROJECT_ID: ${{ env.PROJECT_ID }}
-#           PR_ID: ${{ github.event.pull_request.node_id }}
+          echo 'ITEM_ID='$item_id >> $GITHUB_ENV          
+        env:
+          GITHUB_TOKEN: ${{secrets.PERSONAL_ACCESS_TOKEN}}
+          PROJECT_ID: ${{ env.PROJECT_ID }}
+          PR_ID: ${{ github.event.pull_request.node_id }}
