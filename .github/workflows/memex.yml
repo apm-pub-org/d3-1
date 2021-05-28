@@ -71,7 +71,7 @@ jobs:
         id: set_status
         run: |
           gh api graphql --header 'GraphQL-Features: projects_next_graphql' -f query='
-            mutation($proj: ID!, $item: ID!, $field: ID!, $value: String!) {
+            mutation($proj: ID!, $item: ID!, $field: ID!, $value: ID!) {
               updateProjectNextItemField(input: {projectId: $proj, itemId: $item, fieldId: $field, value: $value}) {
                 projectNextItem {
                   id
