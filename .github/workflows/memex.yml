@@ -107,4 +107,5 @@ jobs:
           PROJECT_ID: ${{ env.PROJECT_ID }}
           ITEM_ID: ${{ env.ITEM_ID }}
           DATE_ID: ${{ env.DATE_ID }}
-          DATE: (date +"%Y-%m-%d")
+          DATE: "2021-02-02"
+#           DATE: (date +"%Y-%m-%d")
