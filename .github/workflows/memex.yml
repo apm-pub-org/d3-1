@@ -89,6 +89,9 @@ jobs:
 #           STATUS_ID: ${{ env.STATUS_ID }}
 #           TODO_ID: ${{ env.TODO_ID }}
 
+      - name: Get date
+        run: echo "DATE=$(date +"%Y-%m-%d")" >> $GITHUB_ENV
+
       - name: Set date
         id: set_date
         run: |
@@ -108,4 +111,4 @@ jobs:
           ITEM_ID: ${{ env.ITEM_ID }}
           DATE_ID: ${{ env.DATE_ID }}
 #           DATE: "2021-02-02"
-          DATE: ${{ (date +"%Y-%m-%d") }}
+          DATE: ${{ env.DATE }}
