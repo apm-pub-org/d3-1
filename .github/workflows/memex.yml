@@ -60,6 +60,8 @@ jobs:
          echo $STATUS_ID
          echo "4"
          echo $TODO_ID
+         echo "5"
+         echo $DATE_ID
 
         env:
           PROJECT_ID: ${{ env.PROJECT_ID }}
@@ -105,4 +107,4 @@ jobs:
           PROJECT_ID: ${{ env.PROJECT_ID }}
           ITEM_ID: ${{ env.ITEM_ID }}
           DATE_ID: ${{ env.DATE_ID }}
-          DATE: $(date +"%Y-%m-%d")
+          DATE: (date +"%Y-%m-%d")
