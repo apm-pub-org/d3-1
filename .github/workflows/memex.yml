@@ -22,9 +22,9 @@ jobs:
           ' -F org=$ORG -F number=$PROJECT_NUM) > project_data.json
           
           echo 'PROJECT_ID='$(cat project_data.json | jq '.data.organization.projectNext.id') >> $GITHUB_ENV
-          echo 'DATE_ID='$(cat project_data.json | jq '.data.node.fields.nodes[] | select(.name== "Date posted") | .id') >> $GITHUB_ENV
-          echo 'STATUS_ID='$(cat project_data.json | jq '.data.node.fields.nodes[] | select(.name== "Status") | .id') >> $GITHUB_ENV
-          echo 'TODO_ID='$(cat project_data.json | jq '.data.node.fields.nodes[] | select(.name== "Status") |.settings | fromjson.options[] | select(.name=="Todo") |.id') >> $GITHUB_ENV
+          echo 'DATE_ID='$(cat project_data.json | jq '.data.organization.projectNext.fields.nodes[] | select(.name== "Date posted") | .id') >> $GITHUB_ENV
+          echo 'STATUS_ID='$(cat project_data.json | jq '.data.organization.projectNext.fields.nodes[] | select(.name== "Status") | .id') >> $GITHUB_ENV
+          echo 'TODO_ID='$(cat project_data.json | jq '.data.organization.projectNext.fields.nodes[] | select(.name== "Status") |.settings | fromjson.options[] | select(.name=="Todo") |.id') >> $GITHUB_ENV
 
         env:
           GITHUB_TOKEN: ${{secrets.PERSONAL_ACCESS_TOKEN}}
