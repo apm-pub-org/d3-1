@@ -67,22 +67,42 @@ jobs:
           STATUS_ID: ${{ env.STATUS_ID }}
           TODO_ID: ${{ env.TODO_ID }}
           
-      - name: Set status
-        id: set_status
+#       - name: Set status
+#         id: set_status
+#         run: |
+#           gh api graphql --header 'GraphQL-Features: projects_next_graphql' -f query='
+#             mutation($proj: ID!, $item: ID!, $field: ID!, $value: String!) {
+#               updateProjectNextItemField(input: {projectId: $proj, itemId: $item, fieldId: $field, value: $value}) {
+#                 projectNextItem {
+#                   id
+#                 }
+#               }
+#             }
+#           ' -F proj=$PROJECT_ID -F item=$ITEM_ID -F field=$STATUS_ID -F value=$TODO_ID
+
+#         env:
+#           GITHUB_TOKEN: ${{secrets.PERSONAL_ACCESS_TOKEN}}
+#           PROJECT_ID: ${{ env.PROJECT_ID }}
+#           ITEM_ID: ${{ env.ITEM_ID }}
+#           STATUS_ID: ${{ env.STATUS_ID }}
+#           TODO_ID: ${{ env.TODO_ID }}
+
+      - name: Set date
+        id: set_date
         run: |
           gh api graphql --header 'GraphQL-Features: projects_next_graphql' -f query='
-            mutation($proj: ID!, $item: ID!, $field: ID!, $value: ID!) {
+            mutation($proj: ID!, $item: ID!, $field: ID!, $value: String!) {
               updateProjectNextItemField(input: {projectId: $proj, itemId: $item, fieldId: $field, value: $value}) {
                 projectNextItem {
                   id
                 }
               }
             }
-          ' -F proj=$PROJECT_ID -F item=$ITEM_ID -F field=$STATUS_ID -F value=$TODO_ID
+          ' -F proj=$PROJECT_ID -F item=$ITEM_ID -F field=$DATE_ID -F value=$DATE
 
         env:
           GITHUB_TOKEN: ${{secrets.PERSONAL_ACCESS_TOKEN}}
           PROJECT_ID: ${{ env.PROJECT_ID }}
           ITEM_ID: ${{ env.ITEM_ID }}
-          STATUS_ID: ${{ env.STATUS_ID }}
-          TODO_ID: ${{ env.TODO_ID }}
+          DATE_ID: ${{ env.DATE_ID }}
+          DATE: $(date +"%Y-%m-%d")
