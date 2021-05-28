@@ -50,6 +50,23 @@ jobs:
           PROJECT_ID: ${{ env.PROJECT_ID }}
           PR_ID: ${{ github.event.pull_request.node_id }}
 
+      - name: check
+        run: |
+         echo "1"
+         echo $PROJECT_ID
+         echo "2"
+         echo $ITEM_ID
+         echo "3"
+         echo $STATUS_ID
+         echo "4"
+         echo $TODO_ID
+
+        env:
+          PROJECT_ID: ${{ env.PROJECT_ID }}
+          ITEM_ID: ${{ env.ITEM_ID }}
+          STATUS_ID: ${{ env.STATUS_ID }}
+          TODO_ID: ${{ env.TODO_ID }}
+          
       - name: Set status
         id: set_status
         run: |
