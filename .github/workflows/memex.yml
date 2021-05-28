@@ -1,5 +1,6 @@
 name: Add PR to project
 on:
+  workflow_dispatch:
   pull_request:
     types:
       - ready_for_review
@@ -10,7 +11,7 @@ jobs:
       - name: Get project ID
         id: get_project_id
         run: |
-          project_id="$( gh api graphql --header 'GraphQL-Features: projects_next_graphql' -f query='
+          gh api graphql --header 'GraphQL-Features: projects_next_graphql' -f query='
             query($org: String!, $number: Int!) {
             organization(login: $org){
               projectNext(number: $number) {
@@ -18,29 +19,29 @@ jobs:
               }
             }
           }
-          ' -F org=$ORG -F number=$PROJECT_NUM --jq '.data.organization.projectNext.id')"
-
-          echo 'PROJECT_ID='$project_id >> $GITHUB_ENV          
+          ' -F org=$ORG -F number=$PROJECT_NUM --jq '.data.organization.projectNext.id' > project_data.json
+          
+          echo 'PROJECT_ID='$(cat project_data.json | jq '.data.organization.projectNext.id') >> $GITHUB_ENV          
         env:
           GITHUB_TOKEN: ${{secrets.PERSONAL_ACCESS_TOKEN}}
           ORG: "ske-test-org"
           PROJECT_NUM: 6
 
-      - name: Add PR to project
-        id: add_pr
-        run: |
-          item_id="$( gh api graphql --header 'GraphQL-Features: projects_next_graphql' -f query='
-            mutation($proj:ID!, $pr:ID!) {
-              addProjectNextItem(input: {projectId: $proj, contentId: $pr}) {
-                projectNextItem {
-                  id
-                }
-              }
-            }
-          ' -F proj=$PROJECT_ID -F pr=$PR_ID --jq '.data.addProjectNextItem.projectNextItem.id')"
+#       - name: Add PR to project
+#         id: add_pr
+#         run: |
+#           item_id="$( gh api graphql --header 'GraphQL-Features: projects_next_graphql' -f query='
+#             mutation($proj:ID!, $pr:ID!) {
+#               addProjectNextItem(input: {projectId: $proj, contentId: $pr}) {
+#                 projectNextItem {
+#                   id
+#                 }
+#               }
+#             }
+#           ' -F proj=$PROJECT_ID -F pr=$PR_ID --jq '.data.addProjectNextItem.projectNextItem.id')"
           
-          echo 'ITEM_ID='$item_id >> $GITHUB_ENV          
-        env:
-          GITHUB_TOKEN: ${{secrets.PERSONAL_ACCESS_TOKEN}}
-          PROJECT_ID: ${{ env.PROJECT_ID }}
-          PR_ID: ${{ github.event.pull_request.node_id }}
+#           echo 'ITEM_ID='$item_id >> $GITHUB_ENV          
+#         env:
+#           GITHUB_TOKEN: ${{secrets.PERSONAL_ACCESS_TOKEN}}
+#           PROJECT_ID: ${{ env.PROJECT_ID }}
+#           PR_ID: ${{ github.event.pull_request.node_id }}
