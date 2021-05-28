@@ -18,7 +18,7 @@ jobs:
               }
             }
           }
-          ' -F org=$ORG -F number=$PROJECT_NUM -jq '.data.organization.projectNext.id')"
+          ' -F org=$ORG -F number=$PROJECT_NUM --jq '.data.organization.projectNext.id')"
           
           echo 'PROJECT_ID='$project_id >> $GITHUB_ENV          
         env:
@@ -37,7 +37,7 @@ jobs:
                 }
               }
             }
-          ' -F proj=$PROJECT_ID -F pr=$PR_ID -jq '.data.addProjectNextItem.projectNextItem.id')"
+          ' -F proj=$PROJECT_ID -F pr=$PR_ID --jq '.data.addProjectNextItem.projectNextItem.id')"
           
           echo 'ITEM_ID='$item_id >> $GITHUB_ENV          
         env:
