@@ -10,7 +10,7 @@ jobs:
       - name: Get project ID
         id: get_project_id
         run: |
-          response="$( gh api graphql --header 'GraphQL-Features: projects_next_graphql' -F org=$ORG -F number=$PROJECT_NUM -f query='
+          project_id ="$( gh api graphql --header 'GraphQL-Features: projects_next_graphql' -f query='
             query($org: String!, $number: Int!) {
             organization(login: $org){
               projectNext(number: $number) {
@@ -18,9 +18,9 @@ jobs:
               }
             }
           }
-          ')"
+          ' -F org=$ORG -F number=$PROJECT_NUM -jq '.data.organization.projectNext.id')"
           
-          echo 'PROJECT_ID='$(jq '.data.organization.projectNext.id' <<< "$response") >> $GITHUB_ENV          
+          echo 'PROJECT_ID='$project_id >> $GITHUB_ENV          
         env:
           GITHUB_TOKEN: ${{secrets.PERSONAL_ACCESS_TOKEN}}
           ORG: "ske-test-org"
@@ -29,7 +29,7 @@ jobs:
       - name: Add PR to project
         id: add_pr
         run: |
-          response="$( gh api graphql --header 'GraphQL-Features: projects_next_graphql' -F proj=$PROJECT_ID -F pr=$PR_ID -f query='
+          item_id="$( gh api graphql --header 'GraphQL-Features: projects_next_graphql' -f query='
             mutation($proj:ID!, $pr:ID!) {
               addProjectNextItem(input: {projectId: $proj, contentId: $pr}) {
                 projectNextItem {
@@ -37,9 +37,9 @@ jobs:
                 }
               }
             }
-          ')"
+          ' -F proj=$PROJECT_ID -F pr=$PR_ID -jq '.data.addProjectNextItem.projectNextItem.id')"
           
-          echo 'ITEM_ID='$(jq '.data.addProjectNextItem.projectNextItem.id' <<< "$response") >> $GITHUB_ENV          
+          echo 'ITEM_ID='$item_id >> $GITHUB_ENV          
         env:
           GITHUB_TOKEN: ${{secrets.PERSONAL_ACCESS_TOKEN}}
           PROJECT_ID: ${{ env.PROJECT_ID }}
