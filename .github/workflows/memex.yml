@@ -65,7 +65,7 @@ jobs:
           PROJECT_ID: ${{ env.PROJECT_ID }}
           ITEM_ID: ${{ env.ITEM_ID }}
           STATUS_FIELD_ID: ${{ env.STATUS_FIELD_ID }}
-          TODO_OPTION_ID: ${{ env.TODO_OPTION_ID }}
+          TODO_OPTION_ID: "f75ad846"
 
       - name: Get date
         run: echo "DATE=$(date +"%Y-%m-%d")" >> $GITHUB_ENV
