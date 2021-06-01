@@ -6,8 +6,7 @@ on:
 jobs:
   track_pr:
     runs-on: ubuntu-latest
-    permissions:
-      pull-requests: write
+    permissions: write-all
     steps:      
       - name: Get project data
         id: get_project_data
