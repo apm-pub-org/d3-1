@@ -1,34 +1,34 @@
 name: Add PR to project
 on:
-  workflow_dispatch:
   pull_request:
     types:
       - ready_for_review
 jobs:
-  add_pr:
+  track_pr:
     runs-on: ubuntu-latest
+    permissions:
+      pull-requests: write
     steps:      
       - name: Get project data
         id: get_project_data
         run: |
           (gh api graphql --header 'GraphQL-Features: projects_next_graphql' -f query='
             query($org: String!, $number: Int!) {
-            organization(login: $org){
-              projectNext(number: $number) {
-                id, fields(first:20) {nodes {id, name, settings}}
+              organization(login: $org){
+                projectNext(number: $number) {
+                  id, fields(first:20) {nodes {id, name, settings}}
+                }
               }
-            }
-          }
-          ' -F org=$ORG -F number=$PROJECT_NUM) > project_data.json
+            }' -F org=$ORG -F number=$PROJECT_NUM
+          ) > project_data.json
           
           echo 'PROJECT_ID='$(cat project_data.json | jq '.data.organization.projectNext.id') >> $GITHUB_ENV
-          echo 'DATE_ID='$(cat project_data.json | jq '.data.organization.projectNext.fields.nodes[] | select(.name== "Date posted") | .id') >> $GITHUB_ENV
-          echo 'STATUS_ID='$(cat project_data.json | jq '.data.organization.projectNext.fields.nodes[] | select(.name== "Status") | .id') >> $GITHUB_ENV
-          echo 'TODO_ID='$(cat project_data.json | jq '.data.organization.projectNext.fields.nodes[] | select(.name== "Status") |.settings | fromjson.options[] | select(.name=="Todo") |.id') >> $GITHUB_ENV
-
+          echo 'DATE_FIELD_ID='$(cat project_data.json | jq '.data.organization.projectNext.fields.nodes[] | select(.name== "Date posted") | .id') >> $GITHUB_ENV
+          echo 'STATUS_FIELD_ID='$(cat project_data.json | jq '.data.organization.projectNext.fields.nodes[] | select(.name== "Status") | .id') >> $GITHUB_ENV
+          echo 'TODO_OPTION_ID='$(cat project_data.json | jq '.data.organization.projectNext.fields.nodes[] | select(.name== "Status") |.settings | fromjson.options[] | select(.name=="Todo") |.id') >> $GITHUB_ENV
         env:
           GITHUB_TOKEN: ${{secrets.PERSONAL_ACCESS_TOKEN}}
-          ORG: "ske-test-org"
+          ORG: ske-test-org
           PROJECT_NUM: 6
 
       - name: Add PR to project
@@ -41,33 +41,13 @@ jobs:
                   id
                 }
               }
-            }
-          ' -F proj=$PROJECT_ID -F pr=$PR_ID --jq '.data.addProjectNextItem.projectNextItem.id')"
+            }' -F proj=$PROJECT_ID -F pr=$PR_ID --jq '.data.addProjectNextItem.projectNextItem.id')"
           
-          echo 'ITEM_ID='$item_id >> $GITHUB_ENV          
+          echo 'ITEM_ID='$item_id >> $GITHUB_ENV
         env:
           GITHUB_TOKEN: ${{secrets.PERSONAL_ACCESS_TOKEN}}
           PROJECT_ID: ${{ env.PROJECT_ID }}
           PR_ID: ${{ github.event.pull_request.node_id }}
-
-      - name: check
-        run: |
-         echo "1"
-         echo $PROJECT_ID
-         echo "2"
-         echo $ITEM_ID
-         echo "3"
-         echo $STATUS_ID
-         echo "4"
-         echo $TODO_ID
-         echo "5"
-         echo $DATE_ID
-
-        env:
-          PROJECT_ID: ${{ env.PROJECT_ID }}
-          ITEM_ID: ${{ env.ITEM_ID }}
-          STATUS_ID: ${{ env.STATUS_ID }}
-          TODO_ID: ${{ env.TODO_ID }}
           
       - name: Set status
         id: set_status
@@ -79,15 +59,13 @@ jobs:
                   id
                 }
               }
-            }
-          ' -F proj=$PROJECT_ID -F item=$ITEM_ID -F field=$STATUS_ID -F value=$TODO_ID
-
+            }' -F proj=$PROJECT_ID -F item=$ITEM_ID -F field=$STATUS_FIELD_ID -F value=$TODO_OPTION_ID
         env:
           GITHUB_TOKEN: ${{secrets.PERSONAL_ACCESS_TOKEN}}
           PROJECT_ID: ${{ env.PROJECT_ID }}
           ITEM_ID: ${{ env.ITEM_ID }}
-          STATUS_ID: ${{ env.STATUS_ID }}
-          TODO_ID: ${{ env.TODO_ID }}
+          STATUS_FIELD_ID: ${{ env.STATUS_FIELD_ID }}
+          TODO_OPTION_ID: ${{ env.TODO_OPTION_ID }}
 
       - name: Get date
         run: echo "DATE=$(date +"%Y-%m-%d")" >> $GITHUB_ENV
@@ -102,12 +80,10 @@ jobs:
                   id
                 }
               }
-            }
-          ' -F proj=$PROJECT_ID -F item=$ITEM_ID -F field=$DATE_ID -F value=$DATE
-
+            }' -F proj=$PROJECT_ID -F item=$ITEM_ID -F field=$DATE_FIELD_ID -F value=$DATE
         env:
           GITHUB_TOKEN: ${{secrets.PERSONAL_ACCESS_TOKEN}}
           PROJECT_ID: ${{ env.PROJECT_ID }}
           ITEM_ID: ${{ env.ITEM_ID }}
-          DATE_ID: ${{ env.DATE_ID }}
+          DATE_FIELD_ID: ${{ env.DATE_FIELD_ID }}
           DATE: ${{ env.DATE }}
