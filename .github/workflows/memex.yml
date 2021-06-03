@@ -10,7 +10,7 @@ jobs:
       - name: Get project data
         id: get_project_data
         env:
-          GITHUB_TOKEN: ${{secrets.PERSONAL_ACCESS_TOKEN}}
+          GITHUB_TOKEN: ${{secrets.REPO_LEVEL_ORG_WRITE}}
           ORGANIZATION: ske-test-org
           PROJECT_NUMBER: 6
         run: |
@@ -32,7 +32,7 @@ jobs:
       - name: Add PR to project
         id: add_pr
         env:
-          GITHUB_TOKEN: ${{secrets.PERSONAL_ACCESS_TOKEN}}
+          GITHUB_TOKEN: ${{secrets.REPO_LEVEL_ORG_WRITE}}
           PR_ID: ${{ github.event.pull_request.node_id }}
         run: |
           item_id="$( gh api graphql --header 'GraphQL-Features: projects_next_graphql' -f query='
@@ -49,7 +49,7 @@ jobs:
       - name: Set status
         id: set_status
         env:
-          GITHUB_TOKEN: ${{secrets.PERSONAL_ACCESS_TOKEN}}
+          GITHUB_TOKEN: ${{secrets.REPO_LEVEL_ORG_WRITE}}
           TT: ${{ env.TODO_OPTION_ID }}
         run: |
           gh api graphql --header 'GraphQL-Features: projects_next_graphql' -f query='
@@ -67,7 +67,7 @@ jobs:
       - name: Set date
         id: set_date
         env:
-          GITHUB_TOKEN: ${{secrets.PERSONAL_ACCESS_TOKEN}}
+          GITHUB_TOKEN: ${{secrets.REPO_LEVEL_ORG_WRITE}}
         run: |
           gh api graphql --header 'GraphQL-Features: projects_next_graphql' -f query='
             mutation($proj: ID!, $item: ID!, $field: ID!, $value: String!) {
