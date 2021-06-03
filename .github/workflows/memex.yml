@@ -41,12 +41,11 @@ jobs:
                   id
                 }
               }
-            }' -F proj=$PROJECT_ID -F pr=$PR_ID --jq '.data.addProjectNextItem.projectNextItem.id')"
+            }' -F proj=${{ env.PROJECT_ID }} -F pr=$PR_ID --jq '.data.addProjectNextItem.projectNextItem.id')"
           
           echo 'ITEM_ID='$item_id >> $GITHUB_ENV
         env:
           GITHUB_TOKEN: ${{secrets.PERSONAL_ACCESS_TOKEN}}
-          PROJECT_ID: ${{ env.PROJECT_ID }}
           PR_ID: ${{ github.event.pull_request.node_id }}
           
       - name: Set status
