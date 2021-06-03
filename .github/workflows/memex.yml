@@ -50,6 +50,7 @@ jobs:
         id: set_status
         env:
           GITHUB_TOKEN: ${{secrets.PERSONAL_ACCESS_TOKEN}}
+          TT: ${{ env.TODO_OPTION_ID }}
         run: |
           gh api graphql --header 'GraphQL-Features: projects_next_graphql' -f query='
             mutation($proj: ID!, $item: ID!, $field: ID!, $value: String!) {
@@ -58,7 +59,7 @@ jobs:
                   id
                 }
               }
-            }' -F proj=${{ env.PROJECT_ID }} -F item=${{ env.ITEM_ID }} -F field=${{ env.STATUS_FIELD_ID }} -F value=${{ env.TODO_OPTION_ID }}
+            }' -F proj=${{ env.PROJECT_ID }} -F item=${{ env.ITEM_ID }} -F field=${{ env.STATUS_FIELD_ID }} -F value=$TT
 
       - name: Get date
         run: echo "DATE=$(date +"%Y-%m-%d")" >> $GITHUB_ENV
