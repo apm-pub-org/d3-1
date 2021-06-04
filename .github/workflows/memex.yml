@@ -59,4 +59,4 @@ jobs:
               set_date_posted: updateProjectNextItemField(input: {projectId: $project, itemId: $item, fieldId: $date_field, value: $date_value}) {
                 projectNextItem { id }
               }
-            }' -F project=$PROJECT_ID -F item=$ITEM_ID status_field=$STATUS_FIELD_ID -F status_value=${{ env.TODO_OPTION_ID }} -F date_field=$DATE_FIELD_ID -F date_value=$DATE
+            }' -F project=$PROJECT_ID -F item=$ITEM_ID -F status_field=$STATUS_FIELD_ID -F status_value=${{ env.TODO_OPTION_ID }} -F date_field=$DATE_FIELD_ID -F date_value=$DATE
