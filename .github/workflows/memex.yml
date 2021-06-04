@@ -44,18 +44,18 @@ jobs:
           
           echo 'ITEM_ID='$item_id >> $GITHUB_ENV
           
-      - name: Set status
-        env:
-          GITHUB_TOKEN: ${{secrets.PERSONAL_ACCESS_TOKEN}}
-        run: |
-          gh api graphql --header 'GraphQL-Features: projects_next_graphql' -f query='
-            mutation($proj: ID!, $item: ID!, $field: ID!, $value: String!) {
-              updateProjectNextItemField(input: {projectId: $proj, itemId: $item, fieldId: $field, value: $value}) {
-                projectNextItem {
-                  id
-                }
-              }
-            }' -F proj=$PROJECT_ID -F item=$ITEM_ID -F field=$STATUS_FIELD_ID -F value=${{ env.TODO_OPTION_ID }}
+#       - name: Set status
+#         env:
+#           GITHUB_TOKEN: ${{secrets.PERSONAL_ACCESS_TOKEN}}
+#         run: |
+#           gh api graphql --header 'GraphQL-Features: projects_next_graphql' -f query='
+#             mutation($proj: ID!, $item: ID!, $field: ID!, $value: String!) {
+#               updateProjectNextItemField(input: {projectId: $proj, itemId: $item, fieldId: $field, value: $value}) {
+#                 projectNextItem {
+#                   id
+#                 }
+#               }
+#             }' -F proj=$PROJECT_ID -F item=$ITEM_ID -F field=$STATUS_FIELD_ID -F value=${{ env.TODO_OPTION_ID }}
 
       - name: Get date
         run: echo "DATE=$(date +"%Y-%m-%d")" >> $GITHUB_ENV
@@ -65,10 +65,12 @@ jobs:
           GITHUB_TOKEN: ${{secrets.PERSONAL_ACCESS_TOKEN}}
         run: |
           gh api graphql --header 'GraphQL-Features: projects_next_graphql' -f query='
-            mutation($proj: ID!, $item: ID!, $field: ID!, $value: String!) {
-              updateProjectNextItemField(input: {projectId: $proj, itemId: $item, fieldId: $field, value: $value}) {
-                projectNextItem {
-                  id
-                }
+            mutation ($proj: ID!, $item: ID!, $field1: ID!, $value1: String!, $field2: ID!, $value2: String!) {
+              u1: updateProjectNextItemField(input: {projectId: $proj, itemId: $item, fieldId: $field1, value: $value1}) {
+                projectNextItem { id }
               }
-            }' -F proj=$PROJECT_ID -F item=$ITEM_ID -F field=$DATE_FIELD_ID -F value=$DATE
+              u2: updateProjectNextItemField(input: {projectId: $proj, itemId: $item, fieldId: $field2, value: $value2}) {
+                projectNextItem { id }
+              }
+            }' -F proj=$PROJECT_ID -F item=$ITEM_ID field1=$STATUS_FIELD_ID -F value1={% raw %}${{ env.TODO_OPTION_ID }}{% endraw %} -F field2=$DATE_FIELD_ID -F value2=$DATE
+
