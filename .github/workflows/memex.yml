@@ -27,7 +27,7 @@ jobs:
           echo 'PROJECT_ID='$(cat project_data.json | jq '.data.organization.projectNext.id') >> $GITHUB_ENV
           echo 'DATE_FIELD_ID='$(cat project_data.json | jq '.data.organization.projectNext.fields.nodes[] | select(.name== "Date posted") | .id') >> $GITHUB_ENV
           echo 'STATUS_FIELD_ID='$(cat project_data.json | jq '.data.organization.projectNext.fields.nodes[] | select(.name== "Status") | .id') >> $GITHUB_ENV
-          echo 'TODO_OPTION_ID='$(cat project_data.json | jq '.data.organization.projectNext.fields.nodes[] | select(.name== "Status") |.settings | fromjson.options[] | select(.name=="Done") | "\"" + (.id) +"\""') >> $GITHUB_ENV
+          echo 'TODO_OPTION_ID='$(cat project_data.json | jq '.data.organization.projectNext.fields.nodes[] | select(.name== "Status") |.settings | fromjson.options[] | select(.name=="Done") | .id | tostring') >> $GITHUB_ENV
 
       - name: Add PR to project
         id: add_pr
