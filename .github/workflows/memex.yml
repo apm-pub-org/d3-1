@@ -72,4 +72,4 @@ jobs:
               u2: updateProjectNextItemField(input: {projectId: $proj, itemId: $item, fieldId: $field2, value: $value2}) {
                 projectNextItem { id }
               }
-            } -F proj=$PROJECT_ID -F item=$ITEM_ID field1=$STATUS_FIELD_ID -F value1=${{ env.TODO_OPTION_ID }} -F field2=$DATE_FIELD_ID -F value2=$DATE
+            }' -F proj=$PROJECT_ID -F item=$ITEM_ID field1=$STATUS_FIELD_ID -F value1=${{ env.TODO_OPTION_ID }} -F field2=$DATE_FIELD_ID -F value2=$DATE
