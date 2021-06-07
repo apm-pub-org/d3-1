@@ -20,7 +20,7 @@ jobs:
                   id, fields(first:20) {nodes {id, name, settings}}
                 }
               }
-            }' -F org=$ORGANIZATION -F number=$PROJECT_NUMBER
+            }' -f org=$ORGANIZATION -F number=$PROJECT_NUMBER
           ) > project_data.json
 
           echo 'PROJECT_ID='$(jq '.data.organization.projectNext.id' project_data.json) >> $GITHUB_ENV
