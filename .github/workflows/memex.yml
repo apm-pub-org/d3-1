@@ -10,8 +10,8 @@ jobs:
       - name: Get project data
         env:
           GITHUB_TOKEN: ${{secrets.PERSONAL_ACCESS_TOKEN}}
-          ORGANIZATION: "ske-test-org"
-          PROJECT_NUMBER: "6"
+          ORGANIZATION: ske-test-org
+          PROJECT_NUMBER: 6
         run: |
           (gh api graphql --header 'GraphQL-Features: projects_next_graphql' -f query='
             query($org: String!, $number: Int!) {
@@ -20,7 +20,7 @@ jobs:
                   id, fields(first:20) {nodes {id, name, settings}}
                 }
               }
-            }' -f org=$ORGANIZATION -f number=$PROJECT_NUMBER
+            }' -F org=$ORGANIZATION -F number=$PROJECT_NUMBER
           ) > project_data.json
 
           echo 'PROJECT_ID='$(jq '.data.organization.projectNext.id' project_data.json) >> $GITHUB_ENV
