@@ -10,8 +10,8 @@ jobs:
       - name: Get project data
         env:
           GITHUB_TOKEN: ${{secrets.PERSONAL_ACCESS_TOKEN}}
-          ORGANIZATION: ske-test-org
-          PROJECT_NUMBER: 6
+          ORGANIZATION: "ske-test-org"
+          PROJECT_NUMBER: "6"
         run: |
           (gh api graphql --header 'GraphQL-Features: projects_next_graphql' -f query='
             query($org: String!, $number: Int!) {
