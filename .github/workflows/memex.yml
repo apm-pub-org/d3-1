@@ -17,7 +17,14 @@ jobs:
             query($org: String!, $number: Int!) {
               organization(login: $org){
                 projectNext(number: $number) {
-                  id, fields(first:20) {nodes {id, name, settings}}
+                  id
+                  fields(first:20) {
+                    nodes {
+                      id
+                      name
+                      settings
+                    }
+                  }
                 }
               }
             }' -f org=$ORGANIZATION -F number=$PROJECT_NUMBER > project_data.json
@@ -29,7 +36,7 @@ jobs:
 
       - name: Add PR to project
         env:
-          GITHUB_TOKEN: ${{secrets.PERSONAL_ACCESS_TOKEN}}
+          GITHUB_TOKEN: ${{secrets.YOUR_TOKEN}}
           PR_ID: ${{ github.event.pull_request.node_id }}
         run: |
           item_id="$( gh api graphql --header 'GraphQL-Features: projects_next_graphql' -f query='
@@ -48,14 +55,35 @@ jobs:
 
       - name: Set fields
         env:
-          GITHUB_TOKEN: ${{secrets.PERSONAL_ACCESS_TOKEN}}
+          GITHUB_TOKEN: ${{secrets.YOUR_TOKEN}}
         run: |
           gh api graphql --header 'GraphQL-Features: projects_next_graphql' -f query='
-            mutation ($project: ID!, $item: ID!, $status_field: ID!, $status_value: String!, $date_field: ID!, $date_value: String!) {
-              set_status: updateProjectNextItemField(input: {projectId: $project, itemId: $item, fieldId: $status_field, value: $status_value}) {
-                projectNextItem { id }
+            mutation (
+              $project: ID!
+              $item: ID!
+              $status_field: ID!
+              $status_value: String!
+              $date_field: ID!
+              $date_value: String!
+            ) {
+              set_status: updateProjectNextItemField(input: {
+                projectId: $project
+                itemId: $item
+                fieldId: $status_field
+                value: $status_value
+              }) {
+                projectNextItem {
+                  id
+                  }
               }
-              set_date_posted: updateProjectNextItemField(input: {projectId: $project, itemId: $item, fieldId: $date_field, value: $date_value}) {
-                projectNextItem { id }
+              set_date_posted: updateProjectNextItemField(input: {
+                projectId: $project
+                itemId: $item
+                fieldId: $date_field
+                value: $date_value
+              }) {
+                projectNextItem {
+                  id
+                }
               }
             }' -f project=$PROJECT_ID -f item=$ITEM_ID -f status_field=$STATUS_FIELD_ID -f status_value=${{ env.TODO_OPTION_ID }} -f date_field=$DATE_FIELD_ID -f date_value=$DATE --silent
