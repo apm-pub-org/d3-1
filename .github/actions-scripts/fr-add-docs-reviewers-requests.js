@@ -44,12 +44,12 @@ async function addItemsToProject(items, project) {
 
 // Given a list of project item node IDs and a list of corresponding authors
 // generates a GraphQL mutation to populate:
-//   - status (as "Ready for review" option)
-//   - datePosted (as today)
-//   - reviewDueDate (as today + 2 weekdays)
-//   - feature (as "OpenAPI schema update")
-//   - contributorType (as "Hubber or partner" option) todo may want to make this dependent on author
-// Not populating review needs or size
+//   - "Status" (as "Ready for review" option)
+//   - "Date posted" (as today)
+//   - "Review due date" (as today + 2 weekdays)
+//   - "Feature" (as "OpenAPI schema update")
+//   - "Contributor type"" (as "Hubber or partner" option)
+// Does not populate "Review needs" or "Size"
 function generateUpdateProjectNextItemFieldMutation(items, authors) {
 
   // Formats a date object into the required format for projects
@@ -129,10 +129,6 @@ function generateUpdateProjectNextItemFieldMutation(items, authors) {
 
 async function run() {
 
-  console.log(process.env.PROJECT_NUMBER)
-  console.log(typeof(process.env.PROJECT_NUMBER))
-  console.log(typeof(parseInt(process.env.PROJECT_NUMBER)))
-
   // Get info about the docs-content review board project
   // and about open github/github PRs
   const data = await graphql(
@@ -146,6 +142,11 @@ async function run() {
         organization(login: $organization) {
           projectNext(number: $projectNumber) {
             id
+            items(last: 100) {
+              nodes {
+                id
+              }
+            }
             fields(first:20) {
               nodes {
                 id
@@ -227,6 +228,12 @@ async function run() {
   // Get the project ID
   const projectID = data.organization.projectNext.id
 
+  // Get the IDs of the last 100 items on the board
+  // Until we have a way to check from a PR whether the PR is in a project,
+  // this is how we (roughly) avoid overwriting PRs that are already on the board
+  // If we are overwriting items, query for more items
+  const existingItemIDs = data.organization.projectNext.items.nodes.map(node => node.id)
+
   // Get the ID of the fields that we want to populate
   const datePostedID = data.organization.projectNext.fields.nodes.find(field => field.name === "Date posted").id
   const reviewDueDateID = data.organization.projectNext.fields.nodes.find(field => field.name === "Review due date").id
@@ -240,7 +247,14 @@ async function run() {
   const hubberTypeID = JSON.parse(data.organization.projectNext.fields.nodes.find(field => field.name === "Contributor type").settings).options.find(field => field.name === "Hubber or partner").id
 
   // Add the PRs to the project
-  const newItemIDs = await addItemsToProject(prIDs, projectID)
+  const itemIDs = await addItemsToProject(prIDs, projectID)
+
+  // If an item already existed on the project, the existing ID will be returned
+  // Exclude existing items going forward.
+  // Until we have a way to check from a PR whether the PR is in a project,
+  // this is how we (roughly) avoid overwriting PRs that are already on the board
+  // If we are overwriting items, query for more items
+  const newItemIDs = itemIDs.filter(id => !existingItemIDs.includes(id) )
 
   // Populate fields for the new project items
   // Note: Since there is not a way to check if a PR is already on the board, 
@@ -281,4 +295,3 @@ run()
   )
 
   // todo use typescript
-  // TODO in initial query, get all item ids in project; exclude these before updating fields
