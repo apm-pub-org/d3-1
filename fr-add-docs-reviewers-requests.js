@@ -54,7 +54,7 @@ function generateUpdateProjectNextItemFieldMutation(items, authors) {
 
   // Formats a date object into the required format for projects
   function formatDate(date) {
-    return date.getFullYear() + '-' + date.getMonth() + '-' + date.getDay()
+    return date.getFullYear() + '-' + date.getMonth() + '-' + date.getDate()
   }
 
   // Calculate 2 weekdays from now (excluding weekends; not considering holidays)
