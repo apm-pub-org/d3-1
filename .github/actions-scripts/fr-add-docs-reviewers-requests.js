@@ -4,7 +4,7 @@ const { graphql } = require("@octokit/graphql");
 // adds the PRs/issues to the project
 // and returns the node IDs of the project items
 async function addItemsToProject(items, project) {
-  console.log(`Adding items ${items} to project ${project}`)
+  console.log(`Adding ${items} to project ${project}`)
 
   const mutations = items.map((pr, index) => `
     pr_${index}: addProjectNextItem(input: {
@@ -37,7 +37,7 @@ async function addItemsToProject(items, project) {
 
   const newItemIDs = Object.entries(newItems).map(item => item[1].projectNextItem.id)
 
-  console.log(`New items added: ${newItemIDs}`)
+  console.log(`New item IDs: ${newItemIDs}`)
 
   return newItemIDs
 }
@@ -209,7 +209,6 @@ async function run() {
   // - not a train
   // - are requesting a review by docs-reviewers
   // - have not already been reviewed on behalf of docs-reviewers
-  // - are not already on the specified project board // todo not possible yet
   const prs = data.repository.pullRequests.nodes.filter(pr =>
     !pr.isDraft
     && !pr.labels.nodes.find(label => label.name === "Deploy train 🚂")
@@ -249,18 +248,22 @@ async function run() {
   // Add the PRs to the project
   const itemIDs = await addItemsToProject(prIDs, projectID)
 
-  // If an item already existed on the project, the existing ID will be returned
+  // If an item already existed on the project, the existing ID will be returned.
   // Exclude existing items going forward.
   // Until we have a way to check from a PR whether the PR is in a project,
   // this is how we (roughly) avoid overwriting PRs that are already on the board
-  // If we are overwriting items, query for more items
   const newItemIDs = itemIDs.filter(id => !existingItemIDs.includes(id) )
+
+  if (prs.length === 0) {
+    console.log("All found PRs are already on the project. Exiting.")
+    return
+  }
 
   // Populate fields for the new project items
   // Note: Since there is not a way to check if a PR is already on the board, 
   // this will overwrite the values of PRs that are on the board
   const updateProjectNextItemMutation = generateUpdateProjectNextItemFieldMutation(newItemIDs, prAuthors)
-  console.log('Populating fields')
+  console.log(`Populating fields for these items: ${newItemIDs}`)
 
   await graphql(
     updateProjectNextItemMutation,
@@ -293,5 +296,3 @@ run()
       process.exit(1)
     }
   )
-
-  // todo use typescript
