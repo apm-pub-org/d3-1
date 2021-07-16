@@ -254,7 +254,7 @@ async function run() {
   // this is how we (roughly) avoid overwriting PRs that are already on the board
   const newItemIDs = itemIDs.filter(id => !existingItemIDs.includes(id) )
 
-  if (prs.length === 0) {
+  if (newItemIDs.length === 0) {
     console.log("All found PRs are already on the project. Exiting.")
     return
   }
@@ -287,15 +287,6 @@ async function run() {
 
   return newItemIDs
 }
-
-// run()
-//   .then(
-//     (response) => { console.log(JSON.stringify(response)) },
-//     (error) => {
-//       console.log(`#ERROR# ${error}`)
-//       process.exit(1)
-//     }
-//   )
 
 run().catch((error) => {
   console.log(`#ERROR# ${error}`)
