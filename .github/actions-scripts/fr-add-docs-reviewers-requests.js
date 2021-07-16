@@ -129,6 +129,9 @@ function generateUpdateProjectNextItemFieldMutation(items, authors) {
 
 async function run() {
 
+  console.log(process.env.PROJECT_NUMBER)
+  console.log(typeof(process.env.PROJECT_NUMBER))
+
   // Get info about the docs-content review board project
   // and about open github/github PRs
   const data = await graphql(
