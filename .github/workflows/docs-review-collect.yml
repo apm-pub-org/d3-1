@@ -5,7 +5,8 @@ name: Add docs-reviewers request to FR board
 # **Who does it impact**: 
 
 on:
-  workflow_dispatch
+  - workflow_dispatch
+  - push
   # todo also add schedule
 
 jobs:
@@ -17,12 +18,12 @@ jobs:
       - name: Check out repo content
         uses: actions/checkout@v2
 
-      - name: Install dependencies
-        run: npm ci
+      - name: Check node version
+        run: node -v
 
       - name: Run script
         run: |
-          fr-add-docs-reviewers-requests.js
+          node fr-add-docs-reviewers-requests.js
         env:
           TOKEN: ${{ secrets.PERSONAL_ACCESS_TOKEN}}
           VAR: "hello"
