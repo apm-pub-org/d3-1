@@ -21,6 +21,9 @@ jobs:
       - name: Check node version
         run: node -v
 
+      - name: Install dependencies
+        run: npm install @octokit/graphql
+
       - name: Run script
         run: |
           node fr-add-docs-reviewers-requests.js
