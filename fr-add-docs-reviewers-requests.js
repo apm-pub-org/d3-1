@@ -123,7 +123,7 @@ function generateUpdateProjectNextItemFieldMutation(items, authors) {
       ${mutations.join(' ')}
     }
     `
-console.log(mutation)
+
   return mutation
 }
 
@@ -134,7 +134,7 @@ async function run() {
   const projectNumber = 10// todo change
   const organization = "ske-test-org"// todo change
   const repo = "test-org-repo"// todo change
-  const reviewerName = "docs-reviewers"
+  const reviewerName = "test-team" // todo change
   // 100 is an educated guess of how many PRs are opened in a day on the github/github repo
   // If we are missing PRs, either increase this number or increase the frequency at which this script is run
   const numPRsToSearch = 100
@@ -218,7 +218,7 @@ async function run() {
   const prs = data.repository.pullRequests.nodes.filter(pr =>
     !pr.isDraft
     && !pr.labels.nodes.find(label => label.name === "Deploy train 🚂")
-    // && pr.reviewRequests.nodes.find(requestedReviewers => requestedReviewers.requestedReviewer.name === reviewerName) //todo readd
+    && pr.reviewRequests.nodes.find(requestedReviewers => requestedReviewers.requestedReviewer.name === reviewerName)
     && !pr.reviews.nodes.flatMap(review => review.onBehalfOf.nodes).find(behalf => behalf.name === reviewerName)
   )
   if (prs.length === 0) {
@@ -246,7 +246,7 @@ async function run() {
   const hubberTypeID = JSON.parse(data.organization.projectNext.fields.nodes.find(field => field.name === "Contributor type").settings).options.find(field => field.name === "Hubber or partner").id
 
   // Add the PRs to the project
-  const newItemIDs = await addItemsToProject([prIDs[0]], projectID)// todo remove [0] and []
+  const newItemIDs = await addItemsToProject(prIDs, projectID)
 
   // Populate fields for the new project items
   // Note: Since there is not a way to check if a PR is already on the board, 
@@ -288,3 +288,4 @@ run()
 
   // todo use typescript
   // todo use by action
+  // TODO in initial query, get all item ids in project; exclude these before updating fields
