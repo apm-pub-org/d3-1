@@ -123,7 +123,7 @@ function generateUpdateProjectNextItemFieldMutation(items, authors) {
       ${mutations.join(' ')}
     }
     `
-
+console.log(mutation)
   return mutation
 }
 
