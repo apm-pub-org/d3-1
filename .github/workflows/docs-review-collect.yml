@@ -22,3 +22,4 @@ jobs:
           fr-add-docs-reviewers-requests.js
         env:
           TOKEN: ${{ secrets.PERSONAL_ACCESS_TOKEN}}
+          VAR: "hello"
