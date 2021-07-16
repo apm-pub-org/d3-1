@@ -130,9 +130,8 @@ function generateUpdateProjectNextItemFieldMutation(items, authors) {
 async function run() {
 
   console.log(process.env.PROJECT_NUMBER)
-  const projectNumber = parseInt(process.env.PROJECT_NUMBER)
-  console.log(projectNumber)
-  console.log(typeof(projectNumber))
+  console.log(typeof(process.env.PROJECT_NUMBER))
+  console.log(typeof(parseInt(process.env.PROJECT_NUMBER)))
 
   // Get info about the docs-content review board project
   // and about open github/github PRs
@@ -195,8 +194,8 @@ async function run() {
     {
       organization: process.env.ORGANIZATION,
       repo: process.env.REPO,
-      projectNumber: projectNumber,
-      num_prs: process.env.NUM_PRS,
+      projectNumber: parseInt(process.env.PROJECT_NUMBER),
+      num_prs: parseInt(process.env.NUM_PRS),
       headers: {
         authorization: `token ${process.env.TOKEN}`,
         "GraphQL-Features": "projects_next_graphql",
