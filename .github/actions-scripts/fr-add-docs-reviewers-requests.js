@@ -131,6 +131,7 @@ async function run() {
 
   console.log(process.env.PROJECT_NUMBER)
   console.log(typeof(process.env.PROJECT_NUMBER))
+  console.log(typeof(parseInt(process.env.PROJECT_NUMBER)))
 
   // Get info about the docs-content review board project
   // and about open github/github PRs
@@ -193,7 +194,7 @@ async function run() {
     {
       organization: process.env.ORGANIZATION,
       repo: process.env.REPO,
-      projectNumber: process.env.PROJECT_NUMBER,
+      projectNumber: parseInt(process.env.PROJECT_NUMBER),
       num_prs: process.env.NUM_PRS,
       headers: {
         authorization: `token ${process.env.TOKEN}`,
