@@ -48,7 +48,7 @@ async function addItemsToProject(items, project) {
 //   - "Date posted" (as today)
 //   - "Review due date" (as today + 2 weekdays)
 //   - "Feature" (as "OpenAPI schema update")
-//   - "Contributor type"" (as "Hubber or partner" option)
+//   - "Contributor type" (as "Hubber or partner" option)
 // Does not populate "Review needs" or "Size"
 function generateUpdateProjectNextItemFieldMutation(items, authors) {
   // Formats a date object into the required format for projects
@@ -254,45 +254,54 @@ async function run() {
   // Get the project ID
   const projectID = data.organization.projectNext.id;
 
-  // Get the IDs of the last 100 items on the board
+  // Get the IDs of the last 100 items on the board.
   // Until we have a way to check from a PR whether the PR is in a project,
-  // this is how we (roughly) avoid overwriting PRs that are already on the board
-  // If we are overwriting items, query for more items
+  // this is how we (roughly) avoid overwriting PRs that are already on the board.
+  // If we are overwriting items, query for more items.
   const existingItemIDs = data.organization.projectNext.items.nodes.map(
     (node) => node.id
   );
 
+  function findFieldID(fieldName, data) {
+    const field =  data.organization.projectNext.fields.nodes.find(
+      (field) => field.name === fieldName
+    )
+
+    if (field && field.id) {
+      return field.id
+    } else {
+      throw(`A field called ${fieldName} was not found. Check if the field was renamed.`)
+    }
+  }
+
+  function findSingleSelectID(singleSelectName, fieldName, data) {
+    const field =  data.organization.projectNext.fields.nodes.find(
+      (field) => field.name === fieldName
+    )
+    if (!field) {
+      throw(`A field called ${fieldName} was not found. Check if the field was renamed.`)
+    }
+
+    const singleSelect = JSON.parse(field.settings).options.find((field) => field.name === singleSelectName)
+
+    if (singleSelect && singleSelect.id) {
+      return singleSelect.id
+    } else {
+      throw(`A single select called ${singleSelectName} for the field ${fieldName} was not found. Check if the single select was renamed.`)
+    }
+  }
+
   // Get the ID of the fields that we want to populate
-  const datePostedID = data.organization.projectNext.fields.nodes.find(
-    (field) => field.name === "Date posted"
-  ).id;
-  const reviewDueDateID = data.organization.projectNext.fields.nodes.find(
-    (field) => field.name === "Review due date"
-  ).id;
-  const statusID = data.organization.projectNext.fields.nodes.find(
-    (field) => field.name === "Status"
-  ).id;
-  const featureID = data.organization.projectNext.fields.nodes.find(
-    (field) => field.name === "Feature"
-  ).id;
-  const contributorTypeID = data.organization.projectNext.fields.nodes.find(
-    (field) => field.name === "Contributor type"
-  ).id;
-  const authorID = data.organization.projectNext.fields.nodes.find(
-    (field) => field.name === "Author"
-  ).id;
+  const datePostedID = findFieldID("Date posted", data)
+  const reviewDueDateID = findFieldID("Review due date", data)
+  const statusID = findFieldID("Status", data)
+  const featureID = findFieldID("Feature", data)
+  const contributorTypeID = findFieldID("Contributor type", data)
+  const authorID = findFieldID("Author", data)
 
   // Get the ID of the single select values that we want to set
-  const readyForReviewID = JSON.parse(
-    data.organization.projectNext.fields.nodes.find(
-      (field) => field.name === "Status"
-    ).settings
-  ).options.find((field) => field.name === "Ready for review").id;
-  const hubberTypeID = JSON.parse(
-    data.organization.projectNext.fields.nodes.find(
-      (field) => field.name === "Contributor type"
-    ).settings
-  ).options.find((field) => field.name === "Hubber or partner").id;
+  const readyForReviewID = findSingleSelectID("Ready for review", "Status", data)
+  const hubberTypeID = findSingleSelectID("Hubber or partner", "Contributor type", data)
 
   // Add the PRs to the project
   const itemIDs = await addItemsToProject(prIDs, projectID);
