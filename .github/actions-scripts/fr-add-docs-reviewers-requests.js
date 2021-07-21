@@ -238,7 +238,7 @@ async function run() {
     if (field && field.id) {
       return field.id
     } else {
-      throw new Error(`A field called ${fieldName} was not found. Check if the field was renamed.`)
+      throw new Error(`A field called "${fieldName}" was not found. Check if the field was renamed.`)
     }
   }
 
@@ -247,7 +247,7 @@ async function run() {
       (field) => field.name === fieldName
     )
     if (!field) {
-      throw new Error(`A field called ${fieldName} was not found. Check if the field was renamed.`)
+      throw new Error(`A field called "${fieldName}" was not found. Check if the field was renamed.`)
     }
 
     const singleSelect = JSON.parse(field.settings).options.find(
@@ -257,7 +257,7 @@ async function run() {
     if (singleSelect && singleSelect.id) {
       return singleSelect.id
     } else {
-      throw new Error(`A single select called ${singleSelectName} for the field ${fieldName} was not found. Check if the single select was renamed.`)
+      throw new Error(`A single select called "${singleSelectName}" for the field "${fieldName}" was not found. Check if the single select was renamed.`)
     }
   }
 
