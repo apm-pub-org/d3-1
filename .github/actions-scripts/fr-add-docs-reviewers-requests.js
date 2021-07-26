@@ -32,6 +32,11 @@ async function addItemsToProject(items, project) {
       'GraphQL-Features': 'projects_next_graphql',
     },
   })
+  console.log('OUT')
+  console.log(newItems)
+  console.log('OUT2')
+  console.log(JSON.stringify(newItems))
+  console.log('OUT3')
 
   const newItemIDs = Object.entries(newItems).map((item) => item[1].projectNextItem.id)
 
