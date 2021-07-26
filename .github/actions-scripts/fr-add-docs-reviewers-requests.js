@@ -32,12 +32,10 @@ async function addItemsToProject(items, project) {
       'GraphQL-Features': 'projects_next_graphql',
     },
   })
-  console.log('OUT')
-  console.log(newItems)
-  console.log('OUT2')
-  console.log(JSON.stringify(newItems))
-  console.log('OUT3')
 
+  // The output of the mutation is
+  // {"pr_0":{"projectNextItem":{"id":ID!}},...}
+  // Pull out the ID for each new item
   const newItemIDs = Object.entries(newItems).map((item) => item[1].projectNextItem.id)
 
   console.log(`New item IDs: ${newItemIDs}`)
@@ -72,10 +70,11 @@ function generateUpdateProjectNextItemFieldMutation(items, authors) {
     default:
       daysUntilDue = 2
   }
-  const dueDate = new Date(datePosted.getTime() + 24 * 60 * 60 * 1000 * daysUntilDue)
+  const millisecPerDay = 24 * 60 * 60 * 1000
+  const dueDate = new Date(datePosted.getTime() + millisecPerDay * daysUntilDue)
 
   // Build the mutation for a single field
-  function generateMutation(index, item, fieldID, value, literal = false) {
+  function generateMutation({ index, item, fieldID, value, literal = false }) {
     let parsedValue
     if (literal) {
       parsedValue = `value: "${value}"`
@@ -100,12 +99,46 @@ function generateUpdateProjectNextItemFieldMutation(items, authors) {
   // Build the mutation for all fields for all items
   const mutations = items.map(
     (item, index) => `
-    ${generateMutation(index, item, '$statusID', '$readyForReviewID')}
-    ${generateMutation(index, item, '$datePostedID', formatDate(datePosted), true)}
-    ${generateMutation(index, item, '$reviewDueDateID', formatDate(dueDate), true)}
-    ${generateMutation(index, item, '$contributorTypeID', '$hubberTypeID')}
-    ${generateMutation(index, item, '$featureID', 'OpenAPI schema update', true)}
-    ${generateMutation(index, item, '$authorID', authors[index], true)}
+    ${generateMutation({
+      index: index,
+      item: item,
+      fieldID: '$statusID',
+      value: '$readyForReviewID',
+    })}
+    ${generateMutation({
+      index: index,
+      item: item,
+      fieldID: '$datePostedID',
+      value: formatDate(datePosted),
+      literal: true,
+    })}
+    ${generateMutation({
+      index: index,
+      item: item,
+      fieldID: '$reviewDueDateID',
+      value: formatDate(dueDate),
+      literal: true,
+    })}
+    ${generateMutation({
+      index: index,
+      item: item,
+      fieldID: '$contributorTypeID',
+      value: '$hubberTypeID',
+    })}
+    ${generateMutation({
+      index: index,
+      item: item,
+      fieldID: '$featureID',
+      value: 'OpenAPI schema update',
+      literal: true,
+    })}
+    ${generateMutation({
+      index: index,
+      item: item,
+      fieldID: '$authorID',
+      value: authors[index],
+      literal: true,
+    })}
   `
   )
 
@@ -243,7 +276,9 @@ async function run() {
     if (field && field.id) {
       return field.id
     } else {
-      throw new Error(`A field called "${fieldName}" was not found. Check if the field was renamed.`)
+      throw new Error(
+        `A field called "${fieldName}" was not found. Check if the field was renamed.`
+      )
     }
   }
 
@@ -252,7 +287,9 @@ async function run() {
       (field) => field.name === fieldName
     )
     if (!field) {
-      throw new Error(`A field called "${fieldName}" was not found. Check if the field was renamed.`)
+      throw new Error(
+        `A field called "${fieldName}" was not found. Check if the field was renamed.`
+      )
     }
 
     const singleSelect = JSON.parse(field.settings).options.find(
@@ -262,7 +299,9 @@ async function run() {
     if (singleSelect && singleSelect.id) {
       return singleSelect.id
     } else {
-      throw new Error(`A single select called "${singleSelectName}" for the field "${fieldName}" was not found. Check if the single select was renamed.`)
+      throw new Error(
+        `A single select called "${singleSelectName}" for the field "${fieldName}" was not found. Check if the single select was renamed.`
+      )
     }
   }
 
