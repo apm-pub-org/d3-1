@@ -72,6 +72,8 @@ function generateUpdateProjectNextItemFieldMutation(items, authors) {
   }
   const millisecPerDay = 24 * 60 * 60 * 1000
   const dueDate = new Date(datePosted.getTime() + millisecPerDay * daysUntilDue)
+  console.log(formatDate(datePosted);
+  console.log(formatDate(dueDate);
 
   // Build the mutation for a single field
   function generateMutation({ index, item, fieldID, value, literal = false }) {
