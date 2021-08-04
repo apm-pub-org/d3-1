@@ -11,7 +11,7 @@ on:
 jobs:
   request_doc_review:
     name: Request a review from the docs-content team
-    if: github.event.label.name == 'ready-for-doc-review' && github.repository == 'github/docs-internal'
+    if: github.event.label.name == 'ready-for-doc-review'
     runs-on: ubuntu-latest
     steps:
       - name: Check out repo content
