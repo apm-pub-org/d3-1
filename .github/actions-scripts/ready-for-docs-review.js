@@ -246,7 +246,7 @@ async function run() {
   // Populate fields for the new project items
   const updateProjectNextItemMutation = generateUpdateProjectNextItemFieldMutation(
     newItemIDs,
-    prAuthors
+    [process.env.AUTHOR]
   )
   console.log(`Populating fields for these items: ${newItemIDs}`)
 
