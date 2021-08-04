@@ -1,4 +1,4 @@
-import { graphql } from '@octokit/graphql'
+const { graphql } = require('@octokit/graphql')
 
 // Given a list of PR/issue node IDs and a project node ID,
 // adds the PRs/issues to the project
