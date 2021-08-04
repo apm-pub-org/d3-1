@@ -26,7 +26,7 @@ jobs:
           TOKEN: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
           PROJECT_NUMBER: 10
           ORGANIZATION: 'ske-test-org'
-          PR: ${{ github.event.pull_request.node_id }}
-          AUTHOR: ${{ github.event.pull_request.user.node_id }}
+          PR_NODE_ID: ${{ github.event.pull_request.node_id }}
+          AUTHOR_LOGIN: ${{ github.event.pull_request.user.login }}
 
 # todo if failure, do old action? 
