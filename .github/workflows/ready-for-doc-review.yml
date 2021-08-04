@@ -27,4 +27,6 @@ jobs:
           PROJECT_NUMBER: 10
           ORGANIZATION: 'ske-test-org'
           PR: ${{ github.event.pull_request.node_id }}
+          AUTHOR: ${{ github.event.pull_request.user.node_id }}
+
 # todo if failure, do old action? 
