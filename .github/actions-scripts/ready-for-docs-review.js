@@ -241,12 +241,13 @@ async function run() {
   // Add the PRs to the project
   // todo could change addItemsToProject to take single or list
   // todo move common functions and import them
-  const newItemIDs = await addItemsToProject([process.env.PR], projectID)
+  const newItemIDs = await addItemsToProject([process.env.PR_NODE_ID], projectID)
 
   // Populate fields for the new project items
+  // todo could change generateUpdateProjectNextItemFieldMutation to take single or list
   const updateProjectNextItemMutation = generateUpdateProjectNextItemFieldMutation(
     newItemIDs,
-    [process.env.AUTHOR]
+    [process.env.AUTHOR_LOGIN]
   )
   console.log(`Populating fields for these items: ${newItemIDs}`)
 
