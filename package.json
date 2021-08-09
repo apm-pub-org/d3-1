@@ -2,7 +2,11 @@
   "name": "test-org-repo",
   "version": "1.0.0",
   "description": "",
-  "main": "error.js",
+  "type": "module",
+  "exports": "./index.js",
+  "engines": {
+    "node": ">= 16.0.0"
+  },
   "directories": {
     "doc": "docs"
   },
