@@ -2,7 +2,7 @@ import { graphql } from '@octokit/graphql'
 
 import {
   addItemsToProject,
-  docsTeamMemberQ,
+  isDocsTeamMember,
   findFieldID,
   findSingleSelectID,
   generateUpdateProjectNextItemFieldMutation,
@@ -142,10 +142,9 @@ async function run() {
     
   // Populate fields for the new project items
   // (Using for...of instead of forEach since it uses await)
-  console.log("ALL FOUND ARE:" + newItemIDs + " len " + newItemIDs.length)
   for (const [index, itemID] of newItemIDs.entries()) {
     const updateProjectNextItemMutation = generateUpdateProjectNextItemFieldMutation({item: itemID, author: prAuthors[index], turnaround: 2})
-    const contributorType = docsTeamMemberQ(prAuthors[index]) ? docsMemberTypeID : hubberTypeID
+    const contributorType = isDocsTeamMember(prAuthors[index]) ? docsMemberTypeID : hubberTypeID
     console.log(`Populating fields for item: ${itemID}`)
 
     await graphql(updateProjectNextItemMutation, {
@@ -166,25 +165,6 @@ async function run() {
     console.log('Done populating fields for item')
 
   }
-
-  console.log(`Populating fields for these items: ${newItemIDs}`)
-
-  await graphql(updateProjectNextItemMutation, {
-    project: projectID,
-    statusID: statusID,
-    readyForReviewID: readyForReviewID,
-    datePostedID: datePostedID,
-    reviewDueDateID: reviewDueDateID,
-    contributorTypeID: contributorTypeID,
-    hubberTypeID: hubberTypeID,
-    featureID: featureID,
-    authorID: authorID,
-    headers: {
-      authorization: `token ${process.env.TOKEN}`,
-      'GraphQL-Features': 'projects_next_graphql',
-    },
-  })
-  console.log('Done populating fields')
 
   return newItemIDs
 }
