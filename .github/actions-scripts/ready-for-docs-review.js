@@ -172,7 +172,7 @@ async function run() {
     datePostedID: datePostedID,
     reviewDueDateID: reviewDueDateID,
     contributorTypeID: contributorTypeID,
-    hubberTypeID: hubberTypeID,
+    contributorType: hubberTypeID,
     featureID: featureID,
     authorID: authorID,
     headers: {
