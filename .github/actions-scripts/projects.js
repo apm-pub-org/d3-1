@@ -84,7 +84,7 @@ export async function addItemsToProject(items, project) {
 
 // Given a GitHub login, returns a bool indicating 
 // whether the login is part of the docs team
-async function docsTeamMemberQ(login) {
+export async function docsTeamMemberQ(login) {
   // Get all members of the docs team
   const data = await graphql(
     `
@@ -112,13 +112,13 @@ async function docsTeamMemberQ(login) {
   return teamMembers.includes(login)
 }
 
-  // Formats a date object into the required format for projects
-  function formatDateForProject(date) {
-    return date.getFullYear() + '-' + (date.getMonth() + 1) + '-' + date.getDate()
-  }
+// Formats a date object into the required format for projects
+export function formatDateForProject(date) {
+  return date.getFullYear() + '-' + (date.getMonth() + 1) + '-' + date.getDate()
+}
 
-  // Calculate the date {turnaround} business days from now (excluding weekends; not considering holidays)
-function calculateDueDate(datePosted, turnaround = 2) {
+// Calculate the date {turnaround} business days from now (excluding weekends; not considering holidays)
+export function calculateDueDate(datePosted, turnaround = 2) {
   let daysUntilDue
   switch (datePosted.getDay()) {
     case 0: // Sunday
