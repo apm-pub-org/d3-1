@@ -70,7 +70,7 @@ function generateUpdateProjectNextItemFieldMutation(items, authors, feature = ""
       fieldID: '$contributorTypeID',
       value: '$hubberTypeID',
     })}
-    ${generateMutation({
+    ${generateMutationToUpdateField({
       index: index,
       item: item,
       fieldID: '$featureID',
