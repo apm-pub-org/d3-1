@@ -76,7 +76,7 @@ export async function addItemsToProject(items, project) {
 
 // Given a GitHub login, returns a bool indicating
 // whether the login is part of the docs team
-export async function docsTeamMemberQ(login) {
+export async function isDocsTeamMember(login) {
   // Get all members of the docs team
   const data = await graphql(
     `
@@ -217,7 +217,7 @@ export function generateUpdateProjectNextItemFieldMutation( {item, author, turna
 
 export default {
   addItemsToProject,
-  docsTeamMemberQ,
+  isDocsTeamMember,
   findFieldID,
   findSingleSelectID,
   formatDateForProject,
