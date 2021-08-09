@@ -142,10 +142,11 @@ async function run() {
     
   // Populate fields for the new project items
   // (Using for...of instead of forEach since it uses await)
+  console.log("ALL FOUND ARE:" + newItemIDs + " len " + newItemIDs.length)
   for (const [index, itemID] of newItemIDs.entries()) {
     const updateProjectNextItemMutation = generateUpdateProjectNextItemFieldMutation({item: itemID, author: prAuthors[index], turnaround: 2})
     const contributorType = docsTeamMemberQ(prAuthors[index]) ? docsMemberTypeID : hubberTypeID
-    console.log(`Populating fields for item: ${newItemIDs}`)
+    console.log(`Populating fields for item: ${itemID}`)
 
     await graphql(updateProjectNextItemMutation, {
       project: projectID,
