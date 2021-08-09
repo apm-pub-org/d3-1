@@ -1,19 +1,28 @@
 import { graphql } from '@octokit/graphql'
 
-import { addItemsToProject, docsTeamMemberQ, findFieldID, findSingleSelectID, formatDateForProject, calculateDueDate } from "./projects.js"
+import {
+  addItemsToProject,
+  docsTeamMemberQ,
+  findFieldID,
+  findSingleSelectID,
+  formatDateForProject,
+  calculateDueDate,
+} from './projects.js'
 
+// todo make it so that contributor type is variable. will need to make sure to only pass the variable that is used. will also need to get repo to determing contributor type;
 
-
-// Given a list of project item node IDs and a list of corresponding authors
+// Given a project item node IDs and author login
 // generates a GraphQL mutation to populate:
-//   - "Status" (as "Ready for review" option)
+//   - "Status" (as variable passed with the request)
 //   - "Date posted" (as today)
-//   - "Review due date" (as today + 2 weekdays)
-//   - "Feature" (as "OpenAPI schema update")
-//   - "Contributor type" (as "Hubber or partner" option)
+//   - "Review due date" (as today + {turnaround} weekdays)
+//   - "Contributor type" (as variable passed with the request)
+//   - "Feature" (as {feature})
+//   - "Author" (as {author})"
 // Does not populate "Review needs" or "Size"
-function generateUpdateProjectNextItemFieldMutation(items, authors, feature = "", turnaround = 2) {
+//todo convert to named args
 
+function generateUpdateProjectNextItemFieldMutation(item, author, turnaround = 2, feature = '') {
   const datePosted = new Date()
   const dueDate = calculateDueDate(datePosted, turnaround)
 
@@ -41,53 +50,6 @@ function generateUpdateProjectNextItemFieldMutation(items, authors, feature = ""
     `
   }
 
-  // Build the mutation for all fields for all items
-  const mutations = items.map(
-    (item, index) => `
-    ${generateMutationToUpdateField({
-      index: index,
-      item: item,
-      fieldID: '$statusID',
-      value: '$readyForReviewID',
-    })}
-    ${generateMutationToUpdateField({
-      index: index,
-      item: item,
-      fieldID: '$datePostedID',
-      value: formatDateForProject(datePosted),
-      literal: true,
-    })}
-    ${generateMutationToUpdateField({
-      index: index,
-      item: item,
-      fieldID: '$reviewDueDateID',
-      value: formatDateForProject(dueDate),
-      literal: true,
-    })}
-    ${generateMutationToUpdateField({
-      index: index,
-      item: item,
-      fieldID: '$contributorTypeID',
-      value: '$contributorType',
-    })}
-    ${generateMutationToUpdateField({
-      index: index,
-      item: item,
-      fieldID: '$featureID',
-      value: feature,
-      literal: true,
-    })}
-    ${generateMutationToUpdateField({
-      index: index,
-      item: item,
-      fieldID: '$authorID',
-      value: authors[index],
-      literal: true,
-    })}
-  `
-  )
-
-  // Build the full mutation
   const mutation = `
     mutation(
       $project: ID!
@@ -100,8 +62,47 @@ function generateUpdateProjectNextItemFieldMutation(items, authors, feature = ""
       $featureID: ID!
       $authorID: ID!
     ) {
-      ${mutations.join(' ')}
-    }
+      ${generateMutationToUpdateField({
+    index: index,
+    item: item,
+    fieldID: '$statusID',
+    value: '$statusValueID',
+  })}
+      ${generateMutationToUpdateField({
+    index: index,
+    item: item,
+    fieldID: '$datePostedID',
+    value: formatDateForProject(datePosted),
+    literal: true,
+  })}
+      ${generateMutationToUpdateField({
+    index: index,
+    item: item,
+    fieldID: '$reviewDueDateID',
+    value: formatDateForProject(dueDate),
+    literal: true,
+  })}
+      ${generateMutationToUpdateField({
+    index: index,
+    item: item,
+    fieldID: '$contributorTypeID',
+    value: '$contributorType',
+  })}
+      ${generateMutationToUpdateField({
+    index: index,
+    item: item,
+    fieldID: '$featureID',
+    value: feature,
+    literal: true,
+  })}
+      ${generateMutationToUpdateField({
+    index: index,
+    item: item,
+    fieldID: '$authorID',
+    value: author,
+    literal: true,
+  })}
+      }
     `
 
   return mutation
@@ -154,33 +155,45 @@ async function run() {
   const osContributorTypeID = findSingleSelectID('OS contributor', 'Contributor type', data)
 
   // Add the PRs to the project
-  // todo could change addItemsToProject to take single or list
-  // todo move common functions and import them
   const newItemIDs = await addItemsToProject([process.env.PR_NODE_ID], projectID)
 
-  // Populate fields for the new project items
-  // todo could change generateUpdateProjectNextItemFieldMutation to take single or list
-  const updateProjectNextItemMutation = generateUpdateProjectNextItemFieldMutation(newItemIDs, [
-    process.env.AUTHOR_LOGIN,
-  ])
-  console.log(`Populating fields for these items: ${newItemIDs}`)
+  // Given the author login and repo, determine which variable to use for the contributor type
+  function getContributorID(author, repo) {
 
-  await graphql(updateProjectNextItemMutation, {
-    project: projectID,
-    statusID: statusID,
-    readyForReviewID: readyForReviewID,
-    datePostedID: datePostedID,
-    reviewDueDateID: reviewDueDateID,
-    contributorTypeID: contributorTypeID,
-    contributorType: hubberTypeID,
-    featureID: featureID,
-    authorID: authorID,
-    headers: {
-      authorization: `token ${process.env.TOKEN}`,
-      'GraphQL-Features': 'projects_next_graphql',
-    },
+    const isDocsTeamMember = docsTeamMemberQ(author)
+
+    if (isDocsTeamMember) return docsMemberTypeID
+
+    if (repo === "github/docs") return osContributorTypeID
+
+    return hubberTypeID
+  }
+
+  // Populate fields for the new project items
+  newItemIDs.forEach((itemID, index) => {
+    const updateProjectNextItemMutation = generateUpdateProjectNextItemFieldMutation(itemID, process.env.AUTHOR_LOGIN, 2)
+    console.log(process.env.PR_REPO)
+    const contributorType = getContributorID(process.env.AUTHOR_LOGIN, process.env.PR_REPO)//todo need to pass repo to action¸
+    console.log(`Populating fields for item: ${newItemIDs}`)
+
+    await graphql(updateProjectNextItemMutation, {
+      project: projectID,
+      statusID: statusID,
+      statusValueID: readyForReviewID,
+      datePostedID: datePostedID,
+      reviewDueDateID: reviewDueDateID,
+      contributorTypeID: contributorTypeID,
+      contributorType: contributorType,
+      featureID: featureID,
+      authorID: authorID,
+      headers: {
+        authorization: `token ${process.env.TOKEN}`,
+        'GraphQL-Features': 'projects_next_graphql',
+      },
+    })
+    console.log('Done populating fields for item')
+
   })
-  console.log('Done populating fields')
 
   return newItemIDs
 }
