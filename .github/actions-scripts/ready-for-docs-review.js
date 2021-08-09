@@ -1,6 +1,6 @@
 import { graphql } from '@octokit/graphql'
 
-import addItemsToProject from "./projects"
+import addItemsToProject from "./projects.js"
 
 async function docsTeamMemberQ(login) {
   // Get all members of the docs team
