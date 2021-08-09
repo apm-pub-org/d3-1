@@ -2,28 +2,20 @@ import { graphql } from '@octokit/graphql'
 
 // Pull out the node ID of a field
 export function findFieldID(fieldName, data) {
-  const field = data.organization.projectNext.fields.nodes.find(
-    (field) => field.name === fieldName
-  )
+  const field = data.organization.projectNext.fields.nodes.find((field) => field.name === fieldName)
 
   if (field && field.id) {
     return field.id
   } else {
-    throw new Error(
-      `A field called "${fieldName}" was not found. Check if the field was renamed.`
-    )
+    throw new Error(`A field called "${fieldName}" was not found. Check if the field was renamed.`)
   }
 }
 
 // Pull out the node ID of a single select field value
 export function findSingleSelectID(singleSelectName, fieldName, data) {
-  const field = data.organization.projectNext.fields.nodes.find(
-    (field) => field.name === fieldName
-  )
+  const field = data.organization.projectNext.fields.nodes.find((field) => field.name === fieldName)
   if (!field) {
-    throw new Error(
-      `A field called "${fieldName}" was not found. Check if the field was renamed.`
-    )
+    throw new Error(`A field called "${fieldName}" was not found. Check if the field was renamed.`)
   }
 
   const singleSelect = JSON.parse(field.settings).options.find(
@@ -82,7 +74,7 @@ export async function addItemsToProject(items, project) {
   return newItemIDs
 }
 
-// Given a GitHub login, returns a bool indicating 
+// Given a GitHub login, returns a bool indicating
 // whether the login is part of the docs team
 export async function docsTeamMemberQ(login) {
   // Get all members of the docs team
@@ -135,4 +127,100 @@ export function calculateDueDate(datePosted, turnaround = 2) {
   return dueDate
 }
 
-export default { addItemsToProject, docsTeamMemberQ, findFieldID, findSingleSelectID, formatDateForProject, calculateDueDate }
+// Given a project item node ID and author login
+// generates a GraphQL mutation to populate:
+//   - "Status" (as variable passed with the request)
+//   - "Date posted" (as today)
+//   - "Review due date" (as today + {turnaround} weekdays)
+//   - "Contributor type" (as variable passed with the request)
+//   - "Feature" (as {feature})
+//   - "Author" (as {author})"
+export function generateUpdateProjectNextItemFieldMutation( {item, author, turnaround = 2, feature = ''} ) {
+  const datePosted = new Date()
+  const dueDate = calculateDueDate(datePosted, turnaround)
+
+  // Build the mutation to update a single project field
+  // Specify literal=true to indicate that the value should be used as a string, not a variable
+  function generateMutationToUpdateField({ item, fieldID, value, literal = false }) {
+    let parsedValue
+    if (literal) {
+      parsedValue = `value: "${value}"`
+    } else {
+      parsedValue = `value: ${value}`
+    }
+
+    return `
+      set_${fieldID.substr(1)}_item_${item}: updateProjectNextItemField(input: {
+        projectId: $project
+        itemId: "${item}"
+        fieldId: ${fieldID}
+        ${parsedValue}
+      }) {
+      projectNextItem {
+        id
+      }
+    }
+    `
+  }
+
+  const mutation = `
+    mutation(
+      $project: ID!
+      $statusID: ID!
+      $statusValueID: String!
+      $datePostedID: ID!
+      $reviewDueDateID: ID!
+      $contributorTypeID: ID!
+      $contributorType: String!
+      $featureID: ID!
+      $authorID: ID!
+    ) {
+      ${generateMutationToUpdateField({
+    item: item,
+    fieldID: '$statusID',
+    value: '$statusValueID',
+  })}
+      ${generateMutationToUpdateField({
+    item: item,
+    fieldID: '$datePostedID',
+    value: formatDateForProject(datePosted),
+    literal: true,
+  })}
+      ${generateMutationToUpdateField({
+    item: item,
+    fieldID: '$reviewDueDateID',
+    value: formatDateForProject(dueDate),
+    literal: true,
+  })}
+      ${generateMutationToUpdateField({
+    item: item,
+    fieldID: '$contributorTypeID',
+    value: '$contributorType',
+  })}
+      ${generateMutationToUpdateField({
+    item: item,
+    fieldID: '$featureID',
+    value: feature,
+    literal: true,
+  })}
+      ${generateMutationToUpdateField({
+    item: item,
+    fieldID: '$authorID',
+    value: author,
+    literal: true,
+  })}
+      }
+    `
+
+  return mutation
+}
+
+export default {
+  addItemsToProject,
+  docsTeamMemberQ,
+  findFieldID,
+  findSingleSelectID,
+  formatDateForProject,
+  calculateDueDate,
+  generateUpdateProjectNextItemFieldMutation,
+}
