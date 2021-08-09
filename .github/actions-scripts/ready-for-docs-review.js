@@ -28,7 +28,7 @@ function generateUpdateProjectNextItemFieldMutation(item, author, turnaround = 2
 
   // Build the mutation to update a single project field
   // Specify literal=true to indicate that the value should be used as a string, not a variable
-  function generateMutationToUpdateField({ index, item, fieldID, value, literal = false }) {
+  function generateMutationToUpdateField({ item, fieldID, value, literal = false }) {
     let parsedValue
     if (literal) {
       parsedValue = `value: "${value}"`
@@ -37,7 +37,7 @@ function generateUpdateProjectNextItemFieldMutation(item, author, turnaround = 2
     }
 
     return `
-      set_${fieldID.substr(1)}_item_${index}: updateProjectNextItemField(input: {
+      set_${fieldID.substr(1)}_item_${item}: updateProjectNextItemField(input: {
         projectId: $project
         itemId: "${item}"
         fieldId: ${fieldID}
@@ -63,40 +63,34 @@ function generateUpdateProjectNextItemFieldMutation(item, author, turnaround = 2
       $authorID: ID!
     ) {
       ${generateMutationToUpdateField({
-    index: index,
     item: item,
     fieldID: '$statusID',
     value: '$statusValueID',
   })}
       ${generateMutationToUpdateField({
-    index: index,
     item: item,
     fieldID: '$datePostedID',
     value: formatDateForProject(datePosted),
     literal: true,
   })}
       ${generateMutationToUpdateField({
-    index: index,
     item: item,
     fieldID: '$reviewDueDateID',
     value: formatDateForProject(dueDate),
     literal: true,
   })}
       ${generateMutationToUpdateField({
-    index: index,
     item: item,
     fieldID: '$contributorTypeID',
     value: '$contributorType',
   })}
       ${generateMutationToUpdateField({
-    index: index,
     item: item,
     fieldID: '$featureID',
     value: feature,
     literal: true,
   })}
       ${generateMutationToUpdateField({
-    index: index,
     item: item,
     fieldID: '$authorID',
     value: author,
