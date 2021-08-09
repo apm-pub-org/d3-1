@@ -1,34 +1,8 @@
 import { graphql } from '@octokit/graphql'
 
-import { addItemsToProject } from "./projects.js"
+import { addItemsToProject, docsTeamMemberQ, findFieldID, findSingleSelectID, formatDateForProject, calculateDueDate } from "./projects.js"
 
-async function docsTeamMemberQ(login) {
-  // Get all members of the docs team
-  const data = await graphql(
-    `
-      query {
-        organization(login: "github") {
-          team(slug: "docs") {
-            members {
-              nodes {
-                login
-              }
-            }
-          }
-        }
-      }
-    `,
-    {
-      headers: {
-        authorization: `token ${process.env.TOKEN}`,
-      },
-    }
-  )
 
-  const teamMembers = data.organization.team.members.nodes.map((entry) => entry.login)
-
-  return teamMembers.includes(login)
-}
 
 // Given a list of project item node IDs and a list of corresponding authors
 // generates a GraphQL mutation to populate:
@@ -38,30 +12,14 @@ async function docsTeamMemberQ(login) {
 //   - "Feature" (as "OpenAPI schema update")
 //   - "Contributor type" (as "Hubber or partner" option)
 // Does not populate "Review needs" or "Size"
-function generateUpdateProjectNextItemFieldMutation(items, authors) {
-  // Formats a date object into the required format for projects
-  function formatDate(date) {
-    return date.getFullYear() + '-' + (date.getMonth() + 1) + '-' + date.getDate()
-  }
+function generateUpdateProjectNextItemFieldMutation(items, authors, feature = "", turnaround = 2) {
 
-  // Calculate 2 weekdays from now (excluding weekends; not considering holidays)
   const datePosted = new Date()
-  let daysUntilDue
-  switch (datePosted.getDay()) {
-    case 0: // Sunday
-      daysUntilDue = 3
-      break
-    case 6: // Saturday
-      daysUntilDue = 4
-      break
-    default:
-      daysUntilDue = 2
-  }
-  const millisecPerDay = 24 * 60 * 60 * 1000
-  const dueDate = new Date(datePosted.getTime() + millisecPerDay * daysUntilDue)
+  const dueDate = calculateDueDate(datePosted, turnaround)
 
-  // Build the mutation for a single field
-  function generateMutation({ index, item, fieldID, value, literal = false }) {
+  // Build the mutation to update a single project field
+  // Specify literal=true to indicate that the value should be used as a string, not a variable
+  function generateMutationToUpdateField({ index, item, fieldID, value, literal = false }) {
     let parsedValue
     if (literal) {
       parsedValue = `value: "${value}"`
@@ -86,33 +44,40 @@ function generateUpdateProjectNextItemFieldMutation(items, authors) {
   // Build the mutation for all fields for all items
   const mutations = items.map(
     (item, index) => `
-    ${generateMutation({
+    ${generateMutationToUpdateField({
       index: index,
       item: item,
       fieldID: '$statusID',
       value: '$readyForReviewID',
     })}
-    ${generateMutation({
+    ${generateMutationToUpdateField({
       index: index,
       item: item,
       fieldID: '$datePostedID',
-      value: formatDate(datePosted),
+      value: formatDateForProject(datePosted),
       literal: true,
     })}
-    ${generateMutation({
+    ${generateMutationToUpdateField({
       index: index,
       item: item,
       fieldID: '$reviewDueDateID',
-      value: formatDate(dueDate),
+      value: formatDateForProject(dueDate),
       literal: true,
+    })}
+    ${generateMutationToUpdateField({
+      index: index,
+      item: item,
+      fieldID: '$contributorTypeID',
+      value: '$hubberTypeID',
     })}
     ${generateMutation({
       index: index,
       item: item,
-      fieldID: '$contributorTypeID',
-      value: '$contributorType',
+      fieldID: '$featureID',
+      value: feature,
+      literal: true,
     })}
-    ${generateMutation({
+    ${generateMutationToUpdateField({
       index: index,
       item: item,
       fieldID: '$authorID',
@@ -174,47 +139,11 @@ async function run() {
   // Get the project ID
   const projectID = data.organization.projectNext.id
 
-  function findFieldID(fieldName, data) {
-    const field = data.organization.projectNext.fields.nodes.find(
-      (field) => field.name === fieldName
-    )
-
-    if (field && field.id) {
-      return field.id
-    } else {
-      throw new Error(
-        `A field called "${fieldName}" was not found. Check if the field was renamed.`
-      )
-    }
-  }
-
-  function findSingleSelectID(singleSelectName, fieldName, data) {
-    const field = data.organization.projectNext.fields.nodes.find(
-      (field) => field.name === fieldName
-    )
-    if (!field) {
-      throw new Error(
-        `A field called "${fieldName}" was not found. Check if the field was renamed.`
-      )
-    }
-
-    const singleSelect = JSON.parse(field.settings).options.find(
-      (field) => field.name === singleSelectName
-    )
-
-    if (singleSelect && singleSelect.id) {
-      return singleSelect.id
-    } else {
-      throw new Error(
-        `A single select called "${singleSelectName}" for the field "${fieldName}" was not found. Check if the single select was renamed.`
-      )
-    }
-  }
-
   // Get the ID of the fields that we want to populate
   const datePostedID = findFieldID('Date posted', data)
   const reviewDueDateID = findFieldID('Review due date', data)
   const statusID = findFieldID('Status', data)
+  const featureID = findFieldID('Feature', data)
   const contributorTypeID = findFieldID('Contributor type', data)
   const authorID = findFieldID('Author', data)
 
@@ -222,14 +151,12 @@ async function run() {
   const readyForReviewID = findSingleSelectID('Ready for review', 'Status', data)
   const hubberTypeID = findSingleSelectID('Hubber or partner', 'Contributor type', data)
   const docsMemberTypeID = findSingleSelectID('Docs team', 'Contributor type', data)
+  const osContributorTypeID = findSingleSelectID('OS contributor', 'Contributor type', data)
+
   // Add the PRs to the project
   // todo could change addItemsToProject to take single or list
   // todo move common functions and import them
   const newItemIDs = await addItemsToProject([process.env.PR_NODE_ID], projectID)
-
-  // Determine what "contributor type" to specify based on docs team membership
-  const isDocsTeamMember = await docsTeamMemberQ(process.env.AUTHOR_LOGIN)
-  const contributorType = isDocsTeamMember ? docsMemberTypeID : hubberTypeID
 
   // Populate fields for the new project items
   // todo could change generateUpdateProjectNextItemFieldMutation to take single or list
@@ -245,7 +172,8 @@ async function run() {
     datePostedID: datePostedID,
     reviewDueDateID: reviewDueDateID,
     contributorTypeID: contributorTypeID,
-    contributorType: contributorType,
+    hubberTypeID: hubberTypeID,
+    featureID: featureID,
     authorID: authorID,
     headers: {
       authorization: `token ${process.env.TOKEN}`,
