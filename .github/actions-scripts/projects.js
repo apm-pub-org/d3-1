@@ -1,7 +1,8 @@
+import { graphql } from '@octokit/graphql'
+
 // Given a list of PR/issue node IDs and a project node ID,
 // adds the PRs/issues to the project
 // and returns the node IDs of the project items
-
 export async function addItemsToProject(items, project) {
   console.log(`Adding ${items} to project ${project}`)
 
@@ -42,7 +43,4 @@ export async function addItemsToProject(items, project) {
   return newItemIDs
 }
 
-
-export default {
-  addItemsToProject
-}
+export default { addItemsToProject }
