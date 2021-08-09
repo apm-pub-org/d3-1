@@ -41,3 +41,8 @@ export async function addItemsToProject(items, project) {
 
   return newItemIDs
 }
+
+
+export default {
+  addItemsToProject
+}
