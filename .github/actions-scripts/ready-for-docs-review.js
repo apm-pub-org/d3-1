@@ -68,7 +68,7 @@ function generateUpdateProjectNextItemFieldMutation(items, authors, feature = ""
       index: index,
       item: item,
       fieldID: '$contributorTypeID',
-      value: '$hubberTypeID',
+      value: '$contributorType',
     })}
     ${generateMutationToUpdateField({
       index: index,
@@ -98,7 +98,6 @@ function generateUpdateProjectNextItemFieldMutation(items, authors, feature = ""
       $contributorTypeID: ID!
       $contributorType: String!
       $authorID: ID!
-
     ) {
       ${mutations.join(' ')}
     }
