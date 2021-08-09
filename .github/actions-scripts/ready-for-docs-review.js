@@ -2,105 +2,11 @@ import { graphql } from '@octokit/graphql'
 
 import {
   addItemsToProject,
-  docsTeamMemberQ,
+  isDocsTeamMember,
   findFieldID,
   findSingleSelectID,
-  formatDateForProject,
-  calculateDueDate,
+  generateUpdateProjectNextItemFieldMutation,
 } from './projects.js'
-
-// todo make it so that contributor type is variable. will need to make sure to only pass the variable that is used. will also need to get repo to determing contributor type;
-
-// Given a project item node IDs and author login
-// generates a GraphQL mutation to populate:
-//   - "Status" (as variable passed with the request)
-//   - "Date posted" (as today)
-//   - "Review due date" (as today + {turnaround} weekdays)
-//   - "Contributor type" (as variable passed with the request)
-//   - "Feature" (as {feature})
-//   - "Author" (as {author})"
-// Does not populate "Review needs" or "Size"
-//todo convert to named args
-
-function generateUpdateProjectNextItemFieldMutation(item, author, turnaround = 2, feature = '') {
-  const datePosted = new Date()
-  const dueDate = calculateDueDate(datePosted, turnaround)
-
-  // Build the mutation to update a single project field
-  // Specify literal=true to indicate that the value should be used as a string, not a variable
-  function generateMutationToUpdateField({ item, fieldID, value, literal = false }) {
-    let parsedValue
-    if (literal) {
-      parsedValue = `value: "${value}"`
-    } else {
-      parsedValue = `value: ${value}`
-    }
-
-    return `
-      set_${fieldID.substr(1)}_item_${item}: updateProjectNextItemField(input: {
-        projectId: $project
-        itemId: "${item}"
-        fieldId: ${fieldID}
-        ${parsedValue}
-      }) {
-      projectNextItem {
-        id
-      }
-    }
-    `
-  }
-
-  const mutation = `
-    mutation(
-      $project: ID!
-      $statusID: ID!
-      $statusValueID: String!
-      $datePostedID: ID!
-      $reviewDueDateID: ID!
-      $contributorTypeID: ID!
-      $contributorType: String!
-      $featureID: ID!
-      $authorID: ID!
-    ) {
-      ${generateMutationToUpdateField({
-    item: item,
-    fieldID: '$statusID',
-    value: '$statusValueID',
-  })}
-      ${generateMutationToUpdateField({
-    item: item,
-    fieldID: '$datePostedID',
-    value: formatDateForProject(datePosted),
-    literal: true,
-  })}
-      ${generateMutationToUpdateField({
-    item: item,
-    fieldID: '$reviewDueDateID',
-    value: formatDateForProject(dueDate),
-    literal: true,
-  })}
-      ${generateMutationToUpdateField({
-    item: item,
-    fieldID: '$contributorTypeID',
-    value: '$contributorType',
-  })}
-      ${generateMutationToUpdateField({
-    item: item,
-    fieldID: '$featureID',
-    value: feature,
-    literal: true,
-  })}
-      ${generateMutationToUpdateField({
-    item: item,
-    fieldID: '$authorID',
-    value: author,
-    literal: true,
-  })}
-      }
-    `
-
-  return mutation
-}
 
 async function run() {
   // Get info about the docs-content review board project
@@ -150,44 +56,41 @@ async function run() {
 
   // Add the PRs to the project
   const newItemIDs = await addItemsToProject([process.env.PR_NODE_ID], projectID)
+  const newItemID = newItemIDs[0]
 
-  // Given the author login and repo, determine which variable to use for the contributor type
-  function getContributorID(author, repo) {
 
-    const isDocsTeamMember = docsTeamMemberQ(author)
 
-    if (isDocsTeamMember) return docsMemberTypeID
+  // Populate fields for the new project item
+  const updateProjectNextItemMutation = generateUpdateProjectNextItemFieldMutation({ item: newItemID, author: process.env.AUTHOR_LOGIN, turnaround: 2 })
 
-    if (repo === "github/docs") return osContributorTypeID
-
-    return hubberTypeID
+  // Ddetermine which variable to use for the contributor type
+  let contributorType
+  if (isDocsTeamMember(author)) {
+    contributorType = docsMemberTypeID
+  } else if (repo === "github/docs") {
+    contributorType = osContributorTypeID
+  } else {
+    contributorType = hubberTypeID
   }
 
-  // Populate fields for the new project items
-  for (const itemID of newItemIDs) {
-    const updateProjectNextItemMutation = generateUpdateProjectNextItemFieldMutation(itemID, process.env.AUTHOR_LOGIN, 2)
-    console.log(process.env.PR_REPO)
-    const contributorType = getContributorID(process.env.AUTHOR_LOGIN, process.env.PR_REPO)//todo need to pass repo to action¸
-    console.log(`Populating fields for item: ${newItemIDs}`)
+  console.log(`Populating fields for item: ${newItemID}`)
 
-    await graphql(updateProjectNextItemMutation, {
-      project: projectID,
-      statusID: statusID,
-      statusValueID: readyForReviewID,
-      datePostedID: datePostedID,
-      reviewDueDateID: reviewDueDateID,
-      contributorTypeID: contributorTypeID,
-      contributorType: contributorType,
-      featureID: featureID,
-      authorID: authorID,
-      headers: {
-        authorization: `token ${process.env.TOKEN}`,
-        'GraphQL-Features': 'projects_next_graphql',
-      },
-    })
-    console.log('Done populating fields for item')
-
-  }
+  await graphql(updateProjectNextItemMutation, {
+    project: projectID,
+    statusID: statusID,
+    statusValueID: readyForReviewID,
+    datePostedID: datePostedID,
+    reviewDueDateID: reviewDueDateID,
+    contributorTypeID: contributorTypeID,
+    contributorType: contributorType,
+    featureID: featureID,
+    authorID: authorID,
+    headers: {
+      authorization: `token ${process.env.TOKEN}`,
+      'GraphQL-Features': 'projects_next_graphql',
+    },
+  })
+  console.log('Done populating fields for item')
 
   return newItemIDs
 }
