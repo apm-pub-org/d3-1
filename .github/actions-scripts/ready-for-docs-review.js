@@ -54,7 +54,7 @@ function generateUpdateProjectNextItemFieldMutation(item, author, turnaround = 2
     mutation(
       $project: ID!
       $statusID: ID!
-      $readyForReviewID: String!
+      $statusValueID: String!
       $datePostedID: ID!
       $reviewDueDateID: ID!
       $contributorTypeID: ID!
