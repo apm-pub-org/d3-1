@@ -97,6 +97,7 @@ function generateUpdateProjectNextItemFieldMutation(items, authors, feature = ""
       $reviewDueDateID: ID!
       $contributorTypeID: ID!
       $contributorType: String!
+      $featureID: ID!
       $authorID: ID!
     ) {
       ${mutations.join(' ')}
