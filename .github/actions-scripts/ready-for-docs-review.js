@@ -170,7 +170,7 @@ async function run() {
   }
 
   // Populate fields for the new project items
-  for (const item of newItemIDs) {
+  for (const itemID of newItemIDs) {
     const updateProjectNextItemMutation = generateUpdateProjectNextItemFieldMutation(itemID, process.env.AUTHOR_LOGIN, 2)
     console.log(process.env.PR_REPO)
     const contributorType = getContributorID(process.env.AUTHOR_LOGIN, process.env.PR_REPO)//todo need to pass repo to action¸
