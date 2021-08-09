@@ -28,5 +28,6 @@ jobs:
           ORGANIZATION: 'ske-test-org'
           PR_NODE_ID: ${{ github.event.pull_request.node_id }}
           AUTHOR_LOGIN: ${{ github.event.pull_request.user.login }}
+          PR_REPO: ${{ github.event.pull_request.base.repo.full_name }}
 
 # todo if failure, do old action? 
