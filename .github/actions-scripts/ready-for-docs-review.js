@@ -2,7 +2,7 @@ import { graphql } from '@octokit/graphql'
 
 
 async function docsTeamMemberQ(login) {
-  console.log(1)
+
   // Get all members of the docs team
   const data = await graphql(
     `
@@ -21,11 +21,11 @@ async function docsTeamMemberQ(login) {
     `,
     {
       headers: {
-        authorization: `token `,
+        authorization: `token ${process.env.TOKEN}`,
       },
     }
   )
-  console.log(2)
+
   const teamMembers = data.organization.team.members.nodes.map(entry => entry.login)
   
   return teamMembers.includes(login)
@@ -55,7 +55,7 @@ async function addItemsToProject(items, project) {
     ${mutations.join(' ')}
   }
   `
-  console.log(3)
+
   const newItems = await graphql(mutation, {
     project: project,
     headers: {
@@ -63,7 +63,7 @@ async function addItemsToProject(items, project) {
       'GraphQL-Features': 'projects_next_graphql',
     },
   })
-  console.log(4)
+
   // The output of the mutation is
   // {"pr_0":{"projectNextItem":{"id":ID!}},...}
   // Pull out the ID for each new item
@@ -187,7 +187,6 @@ function generateUpdateProjectNextItemFieldMutation(items, authors) {
 }
 
 async function run() {
-  console.log(5)
   // Get info about the docs-content review board project
   const data = await graphql(
     `
@@ -215,7 +214,7 @@ async function run() {
       },
     }
   )
-  console.log(6)
+
   // todo get the node id of the PR -- I think I cam pass as env var
 
   // Get the project ID
