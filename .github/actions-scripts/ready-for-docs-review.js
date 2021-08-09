@@ -1,5 +1,36 @@
 import { graphql } from '@octokit/graphql'
 
+
+async function docsTeamMemberQ(login) {
+
+  // Get all members of the docs team
+  const data = await graphql(
+    `
+      query {
+        organization(login: "github") {
+          team(slug: "docs") {
+            members {
+              nodes {
+                login
+              }
+            }
+          }
+        }
+      }
+      
+    `,
+    {
+      headers: {
+        authorization: `token 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`,
+      },
+    }
+  )
+
+  const teamMembers = data.organization.team.members.nodes.map(entry => entry.login)
+  
+  return teamMembers.includes(login)
+}
+
 // Given a list of PR/issue node IDs and a project node ID,
 // adds the PRs/issues to the project
 // and returns the node IDs of the project items
@@ -123,7 +154,7 @@ function generateUpdateProjectNextItemFieldMutation(items, authors) {
       index: index,
       item: item,
       fieldID: '$contributorTypeID',
-      value: '$hubberTypeID',
+      value: '$contributorType',
     })}
     ${generateMutation({
       index: index,
@@ -144,7 +175,7 @@ function generateUpdateProjectNextItemFieldMutation(items, authors) {
       $datePostedID: ID!
       $reviewDueDateID: ID!
       $contributorTypeID: ID!
-      $hubberTypeID: String!
+      $contributorType: String!
       $authorID: ID!
 
     ) {
@@ -237,18 +268,21 @@ async function run() {
   const readyForReviewID = findSingleSelectID('Ready for review', 'Status', data)
   const hubberTypeID = findSingleSelectID('Hubber or partner', 'Contributor type', data)
   const docsMemberTypeID = findSingleSelectID('Docs team', 'Contributor type', data)
-
+  //todo add logic for hubberTypeID vs docsMemberTypeID
   // Add the PRs to the project
   // todo could change addItemsToProject to take single or list
   // todo move common functions and import them
   const newItemIDs = await addItemsToProject([process.env.PR_NODE_ID], projectID)
 
+  // Determine what "contributor type" to specify based on docs team membership
+  const isDocsTeamMember = await docsTeamMemberQ(process.env.AUTHOR_LOGIN)
+  const contributorType = isDocsTeamMember ? docsMemberTypeID : hubberTypeID;
+
   // Populate fields for the new project items
   // todo could change generateUpdateProjectNextItemFieldMutation to take single or list
-  const updateProjectNextItemMutation = generateUpdateProjectNextItemFieldMutation(
-    newItemIDs,
-    [process.env.AUTHOR_LOGIN]
-  )
+  const updateProjectNextItemMutation = generateUpdateProjectNextItemFieldMutation(newItemIDs, [
+    process.env.AUTHOR_LOGIN,
+  ])
   console.log(`Populating fields for these items: ${newItemIDs}`)
 
   await graphql(updateProjectNextItemMutation, {
@@ -258,7 +292,7 @@ async function run() {
     datePostedID: datePostedID,
     reviewDueDateID: reviewDueDateID,
     contributorTypeID: contributorTypeID,
-    hubberTypeID: hubberTypeID,
+    contributorType: contributorType,
     authorID: authorID,
     headers: {
       authorization: `token ${process.env.TOKEN}`,
