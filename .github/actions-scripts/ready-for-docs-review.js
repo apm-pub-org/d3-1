@@ -65,9 +65,9 @@ async function run() {
 
   // Ddetermine which variable to use for the contributor type
   let contributorType
-  if (isDocsTeamMember(author)) {
+  if (isDocsTeamMember(process.env.AUTHOR_LOGIN)) {
     contributorType = docsMemberTypeID
-  } else if (repo === "github/docs") {
+  } else if (process.env.PR_REPO === "github/docs") {
     contributorType = osContributorTypeID
   } else {
     contributorType = hubberTypeID
