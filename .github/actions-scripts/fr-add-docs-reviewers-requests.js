@@ -139,11 +139,15 @@ async function run() {
     console.log('All found PRs are already on the project. Exiting.')
     return
   }
-    
+
   // Populate fields for the new project items
-  // (Using for...of instead of forEach since it uses await)
+  // (Using for...of instead of forEach since the function uses await)
   for (const [index, itemID] of newItemIDs.entries()) {
-    const updateProjectNextItemMutation = generateUpdateProjectNextItemFieldMutation({item: itemID, author: prAuthors[index], turnaround: 2})
+    const updateProjectNextItemMutation = generateUpdateProjectNextItemFieldMutation({
+      item: itemID,
+      author: prAuthors[index],
+      turnaround: 2,
+    })
     const contributorType = isDocsTeamMember(prAuthors[index]) ? docsMemberTypeID : hubberTypeID
     console.log(`Populating fields for item: ${itemID}`)
 
@@ -163,7 +167,6 @@ async function run() {
       },
     })
     console.log('Done populating fields for item')
-
   }
 
   return newItemIDs
