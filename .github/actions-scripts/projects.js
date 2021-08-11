@@ -1,6 +1,6 @@
 import { graphql } from '@octokit/graphql'
 
-// Pull out the node ID of a field
+// Pull out the node ID of a project field
 export function findFieldID(fieldName, data) {
   const field = data.organization.projectNext.fields.nodes.find((field) => field.name === fieldName)
 
@@ -38,10 +38,10 @@ export async function addItemsToProject(items, project) {
   console.log(`Adding ${items} to project ${project}`)
 
   const mutations = items.map(
-    (pr, index) => `
-    pr_${index}: addProjectNextItem(input: {
+    (item, index) => `
+    item_${index}: addProjectNextItem(input: {
       projectId: $project
-      contentId: "${pr}"
+      contentId: "${item}"
     }) {
       projectNextItem {
         id
@@ -65,13 +65,21 @@ export async function addItemsToProject(items, project) {
   })
 
   // The output of the mutation is
-  // {"pr_0":{"projectNextItem":{"id":ID!}},...}
+  // {"item_0":{"projectNextItem":{"id":ID!}},...}
   // Pull out the ID for each new item
   const newItemIDs = Object.entries(newItems).map((item) => item[1].projectNextItem.id)
 
   console.log(`New item IDs: ${newItemIDs}`)
 
   return newItemIDs
+}
+
+export async function addItemToProject(item, project) {
+  const newItemIDs = await addItemsToProject([item], project)
+
+  const newItemID = newItemIDs[0]
+
+  return newItemID
 }
 
 // Given a GitHub login, returns a bool indicating
@@ -109,7 +117,9 @@ export function formatDateForProject(date) {
   return date.getFullYear() + '-' + (date.getMonth() + 1) + '-' + date.getDate()
 }
 
-// Calculate the date {turnaround} business days from now (excluding weekends; not considering holidays)
+// Given a date object and optional turnaround time
+// Calculate the date {turnaround} business days from now
+// (excluding weekends; not considering holidays)
 export function calculateDueDate(datePosted, turnaround = 2) {
   let daysUntilDue
   switch (datePosted.getDay()) {
@@ -135,19 +145,19 @@ export function calculateDueDate(datePosted, turnaround = 2) {
 //   - "Contributor type" (as variable passed with the request)
 //   - "Feature" (as {feature})
 //   - "Author" (as {author})"
-export function generateUpdateProjectNextItemFieldMutation( {item, author, turnaround = 2, feature = ''} ) {
+export function generateUpdateProjectNextItemFieldMutation({
+  item,
+  author,
+  turnaround = 2,
+  feature = '',
+}) {
   const datePosted = new Date()
   const dueDate = calculateDueDate(datePosted, turnaround)
 
   // Build the mutation to update a single project field
   // Specify literal=true to indicate that the value should be used as a string, not a variable
   function generateMutationToUpdateField({ item, fieldID, value, literal = false }) {
-    let parsedValue
-    if (literal) {
-      parsedValue = `value: "${value}"`
-    } else {
-      parsedValue = `value: ${value}`
-    }
+    const parsedValue = literal ? `value: "${value}"` : `value: ${value}`
 
     return `
       set_${fieldID.substr(1)}_item_${item}: updateProjectNextItemField(input: {
@@ -176,39 +186,39 @@ export function generateUpdateProjectNextItemFieldMutation( {item, author, turna
       $authorID: ID!
     ) {
       ${generateMutationToUpdateField({
-    item: item,
-    fieldID: '$statusID',
-    value: '$statusValueID',
-  })}
+        item: item,
+        fieldID: '$statusID',
+        value: '$statusValueID',
+      })}
       ${generateMutationToUpdateField({
-    item: item,
-    fieldID: '$datePostedID',
-    value: formatDateForProject(datePosted),
-    literal: true,
-  })}
+        item: item,
+        fieldID: '$datePostedID',
+        value: formatDateForProject(datePosted),
+        literal: true,
+      })}
       ${generateMutationToUpdateField({
-    item: item,
-    fieldID: '$reviewDueDateID',
-    value: formatDateForProject(dueDate),
-    literal: true,
-  })}
+        item: item,
+        fieldID: '$reviewDueDateID',
+        value: formatDateForProject(dueDate),
+        literal: true,
+      })}
       ${generateMutationToUpdateField({
-    item: item,
-    fieldID: '$contributorTypeID',
-    value: '$contributorType',
-  })}
+        item: item,
+        fieldID: '$contributorTypeID',
+        value: '$contributorType',
+      })}
       ${generateMutationToUpdateField({
-    item: item,
-    fieldID: '$featureID',
-    value: feature,
-    literal: true,
-  })}
+        item: item,
+        fieldID: '$featureID',
+        value: feature,
+        literal: true,
+      })}
       ${generateMutationToUpdateField({
-    item: item,
-    fieldID: '$authorID',
-    value: author,
-    literal: true,
-  })}
+        item: item,
+        fieldID: '$authorID',
+        value: author,
+        literal: true,
+      })}
       }
     `
 
@@ -217,6 +227,7 @@ export function generateUpdateProjectNextItemFieldMutation( {item, author, turna
 
 export default {
   addItemsToProject,
+  addItemToProject,
   isDocsTeamMember,
   findFieldID,
   findSingleSelectID,
