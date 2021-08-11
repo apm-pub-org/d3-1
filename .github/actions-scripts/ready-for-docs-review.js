@@ -1,7 +1,7 @@
 import { graphql } from '@octokit/graphql'
 
 import {
-  addItemsToProject,
+  addItemToProject,
   isDocsTeamMember,
   findFieldID,
   findSingleSelectID,
@@ -54,20 +54,21 @@ async function run() {
   const docsMemberTypeID = findSingleSelectID('Docs team', 'Contributor type', data)
   const osContributorTypeID = findSingleSelectID('OS contributor', 'Contributor type', data)
 
-  // Add the PRs to the project
-  const newItemIDs = await addItemsToProject([process.env.PR_NODE_ID], projectID)
-  const newItemID = newItemIDs[0]
+  // Add the PR to the project
+  const newItemID = await addItemToProject(process.env.PR_NODE_ID, projectID)
 
+  // Generate a mutation to populate fields for the new project item
+  const updateProjectNextItemMutation = generateUpdateProjectNextItemFieldMutation({
+    item: newItemID,
+    author: process.env.AUTHOR_LOGIN,
+    turnaround: 2,
+  })
 
-
-  // Populate fields for the new project item
-  const updateProjectNextItemMutation = generateUpdateProjectNextItemFieldMutation({ item: newItemID, author: process.env.AUTHOR_LOGIN, turnaround: 2 })
-
-  // Ddetermine which variable to use for the contributor type
+  // Determine which variable to use for the contributor type
   let contributorType
   if (isDocsTeamMember(process.env.AUTHOR_LOGIN)) {
     contributorType = docsMemberTypeID
-  } else if (process.env.PR_REPO === "github/docs") {
+  } else if (process.env.PR_REPO === 'github/docs') {
     contributorType = osContributorTypeID
   } else {
     contributorType = hubberTypeID
