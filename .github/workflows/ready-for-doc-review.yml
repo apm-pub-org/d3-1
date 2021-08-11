@@ -30,4 +30,8 @@ jobs:
           AUTHOR_LOGIN: ${{ github.event.pull_request.user.login }}
           PR_REPO: ${{ github.event.pull_request.base.repo.full_name }}
 
-# todo if failure, do old action? 
+        # Since the projects API is still in beta, use the old workflow if something fails
+        # so that we don't miss these PRs
+      - name: Backup action (Add pull request to FR project board)
+        if: ${{ failure() }}
+        run: echo "FAILURE CAUGHT"
