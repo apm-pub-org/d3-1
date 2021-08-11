@@ -93,7 +93,7 @@ async function run() {
   })
   console.log('Done populating fields for item')
 
-  return newItemID
+  return newItemIDs
 }
 
 run().catch((error) => {
