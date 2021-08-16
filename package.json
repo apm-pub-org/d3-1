@@ -1,0 +1,27 @@
+{
+  "name": "test-org-repo",
+  "version": "1.0.0",
+  "description": "",
+  "type": "module",
+  "exports": "./index.js",
+  "engines": {
+    "node": ">= 16.0.0"
+  },
+  "directories": {
+    "doc": "docs"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ske-test-org/test-org-repo.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/ske-test-org/test-org-repo/issues"
+  },
+  "homepage": "https://github.com/ske-test-org/test-org-repo#readme"
+}

@@ -13,20 +13,26 @@ jobs:
           ORGANIZATION: ske-test-org
           PROJECT_NUMBER: 6
         run: |
-          (gh api graphql --header 'GraphQL-Features: projects_next_graphql' -f query='
+          gh api graphql --header 'GraphQL-Features: projects_next_graphql' -f query='
             query($org: String!, $number: Int!) {
               organization(login: $org){
                 projectNext(number: $number) {
-                  id, fields(first:20) {nodes {id, name, settings}}
+                  id
+                  fields(first:20) {
+                    nodes {
+                      id
+                      name
+                      settings
+                    }
+                  }
                 }
               }
-            }' -F org=$ORGANIZATION -F number=$PROJECT_NUMBER
-          ) > project_data.json
+            }' -f org=$ORGANIZATION -F number=$PROJECT_NUMBER > project_data.json
 
           echo 'PROJECT_ID='$(jq '.data.organization.projectNext.id' project_data.json) >> $GITHUB_ENV
           echo 'DATE_FIELD_ID='$(jq '.data.organization.projectNext.fields.nodes[] | select(.name== "Date posted") | .id' project_data.json) >> $GITHUB_ENV
           echo 'STATUS_FIELD_ID='$(jq '.data.organization.projectNext.fields.nodes[] | select(.name== "Status") | .id' project_data.json) >> $GITHUB_ENV
-          echo 'TODO_OPTION_ID='$(jq '.data.organization.projectNext.fields.nodes[] | select(.name== "Status") |.settings | fromjson.options[] | select(.name=="ToDo") |.id' project_data.json) >> $GITHUB_ENV
+          echo 'TODO_OPTION_ID='$(jq '.data.organization.projectNext.fields.nodes[] | select(.name== "Status") |.settings | fromjson.options[] | select(.name=="Todo") |.id' project_data.json) >> $GITHUB_ENV
 
       - name: Add PR to project
         env:
@@ -34,41 +40,50 @@ jobs:
           PR_ID: ${{ github.event.pull_request.node_id }}
         run: |
           item_id="$( gh api graphql --header 'GraphQL-Features: projects_next_graphql' -f query='
-            mutation($proj:ID!, $pr:ID!) {
-              addProjectNextItem(input: {projectId: $proj, contentId: $pr}) {
+            mutation($project:ID!, $pr:ID!) {
+              addProjectNextItem(input: {projectId: $project, contentId: $pr}) {
                 projectNextItem {
                   id
                 }
               }
-            }' -F proj=$PROJECT_ID -F pr=$PR_ID --jq '.data.addProjectNextItem.projectNextItem.id')"
+            }' -f project=$PROJECT_ID -f pr=$PR_ID --jq '.data.addProjectNextItem.projectNextItem.id')"
           
           echo 'ITEM_ID='$item_id >> $GITHUB_ENV
-          
-      - name: Set status
-        env:
-          GITHUB_TOKEN: ${{secrets.PERSONAL_ACCESS_TOKEN}}
-        run: |
-          gh api graphql --header 'GraphQL-Features: projects_next_graphql' -f query='
-            mutation($proj: ID!, $item: ID!, $field: ID!, $value: String!) {
-              updateProjectNextItemField(input: {projectId: $proj, itemId: $item, fieldId: $field, value: $value}) {
-                projectNextItem {
-                  id
-                }
-              }
-            }' -F proj=$PROJECT_ID -F item=$ITEM_ID -F field=$STATUS_FIELD_ID -F value=$TODO_OPTION_ID
 
       - name: Get date
         run: echo "DATE=$(date +"%Y-%m-%d")" >> $GITHUB_ENV
 
-      - name: Set date
+      - name: Set fields
         env:
           GITHUB_TOKEN: ${{secrets.PERSONAL_ACCESS_TOKEN}}
         run: |
           gh api graphql --header 'GraphQL-Features: projects_next_graphql' -f query='
-            mutation($proj: ID!, $item: ID!, $field: ID!, $value: String!) {
-              updateProjectNextItemField(input: {projectId: $proj, itemId: $item, fieldId: $field, value: $value}) {
+            mutation (
+              $project: ID!
+              $item: ID!
+              $status_field: ID!
+              $status_value: String!
+              $date_field: ID!
+              $date_value: String!
+            ) {
+              set_status: updateProjectNextItemField(input: {
+                projectId: $project
+                itemId: $item
+                fieldId: $status_field
+                value: $status_value
+              }) {
+                projectNextItem {
+                  id
+                  }
+              }
+              set_date_posted: updateProjectNextItemField(input: {
+                projectId: $project
+                itemId: $item
+                fieldId: $date_field
+                value: $date_value
+              }) {
                 projectNextItem {
                   id
                 }
               }
-            }' -F proj=$PROJECT_ID -F item=$ITEM_ID -F field=$DATE_FIELD_ID -F value=$DATE
+            }' -f project=$PROJECT_ID -f item=$ITEM_ID -f status_field=$STATUS_FIELD_ID -f status_value=${{ env.TODO_OPTION_ID }} -f date_field=$DATE_FIELD_ID -f date_value=$DATE --silent
