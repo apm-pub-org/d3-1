@@ -1,7 +1,7 @@
-name: Copy to Open Source Repo
+name: Copy to REST API issue to docs-content
 
-# **What it does**: Copies internal issues to the open source repo
-# **Why we have it**: To copy internal issues to the open source repo (since you can't transfer issues from our internal repo to the public repo)
+# **What it does**: Copies an issue in the open source repo to the docs-content repo, comments on and closes the original issue
+# **Why we have it**: REST API updates cannot be made in the open source repo. Instead, we copy the issue to an internal issue (we do not transfer so that the issue does not disappear for the contributor) and close the original issue.
 # **Who does it impact**: Open source and docs-content maintainers
 
 on:
@@ -13,14 +13,13 @@ jobs:
   transfer-issue:
     name: Transfer issue
     runs-on: ubuntu-latest
-    if: github.event.label.name == 'aaa'
+    if: github.event.label.name == 'rest-description' && github.repository == 'apm-pub-org/d3-1'
     steps:
-
       - name: Check if this run was triggered by a member of the docs team
         uses: actions/github-script@626af12fe9a53dc2972b48385e7fe7dec79145c9
         id: triggered-by-member
         with:
-          github-token: ${{secrets.PERSONAL_ACCESS_TOKEN}} # todo change token
+          github-token: ${{secrets.PERSONAL_ACCESS_TOKEN}}
           result-encoding: string
           script: |
             const triggerer_login = context.payload.sender.login
@@ -38,37 +37,34 @@ jobs:
       - name: Exit if not triggered by a docs team member
         if: steps.triggered-by-member.outputs.result == 'false'
         run: |
-          echo Aborting. This workflow must be triggered by a member of the docs team
+          echo Aborting. This workflow must be triggered by a member of the docs team.
           exit 1
 
-#       - name: Escape code blocks
-#         run: echo "'ISSUE_BODY='${{ github.event.issue.body }} | tr g t" >> $GITHUB_ENV
-        
-      - name: Create an issue in the open source repo
-#         run: echo 'NEW_ISSUE='$(gh issue create --title "$ISSUE_TITLE" --body "$ISSUE_BODY" --repo apm-pub-org/apm-pub-org-pub-repo) >> $GITHUB_ENV
+      - name: Create an issue in the docs-content repo
         run: |
-          new_issue_url="$(gh issue create --title "$ISSUE_TITLE" --body "$ISSUE_BODY" --repo apm-pub-org/apm-pub-org-pub-repo)"
-          printf 'NEW_ISSUE="%s"\n' "$new_issue_url" >> $GITHUB_ENV
+          new_issue_url="$(gh issue create --title "$ISSUE_TITLE" --body "$ISSUE_BODY" --repo apm-pub-org/d3-2)"
+          echo 'NEW_ISSUE='$new_issue_url >> $GITHUB_ENV
         env:
           GITHUB_TOKEN: ${{secrets.PERSONAL_ACCESS_TOKEN}}
           ISSUE_TITLE: ${{ github.event.issue.title }}
           ISSUE_BODY: ${{ github.event.issue.body }}
-          
 
-      - name: Label the new issue
-        run: gh issue edit ${{ env.NEW_ISSUE }} --add-label "help wanted"
+      - name: Comment on the new issue
+        run: gh issue comment $NEW_ISSUE --body "This issue was originally opened in the open source repo as $OLD_ISSUE"
         env:
           GITHUB_TOKEN: ${{secrets.PERSONAL_ACCESS_TOKEN}}
+          NEW_ISSUE: ${{ env.NEW_ISSUE }}
+          OLD_ISSUE: ${{ github.event.issue.html_url }}
+
 
       - name: Comment on the old issue
-        run: gh issue comment ${{ github.event.issue.html_url }} --body "This issue was transferred to the open source repo as ${{ env.NEW_ISSUE }}"
+        run: gh issue comment $OLD_ISSUE --body "Thank you for opening this issue! Updates to the REST API description must be made internally. I have copied your issue to an internal issue, so I will close this issue."
         env:
           GITHUB_TOKEN: ${{secrets.PERSONAL_ACCESS_TOKEN}}
+          OLD_ISSUE: ${{ github.event.issue.html_url }}
 
       - name: Close the old issue
-        run: gh issue close ${{ github.event.issue.html_url }}
+        run: gh issue close $OLD_ISSUE
         env:
           GITHUB_TOKEN: ${{secrets.PERSONAL_ACCESS_TOKEN}}
-
-# TODO change PERSONAL_ACCESS_TOKEN to DOCS_BOT_FR
-# TODO change repo to github/docs
+          OLD_ISSUE: ${{ github.event.issue.html_url }}

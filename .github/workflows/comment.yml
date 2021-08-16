@@ -1,0 +1,54 @@
+name: Comment after label
+
+# **What it does**: 
+# **Why we have it**: 
+# **Who does it impact**: 
+
+on:
+  pull_request:
+    types:
+      - labeled
+
+jobs:
+  comment-that-approved:
+    name: Comment that approved
+    runs-on: ubuntu-latest
+    if: github.event.label.name == 'approved' # TODO sometimes also gate on repo
+    steps:
+      - name: print context
+        env:
+          GITHUB_CONTEXT: ${{ toJSON(github) }}
+        run: echo "$GITHUB_CONTEXT"
+#       - name: Check if this run was triggered by a member of the docs team
+#         uses: actions/github-script@626af12fe9a53dc2972b48385e7fe7dec79145c9
+#         id: triggered-by-member
+#         with:
+#           github-token: ${{secrets.GITHUB_TOKEN}}
+#           result-encoding: string
+#           script: |
+#             const triggerer_login = context.payload.sender.login
+#             const teamMembers = await github.request(
+#               `/orgs/github/teams/docs/members?per_page=100`
+#             )
+#             const logins = teamMembers.data.map(member => member.login)
+#             if (logins.includes(triggerer_login)) {
+#               console.log(`This workflow was triggered by ${triggerer_login} (on the docs team).`)
+#               return 'true'
+#             }
+#             console.log(`This workflow was triggered by ${triggerer_login} (not on the docs team), so no action will be taken.`)
+#             return 'false'
+
+#       - name: Exit if not triggered by a docs team member
+#         if: steps.triggered-by-member.outputs.result == 'false'
+#         run: |
+#           echo Aborting. This workflow must be triggered by a member of the docs team.
+#           exit 1
+
+      - name: Comment on the PR
+        run: |
+          gh pr comment $PR --body "yay
+          
+          second line"
+        env:
+          GITHUB_TOKEN: ${{secrets.PERSONAL_ACCESS_TOKEN}}
+          PR: ${{ github.event.pull_request.html_url }}

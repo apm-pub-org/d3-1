@@ -1,0 +1,30 @@
+name: copy contetns
+
+on:
+  push
+
+jobs:
+  copy:
+    name: copy
+    runs-on: ubuntu-latest
+    steps:
+    - name: check out repo content
+      uses: actions/checkout@v2
+
+#     - name: Read and assign
+#       id: output_test
+#       run: |
+#         echo "MYVAR=$(cat .github/workflows/review-template.md)" >> $GITHUB_ENV
+#     - name: use
+#       run: |
+#         echo $MYVAR
+    - name: create string
+      run: |
+        MY_STRING=$(cat .github/workflows/review-template.md)
+        echo "MY_STRING<<EOF" >> $GITHUB_ENV
+        echo "$MY_STRING" >> $GITHUB_ENV
+        echo "EOF" >> $GITHUB_ENV
+
+    - name: display string
+      run: |
+        echo "${{ env.MY_STRING }}"
