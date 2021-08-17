@@ -22,7 +22,6 @@ jobs:
           OWNER: ${{ github.repository_owner }}
           REPO: ${{ github.event.repository.name }}
       - run: |
-          gh issue create --title "Issue report" --body "$NUM_OPEN_ISSUES issues remaining" --repo $REPO
+          gh issue create --title "Issue report" --body "$NUM_OPEN_ISSUES issues remaining" --repo $GITHUB_REPOSITORY
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          REPO: $GITHUB_REPOSITORY
