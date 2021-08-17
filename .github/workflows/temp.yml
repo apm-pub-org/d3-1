@@ -1,13 +1,28 @@
-name: Comment when opened
-on:
-  issues:
-    types:
-      - opened
+name: Report remaining open issues
+on: 
+  workflow_dispatch:
 jobs:
-  comment:
+  track_pr:
     runs-on: ubuntu-latest
     steps:
-      - run: gh issue comment $ISSUE --body "Thank you for opening this issue!"
+      - run: |
+          numOpenIssues="$(gh api graphql -F owner=$OWNER -F name=$REPO -f query='
+            query($name: String!, $owner: String!) {
+              repository(owner: $owner, name: $name) {
+                issues(states:OPEN){
+                  totalCount
+                }
+              }
+            }
+          ' --jq '.data.repository.issues.totalCount')"
+
+          echo 'NUM_OPEN_ISSUES='$numOpenIssues >> $GITHUB_ENV
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          ISSUE: ${{ github.event.issue.html_url }}
+          OWNER: ${{ github.repository_owner }}
+          REPO: ${{ github.event.repository.name }}
+      - run: |
+          gh issue create --title "Issue report" --body "$NUM_OPEN_ISSUES issues remaining" --repo $REPO
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          REPO: $GITHUB_REPOSITORY
