@@ -108,6 +108,10 @@ export async function isDocsTeamMember(login) {
   )
 
   const teamMembers = data.organization.team.members.nodes.map((entry) => entry.login)
+  console.log("TEAM MEMBERS")
+  console.log(teamMembers)
+  console.log(login)
+  console.log(teamMembers.includes(login))
 
   return teamMembers.includes(login)
 }
