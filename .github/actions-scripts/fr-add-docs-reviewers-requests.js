@@ -152,8 +152,8 @@ console.log("hubber")
       turnaround: 2,
     })
     console.log("RETURNED")
-    console.log(isDocsTeamMember(prAuthors[index]))
-    const contributorType = isDocsTeamMember(prAuthors[index]) ? docsMemberTypeID : hubberTypeID
+
+    const contributorType = await isDocsTeamMember(prAuthors[index]) ? docsMemberTypeID : hubberTypeID
     console.log(contributorType)
     console.log(`Populating fields for item: ${itemID}`)
 
