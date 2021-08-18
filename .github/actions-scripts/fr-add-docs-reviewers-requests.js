@@ -125,7 +125,10 @@ async function run() {
   const readyForReviewID = findSingleSelectID('Ready for review', 'Status', data)
   const hubberTypeID = findSingleSelectID('Hubber or partner', 'Contributor type', data)
   const docsMemberTypeID = findSingleSelectID('Docs team', 'Contributor type', data)
-
+console.log("hubber")
+  console.log(hubberTypeID)
+  console.log("member")
+  console.log(docsMemberTypeID)
   // Add the PRs to the project
   const itemIDs = await addItemsToProject(prIDs, projectID)
 
@@ -148,9 +151,10 @@ async function run() {
       author: prAuthors[index],
       turnaround: 2,
     })
-    const contributorType = (await isDocsTeamMember(prAuthors[index]))
-      ? docsMemberTypeID
-      : hubberTypeID
+    console.log("RETURNED")
+
+    const contributorType = await isDocsTeamMember(prAuthors[index]) ? docsMemberTypeID : hubberTypeID
+    console.log(contributorType)
     console.log(`Populating fields for item: ${itemID}`)
 
     await graphql(updateProjectNextItemMutation, {
