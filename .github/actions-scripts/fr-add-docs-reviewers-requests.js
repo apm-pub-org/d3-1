@@ -149,9 +149,7 @@ async function run() {
       turnaround: 2,
       feature: "OpenAPI schema update",
     })
-    const contributorType = (await isDocsTeamMember(prAuthors[index]))
-      ? docsMemberTypeID
-      : hubberTypeID
+    const contributorType = await isDocsTeamMember(prAuthors[index]) ? docsMemberTypeID : hubberTypeID
     console.log(`Populating fields for item: ${itemID}`)
 
     await graphql(updateProjectNextItemMutation, {
