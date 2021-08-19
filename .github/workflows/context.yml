@@ -1,0 +1,21 @@
+name: Context
+
+on:
+  pull_request:
+    types: [labeled]
+  issues:
+    types: [labeled]
+
+jobs:
+  context:
+    runs-on: ubuntu-latest
+    steps:
+      - name: event
+        run: |
+          echo $GITHUB_EVENT_NAME
+      - name: context
+        env:
+          GITHUB_CONTEXT: ${{ toJSON(github) }}
+        run: |
+          echo $GITHUB_CONTEXT
+
