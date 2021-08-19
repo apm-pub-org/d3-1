@@ -125,6 +125,7 @@ async function run() {
   const readyForReviewID = findSingleSelectID('Ready for review', 'Status', data)
   const hubberTypeID = findSingleSelectID('Hubber or partner', 'Contributor type', data)
   const docsMemberTypeID = findSingleSelectID('Docs team', 'Contributor type', data)
+
   // Add the PRs to the project
   const itemIDs = await addItemsToProject(prIDs, projectID)
 
@@ -146,10 +147,12 @@ async function run() {
       item: itemID,
       author: prAuthors[index],
       turnaround: 2,
+      feature: "OpenAPI schema update",
     })
-
-    const contributorType = await isDocsTeamMember(prAuthors[index]) ? docsMemberTypeID : hubberTypeID
-    console.log("RETURNED")
+    const contributorType = (await isDocsTeamMember(prAuthors[index]))
+      ? docsMemberTypeID
+      : hubberTypeID
+   console.log("INFO.....") 
     console.log(contributorType)
     console.log(prAuthors[index])
     console.log(`Populating fields for item: ${itemID}`)
