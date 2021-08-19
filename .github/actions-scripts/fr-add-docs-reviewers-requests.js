@@ -118,6 +118,7 @@ async function run() {
   const reviewDueDateID = findFieldID('Review due date', data)
   const statusID = findFieldID('Status', data)
   const featureID = findFieldID('Feature', data)
+  const notesID = findFieldID('Notes', data)
   const contributorTypeID = findFieldID('Contributor type', data)
   const authorID = findFieldID('Author', data)
 
@@ -147,14 +148,12 @@ async function run() {
       item: itemID,
       author: prAuthors[index],
       turnaround: 2,
-      feature: "OpenAPI schema update",
+      feature: 'OpenAPI schema update',
+      notes: 'Notes on how to review: https://github.com/github/docs-content/blob/main/docs-content-docs/docs-content-workflows/reviews-and-feedback/review-process.md#reviewing-openapi-pull-requests'
     })
     const contributorType = (await isDocsTeamMember(prAuthors[index]))
       ? docsMemberTypeID
       : hubberTypeID
-   console.log("INFO.....") 
-    console.log(contributorType)
-    console.log(prAuthors[index])
     console.log(`Populating fields for item: ${itemID}`)
 
     await graphql(updateProjectNextItemMutation, {
@@ -166,6 +165,7 @@ async function run() {
       contributorTypeID: contributorTypeID,
       contributorType: contributorType,
       featureID: featureID,
+      notesID: notesID,
       authorID: authorID,
       headers: {
         authorization: `token ${process.env.TOKEN}`,
