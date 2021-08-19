@@ -45,6 +45,7 @@ async function run() {
   const reviewDueDateID = findFieldID('Review due date', data)
   const statusID = findFieldID('Status', data)
   const featureID = findFieldID('Feature', data)
+  const notesID = findFieldID('Notes', data)
   const contributorTypeID = findFieldID('Contributor type', data)
   const authorID = findFieldID('Author', data)
 
@@ -66,7 +67,7 @@ async function run() {
 
   // Determine which variable to use for the contributor type
   let contributorType
-  if (isDocsTeamMember(process.env.AUTHOR_LOGIN)) {
+  if (await isDocsTeamMember(process.env.AUTHOR_LOGIN)) {
     contributorType = docsMemberTypeID
   } else if (process.env.PR_REPO === 'github/docs') {
     contributorType = osContributorTypeID
@@ -85,6 +86,7 @@ async function run() {
     contributorTypeID: contributorTypeID,
     contributorType: contributorType,
     featureID: featureID,
+    notesID: notesID,
     authorID: authorID,
     headers: {
       authorization: `token ${process.env.TOKEN}`,
