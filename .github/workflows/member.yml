@@ -34,5 +34,6 @@ jobs:
           if [ $isMember -eq  0 ]
           then
             echo "$GITHUB_ACTOR is not a docs team member. exiting..."
+            gh issue edit 76 --remove-label "bug"
             exit 1
           fi
