@@ -27,8 +27,7 @@ jobs:
         if: ${{ github.event_name == 'pull_request' }}
         run: |
           echo "it's a pr"
-      - name: Run script on issue
-        if: ${{ github.event_name == 'issues' }}
+      - name: Run script
         run: |
           echo $PR_NODE_ID
           echo $AUTHOR_LOGIN
