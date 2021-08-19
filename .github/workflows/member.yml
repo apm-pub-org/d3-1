@@ -24,11 +24,15 @@ jobs:
               }
             }
           ' --jq '.data.organization.team.members.nodes | [(.[].login)]')"
+          
+          echo $members
+          
+          echo $GITHUB_ACTOR
 
-          isMember=$(echo ${members[@]} | grep -ow $login | wc -w)
+          isMember=$(echo ${members[@]} | grep -ow $GITHUB_ACTOR | wc -w)
 
           if [ $isMember -eq  0 ]
           then
-            echo "$login is not a docs team member. exiting..."
+            echo "$GITHUB_ACTOR is not a docs team member. exiting..."
             exit 1
           fi
