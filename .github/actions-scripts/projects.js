@@ -1,5 +1,7 @@
 import { graphql } from '@octokit/graphql'
 
+// Shared functions for managing projects (memex)
+
 // Pull out the node ID of a project field
 export function findFieldID(fieldName, data) {
   const field = data.organization.projectNext.fields.nodes.find((field) => field.name === fieldName)
@@ -108,10 +110,6 @@ export async function isDocsTeamMember(login) {
   )
 
   const teamMembers = data.organization.team.members.nodes.map((entry) => entry.login)
-  console.log("TEAM MEMBERS")
-  console.log(teamMembers)
-  console.log(login)
-  console.log(teamMembers.includes(login))
 
   return teamMembers.includes(login)
 }
@@ -148,12 +146,14 @@ export function calculateDueDate(datePosted, turnaround = 2) {
 //   - "Review due date" (as today + {turnaround} weekdays)
 //   - "Contributor type" (as variable passed with the request)
 //   - "Feature" (as {feature})
+//   - "Notes" (as {notes})
 //   - "Author" (as {author})"
 export function generateUpdateProjectNextItemFieldMutation({
   item,
   author,
   turnaround = 2,
   feature = '',
+  notes = ''
 }) {
   const datePosted = new Date()
   const dueDate = calculateDueDate(datePosted, turnaround)
@@ -187,6 +187,7 @@ export function generateUpdateProjectNextItemFieldMutation({
       $contributorTypeID: ID!
       $contributorType: String!
       $featureID: ID!
+      $notesID: ID!
       $authorID: ID!
     ) {
       ${generateMutationToUpdateField({
@@ -215,6 +216,12 @@ export function generateUpdateProjectNextItemFieldMutation({
         item: item,
         fieldID: '$featureID',
         value: feature,
+        literal: true,
+      })}
+      ${generateMutationToUpdateField({
+        item: item,
+        fieldID: '$notesID',
+        value: note,
         literal: true,
       })}
       ${generateMutationToUpdateField({
