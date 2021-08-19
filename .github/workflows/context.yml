@@ -19,4 +19,11 @@ jobs:
           GITHUB_CONTEXT: ${{ toJSON(github) }}
         run: |
           echo $GITHUB_CONTEXT
-
+      - name: if issue
+        if: ${{ $GITHUB_EVENT_NAME == 'issues' }}
+        run: |
+          echo "it's an issue"
+      - name: if pr
+        if: ${{ $GITHUB_EVENT_NAME == 'pull_request' }}
+        run: |
+          echo "it's a pr"
