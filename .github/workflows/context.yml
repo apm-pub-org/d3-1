@@ -27,3 +27,14 @@ jobs:
         if: ${{ github.event_name == 'pull_request' }}
         run: |
           echo "it's a pr"
+      - name: Run script on issue
+        if: ${{ github.event_name == 'issues' }}
+        run: |
+          echo $PR_NODE_ID
+          echo $AUTHOR_LOGIN
+          echo $REPO
+        env:
+          PR_NODE_ID: ${{ github.event.pull_request.node_id || github.event.issue.node_id }} # todo rename var
+          AUTHOR_LOGIN: ${{ github.event.pull_request.user.login || github.event.issue.user.login }}
+          REPO: ${{ github.repository }} # todo REPO not PR_REPO
+
