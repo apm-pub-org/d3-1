@@ -68,7 +68,7 @@ async function run() {
   let contributorType
   if (isDocsTeamMember(process.env.AUTHOR_LOGIN)) {
     contributorType = docsMemberTypeID
-  } else if (process.env.REPO === 'github/docs') {
+  } else if (process.env.REPO === 'ske-test-org/test-org-repo') {
     contributorType = osContributorTypeID
   } else {
     contributorType = hubberTypeID
