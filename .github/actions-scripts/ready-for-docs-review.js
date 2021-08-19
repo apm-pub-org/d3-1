@@ -45,7 +45,6 @@ async function run() {
   const reviewDueDateID = findFieldID('Review due date', data)
   const statusID = findFieldID('Status', data)
   const featureID = findFieldID('Feature', data)
-  const notesID = findFieldID('Notes', data)
   const contributorTypeID = findFieldID('Contributor type', data)
   const authorID = findFieldID('Author', data)
 
@@ -56,7 +55,7 @@ async function run() {
   const osContributorTypeID = findSingleSelectID('OS contributor', 'Contributor type', data)
 
   // Add the PR to the project
-  const newItemID = await addItemToProject(process.env.PR_NODE_ID, projectID)
+  const newItemID = await addItemToProject(process.env.ITEM_NODE_ID, projectID)
 
   // Generate a mutation to populate fields for the new project item
   const updateProjectNextItemMutation = generateUpdateProjectNextItemFieldMutation({
@@ -67,9 +66,9 @@ async function run() {
 
   // Determine which variable to use for the contributor type
   let contributorType
-  if (await isDocsTeamMember(process.env.AUTHOR_LOGIN)) {
+  if (isDocsTeamMember(process.env.AUTHOR_LOGIN)) {
     contributorType = docsMemberTypeID
-  } else if (process.env.PR_REPO === 'github/docs') {
+  } else if (process.env.REPO === 'github/docs') {
     contributorType = osContributorTypeID
   } else {
     contributorType = hubberTypeID
@@ -86,7 +85,6 @@ async function run() {
     contributorTypeID: contributorTypeID,
     contributorType: contributorType,
     featureID: featureID,
-    notesID: notesID,
     authorID: authorID,
     headers: {
       authorization: `token ${process.env.TOKEN}`,
