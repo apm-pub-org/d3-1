@@ -60,7 +60,7 @@ jobs:
         env:
           TOKEN: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
           PROJECT_NUMBER: 10
-          ORGANIZATION: 'github'
+          ORGANIZATION: 'ske-test-org'
           ITEM_NODE_ID: ${{ github.event.pull_request.node_id || github.event.issue.node_id }}
           AUTHOR_LOGIN: ${{ github.event.pull_request.user.login || github.event.issue.user.login }}
           REPO: ${{ github.repository }}
