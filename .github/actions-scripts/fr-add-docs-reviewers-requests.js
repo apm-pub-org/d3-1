@@ -149,12 +149,13 @@ async function run() {
       author: prAuthors[index],
       turnaround: 2,
       feature: 'OpenAPI schema update',
-      notes: 'Notes on how to review: https://github.com/github/docs-content/blob/main/docs-content-docs/docs-content-workflows/reviews-and-feedback/review-process.md#reviewing-openapi-pull-requests'
+      notes:
+        'Notes on how to review: https://github.com/github/docs-content/blob/main/docs-content-docs/docs-content-workflows/reviews-and-feedback/review-process.md#reviewing-openapi-pull-requests',
     })
     const contributorType = (await isDocsTeamMember(prAuthors[index]))
       ? docsMemberTypeID
       : hubberTypeID
-    console.log(`Populating fields for item: ${itemID}`)
+    console.log(`Populating fields for item: ${itemID} with author ${prAuthors[index]} of type ${contributorType}`)
 
     await graphql(updateProjectNextItemMutation, {
       project: projectID,
