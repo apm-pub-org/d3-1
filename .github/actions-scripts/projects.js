@@ -146,14 +146,12 @@ export function calculateDueDate(datePosted, turnaround = 2) {
 //   - "Review due date" (as today + {turnaround} weekdays)
 //   - "Contributor type" (as variable passed with the request)
 //   - "Feature" (as {feature})
-//   - "Notes" (as {notes})
 //   - "Author" (as {author})"
 export function generateUpdateProjectNextItemFieldMutation({
   item,
   author,
   turnaround = 2,
   feature = '',
-  notes = '',
 }) {
   const datePosted = new Date()
   const dueDate = calculateDueDate(datePosted, turnaround)
@@ -187,7 +185,6 @@ export function generateUpdateProjectNextItemFieldMutation({
       $contributorTypeID: ID!
       $contributorType: String!
       $featureID: ID!
-      $notesID: ID!
       $authorID: ID!
     ) {
       ${generateMutationToUpdateField({
@@ -216,12 +213,6 @@ export function generateUpdateProjectNextItemFieldMutation({
         item: item,
         fieldID: '$featureID',
         value: feature,
-        literal: true,
-      })}
-      ${generateMutationToUpdateField({
-        item: item,
-        fieldID: '$notesID',
-        value: notes,
         literal: true,
       })}
       ${generateMutationToUpdateField({
