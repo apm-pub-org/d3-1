@@ -153,7 +153,7 @@ export function generateUpdateProjectNextItemFieldMutation({
   author,
   turnaround = 2,
   feature = '',
-  notes = ''
+  notes = '',
 }) {
   const datePosted = new Date()
   const dueDate = calculateDueDate(datePosted, turnaround)
@@ -221,7 +221,7 @@ export function generateUpdateProjectNextItemFieldMutation({
       ${generateMutationToUpdateField({
         item: item,
         fieldID: '$notesID',
-        value: note,
+        value: notes,
         literal: true,
       })}
       ${generateMutationToUpdateField({
