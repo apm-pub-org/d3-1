@@ -1,0 +1,32 @@
+name: Is member
+
+on:
+  workflow_dispatch
+  
+jobs:
+  is_member:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check if triggered by a docs team member
+        run: |
+          members="$( gh api graphql -f query='
+            query {
+              organization(login: "github") {
+                team(slug: "docs") {
+                  members {
+                    nodes {
+                      login
+                    }
+                  }
+                }
+              }
+            }
+          ' --jq '.data.organization.team.members.nodes | [(.[].login)]')"
+
+          isMember=$(echo ${members[@]} | grep -ow $login | wc -w)
+
+          if [ $isMember -eq  0 ]
+          then
+            echo "$login is not a docs team member. exiting..."
+            exit 1
+          fi
