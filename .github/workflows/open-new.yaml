@@ -14,8 +14,7 @@ jobs:
         with:
           result-encoding: string
           script: |
-            console.log(context)
-            const body = context.issue.body
+            const body = context.payload.event.issue.body
 
             function getStringBetween(input, before, after) {
               // i = case insensitive, s = match newlines
