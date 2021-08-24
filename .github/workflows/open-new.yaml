@@ -1,0 +1,40 @@
+name: Open docs issue
+
+on:
+  issues:
+    types: [opened, reopened]
+
+jobs:
+  open_docs_issue:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Parse body
+        uses: actions/github-script@2b34a689ec86a68d8ab9478298f91d5401337b7d
+        id: parse-body
+        with:
+          result-encoding: string
+          script: |
+            const body = context.event.issue.body
+
+            function getStringBetween(input, before, after) {
+              // i = case insensitive, s = match newlines
+              re = new RegExp(before + "(.*?)" + after, 'is')
+              const result = input.match(re);
+
+              if (result) {
+                return result[1].trim();
+              } else {
+                console.log(`String between ${before} and ${after} was not found. Check if the release template changed.`)
+                return result
+              }
+            }
+            
+            shipDate = getStringBetween(body, "Expected ship date", "###")
+            description = getStringBetween(body, "Short description of the project:", "###")
+            
+            return `The new issue with ${shipDate} and ${description}`
+
+      - name: Print new body
+        run: echo ${ parse-body.outputs.result }
+
+
