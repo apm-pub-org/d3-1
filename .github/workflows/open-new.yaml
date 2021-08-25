@@ -47,11 +47,6 @@ jobs:
               "###"
             );
             const docsNeeded = getStringBetween(body, "Are docs needed", "###");
-            let docsBool = true
-            if (docsNeeded === "No") {
-              docsBool = false
-            }
-
             const title = context.payload.issue.title;
             const author = context.payload.issue.user.login;
             const issue = context.payload.issue.html_url;
@@ -126,7 +121,7 @@ jobs:
             };
 
       - name: Label release issue if no docs
-        if: fromJSON(steps.parse-body.outputs.result).docsNeeded
+        if: fromJSON(steps.parse-body.outputs.result).docsNeeded == 'No'
         env:
           GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
           RELEASE_ISSUE: ${{ github.event.issue.html_url }}
@@ -134,7 +129,7 @@ jobs:
           gh issue edit $RELEASE_ISSUE --add-label "Docs-NA"
 
       - name: Open issue
-        if: fromJSON(steps.parse-body.outputs.result).docsNeeded
+        if: fromJSON(steps.parse-body.outputs.result).docsNeeded != 'No'
         env:
           GITHUB_TOKEN: ${{secrets.PERSONAL_ACCESS_TOKEN}}
           BODY: ${{ fromJSON(steps.parse-body.outputs.result).body }}
@@ -144,7 +139,7 @@ jobs:
           echo 'DOCS_ISSUE='$docs_issue >> $GITHUB_ENV
 
       - name: Comment on new issue
-        if: fromJSON(steps.parse-body.outputs.result).docsNeeded
+        if: fromJSON(steps.parse-body.outputs.result).docsNeeded != 'No'
         env:
           GITHUB_TOKEN: ${{secrets.PERSONAL_ACCESS_TOKEN}}
           RELEASE_ISSUE: ${{ github.event.issue.html_url }}
