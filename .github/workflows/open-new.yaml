@@ -121,7 +121,7 @@ jobs:
           BODY: ${{ fromJSON(steps.parse-body.outputs.result).body }}
           TITLE: ${{ fromJSON(steps.parse-body.outputs.result).title }}
         run: |
-          docs_issue='$(gh issue create --title "$TITLE" --body "$BODY" --repo ske-test-org/second-repo)'
+          docs_issue="$(gh issue create --title '$TITLE' --body '$BODY' --repo ske-test-org/second-repo)"
           echo 'DOCS_ISSUE='$docs_issue >> $GITHUB_ENV
 
       - name: Comment on new issue
