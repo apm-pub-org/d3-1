@@ -6,7 +6,7 @@ on:
 
 jobs:
   open_docs_issue:
-    if: (!contains(github.event.issue.labels.*.name, 'aaa')
+    if: (!contains(github.event.issue.labels.*.name, 'aaa'))
     runs-on: ubuntu-latest
     steps:
       - name: View context
