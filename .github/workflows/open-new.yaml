@@ -144,3 +144,4 @@ jobs:
 # TODO we also wanted to parse the labels and do differnt things based on them
 # TODO also look at the bot that notes when date changed and comment about the docs too?
 # TODO also edit OP with docs issue?
+# TODO also need to edit release templates to include question about whether docs are needed
