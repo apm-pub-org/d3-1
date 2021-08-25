@@ -45,7 +45,7 @@ jobs:
             );
             const title = context.payload.issue.title;
             const author = context.payload.issue.user.login;
-            const issue = context.payload.issue.url;
+            const issue = context.payload.issue.html_url;
 
             const newBody = `
             ### Who is the DRI/PM and responsible team for this release?
