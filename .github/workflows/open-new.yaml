@@ -117,7 +117,7 @@ jobs:
             return {
               body: newBody,
               title: newTitle,
-              docsNeeded: docsBool
+              docsNeeded: docsNeeded
             };
 
       - name: Label release issue if no docs
