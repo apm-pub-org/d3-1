@@ -8,50 +8,126 @@ jobs:
   open_docs_issue:
     runs-on: ubuntu-latest
     steps:
-      - name: View context
-        uses: actions/github-script@2b34a689ec86a68d8ab9478298f91d5401337b7d
-        with:
-          script: console.log(context)
+#       - name: View context
+#         uses: actions/github-script@2b34a689ec86a68d8ab9478298f91d5401337b7d
+#         with:
+#           script: console.log(context)
 
       - name: Parse body
         uses: actions/github-script@2b34a689ec86a68d8ab9478298f91d5401337b7d
         id: parse-body
         with:
-          result-encoding: string
+#           result-encoding: string
           script: |
-            const body = context.payload.issue.body
+            const body = context.payload.issue.body;
 
             function getStringBetween(input, before, after) {
               // i = case insensitive, s = match newlines
-              re = new RegExp(before + "(.*?)" + after, 'is')
+              re = new RegExp(before + "(.*?)" + after, "is");
               const result = input.match(re);
 
               if (result) {
                 return result[1].trim();
               } else {
-                console.log(`String between ${before} and ${after} was not found. Check if the release template changed.`)
-                return result
+                console.log(
+                  `String between ${before} and ${after} was not found. Check if the release template changed.`
+                );
+                return result;
               }
             }
-            
-            shipDate = getStringBetween(body, "Expected ship date", "###")
-            description = getStringBetween(body, "Short description of the project:", "###")
-            newDescription = `The new issue with ${shipDate} and ${description}`
-            
-            console.log(body)
-            console.log(shipDate)
-            console.log(description)
-            console.log(newDescription)
-            return newDescription
+
+            // Pull out info from the release issue
+            const shipDate = getStringBetween(body, "Expected ship date", "###");
+            const description = getStringBetween(
+              body,
+              "Short description of the project:",
+              "###"
+            );
+            const title = context.payload.issue.title;
+            const author = context.payload.issue.user.login;
+            const issue = context.payload.issue.url;
+
+            const newBody = `
+            ### Who is the DRI/PM and responsible team for this release?
+
+            @${author}
+
+            ### Release issue/tracking issue
+
+            ${issue}
+
+            ### Implementation pull requests
+
+
+
+            ### What feature or product is shipping to GitHub customers?
+
+            ${description}
+
+            ### Who is the primary audience for this feature?
+
+
+
+            ### Which GitHub products will include this feature?
+
+            TODO
+
+            ### If you selected "GitHub Enterprise Server" or "GitHub AE" in the product list above, what version or week?
+
+
+
+            ### If you selected "Other" in the product list above, please describe.
+
+
+
+            ### What existing articles do you think should be updated for your release? Link to any articles on docs.github.com and explain how they should be updated.
+
+
+
+            ### Do you think we need a new article for your content?
+
+
+
+            ### Are any new or updated API endpoints tied to this release?
+
+
+
+            ### If you answered "Yes" or "TBD" above, provide details about the API updates or DRI for follow-up
+
+
+
+            ### Relevant Slack channel
+
+
+
+            ### Are you willing to open a PR to add this documentation? Do you know another Hubber that's willing to help write this documentation?
+
+
+
+            ### Do you have any additional questions or concerns?
+
+            `;
+
+            const newTitle = `[${shipDate}]: ${title}`;
+
+            return {
+              body: newBody,
+              title: newTitle,
+            };
 
       - name: Print new body
-        run: echo $DESC
+        run: |
+          echo $BODY
+          echo $TITLE
         env:
-          DESC: ${{ steps.parse-body.outputs.result }}
+          BODY: ${{ steps.parse-body.outputs.result.newBody }}
+          TITLE: ${{ steps.parse-body.outputs.result.title }}
           
       - name: Open issue
         env:
           GITHUB_TOKEN: ${{secrets.PERSONAL_ACCESS_TOKEN}}
-        run: gh issue create --title "NEW" --body "content" --repo ske-test-org/second-repo
+          BODY: ${{ steps.parse-body.outputs.result.newBody }}
+          TITLE: ${{ steps.parse-body.outputs.result.title }}
+        run: gh issue create --title $TITLE --body $BODY --repo ske-test-org/second-repo
 
 
