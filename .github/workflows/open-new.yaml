@@ -48,5 +48,10 @@ jobs:
         run: echo $DESC
         env:
           DESC: ${{ steps.parse-body.outputs.result }}
+          
+      - name: Open issue
+        env:
+          GITHUB_TOKEN: ${{secrets.PERSONAL_ACCESS_TOKEN}}
+        run: gh issue create --title "NEW" --body "content" --repo ske-test-org/second-repo
 
 
