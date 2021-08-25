@@ -47,11 +47,12 @@ jobs:
               "###"
             );
             const docsNeeded = getStringBetween(body, "Are docs needed", "###");
+            const docsBool;
             if (docsNeeded === "No") {
-              const docsBool = "false"
+              docsBool = false
             }
             else {
-              const docsBool = "true"
+              docsBool = true
             }
 
             const title = context.payload.issue.title;
