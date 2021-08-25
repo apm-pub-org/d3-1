@@ -45,6 +45,8 @@ jobs:
             return newDescription
 
       - name: Print new body
-        run: echo ${{ parse-body.outputs.result }}
+        run: echo $DESC
+        env:
+          DESC: ${{ steps.parse-body.outputs.result }}
 
 
