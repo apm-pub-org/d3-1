@@ -8,13 +8,18 @@ jobs:
   open_docs_issue:
     runs-on: ubuntu-latest
     steps:
+      - name: View context
+        uses: actions/github-script@2b34a689ec86a68d8ab9478298f91d5401337b7d
+        with:
+          script: console.log(context)
+
       - name: Parse body
         uses: actions/github-script@2b34a689ec86a68d8ab9478298f91d5401337b7d
         id: parse-body
         with:
           result-encoding: string
           script: |
-            const body = context.payload.event.issue.body
+            const body = context.issue.body
 
             function getStringBetween(input, before, after) {
               // i = case insensitive, s = match newlines
