@@ -119,15 +119,23 @@ jobs:
         run: |
           echo $BODY
           echo $TITLE
+          echo $BODY2
+          echo $TITLE2
+          echo $RESULT
+          echo $RESULT2
         env:
           BODY: ${{ fromJSON(steps.parse-body.outputs.result.newBody) }}
           TITLE: ${{ fromJSON(steps.parse-body.outputs.result.title) }}
+          BODY2: ${{ toJSON(steps.parse-body.outputs.result.newBody) }}
+          TITLE2: ${{ toJSON(steps.parse-body.outputs.result.title) }}
+          RESULT: ${{ fromJSON(steps.parse-body.outputs.result) }}
+          RESULT2: ${{ toJSON(steps.parse-body.outputs.result) }}
           
-      - name: Open issue
-        env:
-          GITHUB_TOKEN: ${{secrets.PERSONAL_ACCESS_TOKEN}}
-          BODY: ${{ fromJSON(steps.parse-body.outputs.result.newBody) }}
-          TITLE: ${{ fromJSON(steps.parse-body.outputs.result.title) }}
-        run: gh issue create --title "$TITLE" --body "$BODY" --repo ske-test-org/second-repo
+#       - name: Open issue
+#         env:
+#           GITHUB_TOKEN: ${{secrets.PERSONAL_ACCESS_TOKEN}}
+#           BODY: ${{ fromJSON(steps.parse-body.outputs.result.newBody) }}
+#           TITLE: ${{ fromJSON(steps.parse-body.outputs.result.title) }}
+#         run: gh issue create --title "$TITLE" --body "$BODY" --repo ske-test-org/second-repo
 
 
