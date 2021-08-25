@@ -17,7 +17,7 @@ jobs:
         uses: actions/github-script@2b34a689ec86a68d8ab9478298f91d5401337b7d
         id: parse-body
         with:
-#           result-encoding: string
+          result-encoding: string
           script: |
             const body = context.payload.issue.body;
 
@@ -121,7 +121,7 @@ jobs:
           echo $BODY
           echo $TITLE
         env:
-          BODY: ${{ fromJSON(steps.parse-body.outputs.result.newBody) }}
+          BODY: ${{ fromJSON(steps.parse-body.outputs.result.body) }}
           TITLE: ${{ fromJSON(steps.parse-body.outputs.result.title) }}
 
       - name: Print new body 2
@@ -130,7 +130,7 @@ jobs:
           echo $BODY2
           echo $TITLE2
         env:
-          BODY2: ${{ toJSON(steps.parse-body.outputs.result.newBody) }}
+          BODY2: ${{ toJSON(steps.parse-body.outputs.result.body) }}
           TITLE2: ${{ toJSON(steps.parse-body.outputs.result.title) }}
 
       - name: Print new body 3
@@ -147,10 +147,35 @@ jobs:
         env:
           RESULT2: ${{ toJSON(steps.parse-body.outputs.result) }}
 
+      - name: Print new body 4.5
+        if: always()
+        run: |
+          echo $RESULT2
+        env:
+          RESULT2: ${{ fromJSON(toJSON(steps.parse-body.outputs.result)) }}
+
+      - name: Print new body 5
+        if: always()
+        run: |
+          echo $BODY
+          echo $TITLE
+        env:
+          BODY: ${{ fromJSON(steps.parse-body.outputs.result).body }}
+          TITLE: ${{ fromJSON(steps.parse-body.outputs.result).title }}
+
+      - name: Print new body 6
+        if: always()
+        run: |
+          echo $BODY2
+          echo $TITLE2
+        env:
+          BODY2: ${{ toJSON(steps.parse-body.outputs.result).body }}
+          TITLE2: ${{ toJSON(steps.parse-body.outputs.result).title }}
+
 #       - name: Open issue
 #         env:
 #           GITHUB_TOKEN: ${{secrets.PERSONAL_ACCESS_TOKEN}}
-#           BODY: ${{ fromJSON(steps.parse-body.outputs.result.newBody) }}
+#           BODY: ${{ fromJSON(steps.parse-body.outputs.result.body) }}
 #           TITLE: ${{ fromJSON(steps.parse-body.outputs.result.title) }}
 #         run: gh issue create --title "$TITLE" --body "$BODY" --repo ske-test-org/second-repo
 
