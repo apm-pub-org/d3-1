@@ -120,14 +120,14 @@ jobs:
           echo $BODY
           echo $TITLE
         env:
-          BODY: ${{ steps.parse-body.outputs.result.newBody }}
-          TITLE: ${{ steps.parse-body.outputs.result.title }}
+          BODY: ${{ fromJSON(steps.parse-body.outputs.result.newBody) }}
+          TITLE: ${{ fromJSON(steps.parse-body.outputs.result.title) }}
           
       - name: Open issue
         env:
           GITHUB_TOKEN: ${{secrets.PERSONAL_ACCESS_TOKEN}}
-          BODY: ${{ steps.parse-body.outputs.result.newBody }}
-          TITLE: ${{ steps.parse-body.outputs.result.title }}
+          BODY: ${{ fromJSON(steps.parse-body.outputs.result.newBody) }}
+          TITLE: ${{ fromJSON(steps.parse-body.outputs.result.title) }}
         run: gh issue create --title "$TITLE" --body "$BODY" --repo ske-test-org/second-repo
 
 
