@@ -14,47 +14,39 @@ jobs:
         with:
           script: console.log(context)
           
-      - name: Check if docs needed
-        id: check-docs-needed
-        uses: actions/github-script@2b34a689ec86a68d8ab9478298f91d5401337b7d
-        with:
-          result-encoding: string
-          script: |
-            const body = context.payload.issue.body;
+#       - name: Check if docs needed
+#         id: check-docs-needed
+#         uses: actions/github-script@2b34a689ec86a68d8ab9478298f91d5401337b7d
+#         with:
+#           result-encoding: string
+#           script: |
+#             const body = context.payload.issue.body;
 
-            function getStringBetween(input, before, after) {
-              // i = case insensitive, s = match newlines
-              re = new RegExp(before + "(.*?)" + after, "is");
-              const result = input.match(re);
+#             function getStringBetween(input, before, after) {
+#               // i = case insensitive, s = match newlines
+#               re = new RegExp(before + "(.*?)" + after, "is");
+#               const result = input.match(re);
 
-              if (result) {
-                return result[1].trim();
-              } else {
-                console.log(
-                  `String between ${before} and ${after} was not found. Check if the release template changed.`
-                );
-                return result;
-              }
-            }
+#               if (result) {
+#                 return result[1].trim();
+#               } else {
+#                 console.log(
+#                   `String between ${before} and ${after} was not found. Check if the release template changed.`
+#                 );
+#                 return result;
+#               }
+#             }
 
-            // Pull out info from the release issue
-            const docsNeeded = getStringBetween(body, "Are docs needed", "###");
+#             // Pull out info from the release issue
+#             const docsNeeded = getStringBetween(body, "Are docs needed", "###");
             
-            if (docsNeeded === "No") {
-              return "false"}
-            else {
-              return "true"
-            }
+#             if (docsNeeded === "No") {
+#               return "false"}
+#             else {
+#               return "true"
+#             }
 
 
-      - name: Label release issue if no docs
-        if: steps.check-docs-needed.outputs.result == 'false'
-        env:
-          GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
-          RELEASE_ISSUE: ${{ github.event.issue.html_url }}
-        run: |
-          gh issue edit $RELEASE_ISSUE --add-label "Docs-NA"
-          exit 0
 
 
       - name: Parse body
@@ -88,6 +80,7 @@ jobs:
               "Short description of the project:",
               "###"
             );
+            const docsNeeded = getStringBetween(body, "Are docs needed", "###");
             const title = context.payload.issue.title;
             const author = context.payload.issue.user.login;
             const issue = context.payload.issue.html_url;
@@ -158,10 +151,19 @@ jobs:
             return {
               body: newBody,
               title: newTitle,
+              docsNeeded: docsNeeded
             };
 
+      - name: Label release issue if no docs
+        if: fromJSON(steps.parse-body.outputs.result).docsNeeded == 'No'
+        env:
+          GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
+          RELEASE_ISSUE: ${{ github.event.issue.html_url }}
+        run: |
+          gh issue edit $RELEASE_ISSUE --add-label "Docs-NA"
+
       - name: Open issue
-#         if: steps.check-docs-needed.outputs.result == 'true'
+        if: fromJSON(steps.parse-body.outputs.result).docsNeeded != 'No'
         env:
           GITHUB_TOKEN: ${{secrets.PERSONAL_ACCESS_TOKEN}}
           BODY: ${{ fromJSON(steps.parse-body.outputs.result).body }}
@@ -171,7 +173,7 @@ jobs:
           echo 'DOCS_ISSUE='$docs_issue >> $GITHUB_ENV
 
       - name: Comment on new issue
-#         if: steps.check-docs-needed.outputs.result == 'true'
+        if: fromJSON(steps.parse-body.outputs.result).docsNeeded != 'No'
         env:
           GITHUB_TOKEN: ${{secrets.PERSONAL_ACCESS_TOKEN}}
           RELEASE_ISSUE: ${{ github.event.issue.html_url }}
