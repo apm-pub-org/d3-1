@@ -140,3 +140,7 @@ jobs:
           docs_issue="$(gh issue create --title "$TITLE" --body "$BODY" --repo ske-test-org/second-repo)"
           gh issue comment $docs_issue --body "@$AUTHOR You opened $RELEASE_ISSUE, so I opened this corresponding docs issue for you." --repo ske-test-org/second-repo
 
+
+# TODO we also wanted to parse the labels and do differnt things based on them
+# TODO also look at the bot that notes when date changed and comment about the docs too?
+# TODO also edit OP with docs issue?
