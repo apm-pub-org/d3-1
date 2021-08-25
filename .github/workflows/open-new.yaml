@@ -36,10 +36,15 @@ jobs:
             
             shipDate = getStringBetween(body, "Expected ship date", "###")
             description = getStringBetween(body, "Short description of the project:", "###")
+            newDescription = `The new issue with ${shipDate} and ${description}`
             
-            return `The new issue with ${shipDate} and ${description}`
+            console.log(body)
+            console.log(shipDate)
+            console.log(description)
+            console.log(newDescription)
+            return newDescription
 
       - name: Print new body
-        run: echo ${ parse-body.outputs.result }
+        run: echo ${{ parse-body.outputs.result }}
 
 
