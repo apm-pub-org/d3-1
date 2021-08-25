@@ -52,11 +52,13 @@ jobs:
         env:
           GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
           RELEASE_ISSUE: ${{ github.event.issue.html_url }}
-        run: gh issue edit $RELEASE_ISSUE --add-label "Docs-NA"
+        run: |
+          gh issue edit $RELEASE_ISSUE --add-label "Docs-NA"
+          exit 0
 
 
       - name: Parse body
-        if: steps.check-docs-needed.outputs.result == 'true'
+#         if: steps.check-docs-needed.outputs.result == 'true'
         uses: actions/github-script@2b34a689ec86a68d8ab9478298f91d5401337b7d
         id: parse-body
         with:
@@ -159,7 +161,7 @@ jobs:
             };
 
       - name: Open issue
-        if: steps.check-docs-needed.outputs.result == 'true'
+#         if: steps.check-docs-needed.outputs.result == 'true'
         env:
           GITHUB_TOKEN: ${{secrets.PERSONAL_ACCESS_TOKEN}}
           BODY: ${{ fromJSON(steps.parse-body.outputs.result).body }}
@@ -169,7 +171,7 @@ jobs:
           echo 'DOCS_ISSUE='$docs_issue >> $GITHUB_ENV
 
       - name: Comment on new issue
-        if: steps.check-docs-needed.outputs.result == 'true'
+#         if: steps.check-docs-needed.outputs.result == 'true'
         env:
           GITHUB_TOKEN: ${{secrets.PERSONAL_ACCESS_TOKEN}}
           RELEASE_ISSUE: ${{ github.event.issue.html_url }}
