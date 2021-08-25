@@ -47,7 +47,7 @@ jobs:
               "###"
             );
             const docsNeeded = getStringBetween(body, "Are docs needed", "###");
-            const docsBool = true
+            let docsBool = true
             if (docsNeeded === "No") {
               docsBool = false
             }
