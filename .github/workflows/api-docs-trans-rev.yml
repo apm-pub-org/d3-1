@@ -14,15 +14,9 @@ jobs:
   transfer-issue:
     name: Copy issue
     runs-on: ubuntu-latest
-#     if: github.event.label.name == 'documentation'
+    if: github.event.label.name == 'documentation'
     steps:
 ## Todo should I do check for who triggers + exit if not a member of the team?
-
-      - name: context
-        env:
-          GITHUB_CONTEXT: ${{ toJSON(github) }}
-        run: |
-          echo $GITHUB_CONTEXT
           
       - name: priority
         uses: actions/github-script@626af12fe9a53dc2972b48385e7fe7dec79145c9
@@ -41,11 +35,6 @@ jobs:
             }
 
             return priority
-
-      - name: test
-        run: echo $LABELS
-        env:
-          LABELS: ${{ steps.priority.outputs.result }}
 
       - name: Create an issue in the docs-content repo
         run: |
