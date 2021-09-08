@@ -58,7 +58,11 @@ jobs:
 
       - name: Comment on the new issue
         run: |
-          gh issue comment $NEW_ISSUE --body "This issue was originally opened in the rest-api-description repo as $OLD_ISSUE with priority level $PRIORITY. :information_source: gh issue comment $NEW_ISSUE --body "This issue was originally opened in the rest-api-description repo as $OLD_ISSUE. :exclamation: When you close this issue, also comment on and close the [original issue]($OLD_ISSUE). :question: Was this issue something that could have been caught by a linter? If so, suggest a new rule in [#ecosystem-api](https://github.slack.com/archives/C1042T6MS)."
+          gh issue comment $NEW_ISSUE --body "This issue was originally opened in the rest-api-description repo as $OLD_ISSUE with priority $PRIORITY. 
+          
+          :exclamation: When you close this issue, also comment on and close the original issue.
+          
+          :question: Was this issue something that could have been caught by a linter? If so, suggest a new rule in [#ecosystem-api](https://github.slack.com/archives/C1042T6MS)."
         env:
           GITHUB_TOKEN: ${{secrets.PERSONAL_ACCESS_TOKEN}} ## TODO use correct PAT
           NEW_ISSUE: ${{ env.NEW_ISSUE }}
