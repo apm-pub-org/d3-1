@@ -23,6 +23,11 @@ jobs:
           GITHUB_CONTEXT: ${{ toJSON(github) }}
         run: |
           echo $GITHUB_CONTEXT
+          
+      - name: test
+        run: echo $LABELS
+        env:
+          LABELS: ${{ github.event.issue.labels.*.name }}
 
       - name: Create an issue in the docs-content repo
         run: |
@@ -35,9 +40,9 @@ jobs:
 
       - name: Comment on the new issue
         run: |
-          gh issue comment $NEW_ISSUE --body "This issue was originally opened in the rest-api-description repo as $OLD_ISSUE. 
+          :information_source: gh issue comment $NEW_ISSUE --body "This issue was originally opened in the rest-api-description repo as $OLD_ISSUE. 
           
-          :exclamation: When you close this issue, also comment on and close the original issue.
+          :exclamation: When you close this issue, also comment on and close the [original issue]($OLD_ISSUE).
           
           :question: Was this issue something that could have been caught by a linter? If so, suggest a new rule in [#ecosystem-api](https://github.slack.com/archives/C1042T6MS)."
         env:
