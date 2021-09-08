@@ -24,6 +24,12 @@ jobs:
         run: |
           echo $GITHUB_CONTEXT
 
+      - name: test
+        run: |
+          gh issue list
+        env:
+          GITHUB_TOKEN: ${{secrets.PERSONAL_ACCESS_TOKEN}}
+
       - name: Create an issue in the docs-content repo
         run: |
           new_issue_url="$(gh issue create --title "$ISSUE_TITLE" --body "$ISSUE_BODY" --repo skedwards88/test-repo)" ## TODO CHANGE REPO BACK TO github/docs-content
