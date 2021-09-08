@@ -27,7 +27,7 @@ jobs:
       - name: test
         run: echo $LABELS
         env:
-          LABELS: ${{ github.event.issue.labels.*.name }}
+          LABELS: ${{ github.event.issue.labels }}
 
       - name: Create an issue in the docs-content repo
         run: |
