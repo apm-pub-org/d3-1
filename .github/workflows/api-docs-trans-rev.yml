@@ -24,12 +24,6 @@ jobs:
         run: |
           echo $GITHUB_CONTEXT
 
-      - name: test
-        run: |
-          gh issue list --repo skedwards88/test-repo
-        env:
-          GITHUB_TOKEN: ${{secrets.PERSONAL_ACCESS_TOKEN}}
-
       - name: Create an issue in the docs-content repo
         run: |
           new_issue_url="$(gh issue create --title "$ISSUE_TITLE" --body "$ISSUE_BODY" --repo skedwards88/test-repo)" ## TODO CHANGE REPO BACK TO github/docs-content
@@ -47,6 +41,6 @@ jobs:
           
           :question: Was this issue something that could have been caught by a linter? If so, suggest a new rule in [#ecosystem-api](https://github.slack.com/archives/C1042T6MS)."
         env:
-          GITHUB_TOKEN: ${{secrets.DOCUBOT_FR_PROJECT_BOARD_WORKFLOWS_REPO_ORG_READ_SCOPES}}
+          GITHUB_TOKEN: ${{secrets.PERSONAL_ACCESS_TOKEN}} ## TODO use correct PAT
           NEW_ISSUE: ${{ env.NEW_ISSUE }}
           OLD_ISSUE: ${{ github.event.issue.html_url }}
