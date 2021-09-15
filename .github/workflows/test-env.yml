@@ -1,0 +1,17 @@
+name: Test env 
+
+on:
+  workflow_dispatch:
+  push:
+
+jobs:
+  test-env:
+    environment:
+      name: nodeploy
+      url: https://github.com
+    runs-on: ubuntu-latest
+    steps: 
+    - name: test-env
+      run: gh api repos/skedwards88/test-repo/deployments -f ref='main' -f environment='nodeploy2'
+      env:
+        GITHUB_TOKEN: ${{secrets.PERSONAL_ACCESS_TOKEN}}
