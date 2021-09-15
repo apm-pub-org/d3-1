@@ -12,6 +12,6 @@ jobs:
     runs-on: ubuntu-latest
     steps: 
     - name: test-env
-      run: gh api repos/skedwards88/test-repo/deployments -f ref='main' -f environment='nodeploy2'
+      run: gh api repos/ske-test-org/test-org-repo/deployments -f ref='main' -f environment='nodeploy2'
       env:
         GITHUB_TOKEN: ${{secrets.PERSONAL_ACCESS_TOKEN}}
