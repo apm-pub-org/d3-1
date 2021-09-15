@@ -6,9 +6,9 @@ on:
 
 jobs:
   test-env:
-    environment:
-      name: nodeploy
-      url: https://github.com
+#     environment:
+#       name: nodeploy
+#       url: https://github.com
     runs-on: ubuntu-latest
     steps: 
     - name: test-env
