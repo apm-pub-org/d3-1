@@ -104,14 +104,14 @@ jobs:
           new_issue_url="$(gh issue create --title "$ISSUE_TITLE" --body "$ISSUE_BODY" --repo ske-test-org/second-repo)"
           echo 'NEW_ISSUE='$new_issue_url >> $GITHUB_ENV
         env:
-          GITHUB_TOKEN: ${{secrets.PERSONAL_ACCESS_TOKEN}}
+          GITHUB_TOKEN: ${{secrets.RELEASE_TEST_PAT}}
           ISSUE_BODY: ${{ fromJSON(steps.parse_issue.outputs.result).newBody }}
           ISSUE_TITLE: ${{ fromJSON(steps.parse_issue.outputs.result).newTitle }}
 
       - name: Label release issue with GHAE if applicable
         if: fromJSON(steps.parse_issue.outputs.result).ghaeApplicable
         env:
-          GITHUB_TOKEN: ${{secrets.PERSONAL_ACCESS_TOKEN}}
+          GITHUB_TOKEN: ${{secrets.RELEASE_TEST_PAT}}
           NEW_ISSUE: ${{ env.NEW_ISSUE }}
         run: |
           gh issue edit $NEW_ISSUE --add-label "GHAE"
