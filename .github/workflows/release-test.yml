@@ -74,11 +74,11 @@ jobs:
             - What is the timeline for rolling to GHAE?
             - What is the relevant Slack channel?
             - Will any content require legal review?
-            - [ ] Yes
-            - [ ] No 
+              - [ ] Yes
+              - [ ] No 
             - Will any content require security review?
-            - [ ] Yes
-            - [ ] No 
+              - [ ] Yes
+              - [ ] No 
             - If you answered that you can't open the PR but you know someone who can, ping them here. @${author}
 
             ${ghesApplicable ? `### Specific GHES version(s)
