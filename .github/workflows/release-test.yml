@@ -46,15 +46,15 @@ jobs:
             // Pull out info from the release issue
             const shipDate = getStringBetween(body, "Expected ship date", "###");
             const docsNeeded = getStringBetween(body, "Are docs needed", "###");
-            const ghesApplicable = getStringBetween(body, "Will this feature, in its current release phase, flow into GitHub Enterprise Server?", "###")==="Yes";
-            const ghaeApplicable = getStringBetween(body, "Will this feature, in its current release phase, flow into GitHub AE?", "###")==="Yes";
+            const ghesApplicable = getStringBetween(body, "Will this feature, in its current release phase, flow into GitHub Enterprise Server", "###")==="Yes";
+            const ghaeApplicable = getStringBetween(body, "Will this feature, in its current release phase, flow into GitHub AE", "###")==="Yes";
             
             console.log("first:")
             console.log(ghaeApplicable)
             console.log("second:")
-            console.log(getStringBetween(body, "Will this feature, in its current release phase, flow into GitHub AE?", "###"))
+            console.log(getStringBetween(body, "Will this feature, in its current release phase, flow into GitHub AE", "###"))
             console.log("third:")
-            console.log(getStringBetween(body, "Will this feature, in its current release phase, flow into GitHub AE?", "###")==="Yes")
+            console.log(getStringBetween(body, "Will this feature, in its current release phase, flow into GitHub AE", "###")==="Yes")
             console.log("end")
             
             const title = context.payload.issue.title;
