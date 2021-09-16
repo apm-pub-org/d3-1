@@ -48,6 +48,10 @@ jobs:
             const docsNeeded = getStringBetween(body, "Are docs needed", "###");
             const ghesApplicable = getStringBetween(body, "Will this feature, in its current release phase, flow into GitHub Enterprise Server?", "###")==="Yes";
             const ghaeApplicable = getStringBetween(body, "Will this feature, in its current release phase, flow into GitHub AE?", "###")==="Yes";
+            
+            console.log(ghaeApplicable)
+            console.log(getStringBetween(body, "Will this feature, in its current release phase, flow into GitHub AE?", "###"))
+            
             const title = context.payload.issue.title;
             const author = context.payload.issue.user.login;
             const issue = context.payload.issue.html_url;
