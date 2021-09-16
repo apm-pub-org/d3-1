@@ -1,7 +1,8 @@
 name: Automatically open a docs-content tracking issue
 on:
   issues:
-    types: [opened, reopened] ## TOdo revert to just opened
+    types:
+      - opened
 jobs:
   auto_open_docs_issue:
   runs-on: ubuntu-latest
@@ -105,14 +106,13 @@ jobs:
         ISSUE_BODY: ${{ fromJSON(steps.parse-body.outputs.result).newBody }}
         ISSUE_TITLE: ${{ fromJSON(steps.parse-body.outputs.result).newTitle }}
 
-
-      - name: Label release issue GHAE
-        if: fromJSON(steps.parse-body.outputs.result).ghaeApplicable
-        env:
-          GITHUB_TOKEN: ${{secrets.PERSONAL_ACCESS_TOKEN}}
-          NEW_ISSUE: ${{ env.NEW_ISSUE }}
-        run: |
-          gh issue edit $NEW_ISSUE --add-label "Docs-NA"
+    - name: Label release issue GHAE
+      if: fromJSON(steps.parse-body.outputs.result).ghaeApplicable
+      env:
+        GITHUB_TOKEN: ${{secrets.PERSONAL_ACCESS_TOKEN}}
+        NEW_ISSUE: ${{ env.NEW_ISSUE }}
+      run: |
+        gh issue edit $NEW_ISSUE --add-label "Docs-NA"
 
         
 # TODO:
