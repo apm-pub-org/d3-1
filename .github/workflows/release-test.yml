@@ -27,13 +27,20 @@ jobs:
           echo 'NEW_ISSUE='$new_issue_url >> $GITHUB_ENV
         env:
           GITHUB_TOKEN: ${{secrets.PERSONAL_ACCESS_TOKEN}}
-          ISSUE_BODY: ${{ fromJSON(steps.parse-body.outputs.result).newBody }}
-          ISSUE_TITLE: ${{ fromJSON(steps.parse-body.outputs.result).newTitle }}
+          ISSUE_BODY: ${{ fromJSON(steps.parse_issue.outputs.result).newBody }}
+          ISSUE_TITLE: ${{ fromJSON(steps.parse_issue.outputs.result).newTitle }}
 
       - name: Label release issue GHAE
-        if: fromJSON(steps.parse-body.outputs.result).ghaeApplicable
+        if: fromJSON(steps.parse_issue.outputs.result).ghaeApplicable
         env:
           GITHUB_TOKEN: ${{secrets.PERSONAL_ACCESS_TOKEN}}
           NEW_ISSUE: ${{ env.NEW_ISSUE }}
         run: |
           gh issue edit $NEW_ISSUE --add-label "Docs-NA"
+
+          
+  # TODO:
+  # - change repo where issue is created
+  # - change PAT secret name
+  # - store secret
+  # - don't do anything if docs not needed
