@@ -1,0 +1,20 @@
+name: Envs
+
+on:
+  workflow_dispatch:
+  push:
+  pull_request:
+
+jobs:
+  j1:
+    runs-on: ubuntu-latest
+    concurrency: 
+      group: temp1
+      cancel-in-progress: true
+    environment: 
+      name: temp1
+      url: https://google.com/
+    steps:
+      - name: print
+        run: |
+          sleep 120 && echo "done"
