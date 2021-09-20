@@ -1,0 +1,13 @@
+name: Envs
+
+on:
+  workflow_dispatch:
+
+jobs:
+  context:
+    runs-on: ubuntu-latest
+    environment: temp
+    steps:
+      - name: print
+        run: |
+          echo "done"
