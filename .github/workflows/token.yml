@@ -9,7 +9,7 @@ jobs:
       - name: Get member
         uses: actions/github-script@2b34a689ec86a68d8ab9478298f91d5401337b7d
         with:
-          github-token: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
             try {
               await github.teams.getMembershipForUserInOrg({
@@ -21,5 +21,13 @@ jobs:
               return
             } catch(err) {
               console.log('case 2')
-
             }
+      - name: Print
+        run: echo 5
+
+  two:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Print
+        run: echo 544
+
