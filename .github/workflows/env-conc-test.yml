@@ -1,5 +1,9 @@
 name: Envs
 
+concurrency: 
+  group: temp1
+  cancel-in-progress: true
+
 on:
   workflow_dispatch:
   push:
@@ -8,7 +12,6 @@ on:
 jobs:
   j1:
     runs-on: ubuntu-latest
-    concurrency: temp1
     environment: 
       name: temp1
       url: https://google.com/
