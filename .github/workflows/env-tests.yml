@@ -5,9 +5,26 @@ on:
   push:
 
 jobs:
-  context:
+  j1:
     runs-on: ubuntu-latest
-    environment: temp
+    environment: 
+      name: temp
+      url: https://google.com/
+    steps:
+      - name: print
+        run: |
+          echo "done"
+  j2:
+    runs-on: ubuntu-latest
+    environment: 
+      name: temp2
+      url: https://github.com/
+    steps:
+      - name: print
+        run: |
+          echo "done"
+  j3:
+    runs-on: ubuntu-latest
     steps:
       - name: print
         run: |
