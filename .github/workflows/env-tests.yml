@@ -3,12 +3,13 @@ name: Envs
 on:
   workflow_dispatch:
   push:
+  pull_request:
 
 jobs:
   j1:
     runs-on: ubuntu-latest
     environment: 
-      name: temp
+      name: temp1
       url: https://google.com/
     steps:
       - name: print
@@ -18,13 +19,16 @@ jobs:
     runs-on: ubuntu-latest
     environment: 
       name: temp2
-      url: https://github.com/
+      url: https://stackoverflow.com/
     steps:
       - name: print
         run: |
           echo "done"
   j3:
     runs-on: ubuntu-latest
+    environment: 
+      name: temp3
+      url: https://linkedin.com/
     steps:
       - name: print
         run: |
