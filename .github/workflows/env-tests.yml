@@ -14,22 +14,4 @@ jobs:
     steps:
       - name: print
         run: |
-          echo "done"
-  j2:
-    runs-on: ubuntu-latest
-    environment: 
-      name: temp2
-      url: https://stackoverflow.com/
-    steps:
-      - name: print
-        run: |
-          echo "done"
-  j3:
-    runs-on: ubuntu-latest
-    environment: 
-      name: temp3
-      url: https://linkedin.com/
-    steps:
-      - name: print
-        run: |
-          echo "done"
+          sleep 120 && echo "done"
