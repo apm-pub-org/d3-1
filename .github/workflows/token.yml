@@ -18,12 +18,30 @@ jobs:
                 username: context.payload.sender.login,
               });
               console.log('case 1')
-              return
+              return true
             } catch(err) {
               console.log('case 2')
+              return false
             }
       - name: Print
         run: echo 5
+      - name: '1'
+        if: steps.triggered-by-member.outputs.result == 'true'
+        run: |
+          echo 111
+      - name: '2'
+        if: steps.triggered-by-member.outputs.result == 'false'
+        run: |
+          echo 222
+      - name: '3'
+        if: steps.triggered-by-member.outputs.result
+        run: |
+          echo 333
+      - name: '4'
+        if: ${{ !steps.triggered-by-member.outputs.result }}
+        run: |
+          echo true
+
 
   two:
     runs-on: ubuntu-latest
