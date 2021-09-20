@@ -2,6 +2,7 @@ name: Envs
 
 on:
   workflow_dispatch:
+  push:
 
 jobs:
   context:
