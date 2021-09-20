@@ -8,9 +8,10 @@ on:
 jobs:
   j1:
     runs-on: ubuntu-latest
-    concurrency: 
-      group: temp1
-      cancel-in-progress: true
+#     concurrency: 
+#       group: temp1
+#       cancel-in-progress: true
+    concurrency: temp1
     environment: 
       name: temp1
       url: https://google.com/
