@@ -47,6 +47,120 @@ jobs:
   two:
     runs-on: ubuntu-latest
     steps:
+      - name: Get member
+        uses: actions/github-script@2b34a689ec86a68d8ab9478298f91d5401337b7d
+        with:
+          github-token: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
+          result-encoding: string
+          script: |
+            try {
+              await github.teams.getMembershipForUserInOrg({
+                org: 'github',
+                team_slug: 'docs',
+                username: context.payload.sender.login,
+              });
+              console.log('case 1')
+              return true
+            } catch(err) {
+              console.log('case 2')
+              return false
+            }
       - name: Print
-        run: echo 544
+        run: echo 5
+      - name: '1'
+        if: steps.triggered-by-member.outputs.result == 'true'
+        run: |
+          echo 111
+      - name: '2'
+        if: steps.triggered-by-member.outputs.result == 'false'
+        run: |
+          echo 222
+      - name: '3'
+        if: steps.triggered-by-member.outputs.result
+        run: |
+          echo 333
+      - name: '4'
+        if: ${{ !steps.triggered-by-member.outputs.result }}
+        run: |
+          echo 444
 
+  one-one:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Get member
+        uses: actions/github-script@2b34a689ec86a68d8ab9478298f91d5401337b7d
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          result-encoding: string
+          script: |
+            try {
+              await github.teams.getMembershipForUserInOrg({
+                org: 'github',
+                team_slug: 'docs',
+                username: context.payload.sender.login,
+              });
+              console.log('case 1')
+              return 'true'
+            } catch(err) {
+              console.log('case 2')
+              return 'false'
+            }
+      - name: Print
+        run: echo 5
+      - name: '1'
+        if: steps.triggered-by-member.outputs.result == 'true'
+        run: |
+          echo 111
+      - name: '2'
+        if: steps.triggered-by-member.outputs.result == 'false'
+        run: |
+          echo 222
+      - name: '3'
+        if: steps.triggered-by-member.outputs.result
+        run: |
+          echo 333
+      - name: '4'
+        if: ${{ !steps.triggered-by-member.outputs.result }}
+        run: |
+          echo 444
+
+
+  two-two:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Get member
+        uses: actions/github-script@2b34a689ec86a68d8ab9478298f91d5401337b7d
+        with:
+          github-token: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
+          result-encoding: string
+          script: |
+            try {
+              await github.teams.getMembershipForUserInOrg({
+                org: 'github',
+                team_slug: 'docs',
+                username: context.payload.sender.login,
+              });
+              console.log('case 1')
+              return 'true'
+            } catch(err) {
+              console.log('case 2')
+              return 'false'
+            }
+      - name: Print
+        run: echo 5
+      - name: '1'
+        if: steps.triggered-by-member.outputs.result == 'true'
+        run: |
+          echo 111
+      - name: '2'
+        if: steps.triggered-by-member.outputs.result == 'false'
+        run: |
+          echo 222
+      - name: '3'
+        if: steps.triggered-by-member.outputs.result
+        run: |
+          echo 333
+      - name: '4'
+        if: ${{ !steps.triggered-by-member.outputs.result }}
+        run: |
+          echo 444
