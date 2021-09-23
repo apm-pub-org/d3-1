@@ -20,8 +20,6 @@ jobs:
         echo ${{ contains('Hello world', 'llo') }}
         echo ${{ github.event.issue.labels }}
         echo ${{ github.event.pulissuel_request.labels.*.name }}
-        echo ${{ tojson(github.event.issue.labels.*.name) }}
-        echo ${{ fromjson(github.event.issue.labels.*.name) }}
       env:
        VAR1: ${{ contains(github.event.issue.labels.*.name, 'aaa') }}
        VAR2: ${{ contains(join(github.event.issue.labels.*.name, ', '),'aaa') }}
@@ -41,8 +39,6 @@ jobs:
         echo ${{ contains('Hello world', 'llo') }}
         echo ${{ github.event.issue.labels }}
         echo ${{ github.event.pulissuel_request.labels.*.name }}
-        echo ${{ tojson(github.event.issue.labels.*.name) }}
-        echo ${{ fromjson(github.event.issue.labels.*.name) }}
       env:
        VAR1: ${{ contains(github.event.issue.labels.*.name, 'aaa') }}
        VAR2: ${{ contains(join(github.event.issue.labels.*.name, ', '),'aaa') }}
@@ -61,8 +57,6 @@ jobs:
         echo ${{ contains('Hello world', 'llo') }}
         echo ${{ github.event.issue.labels }}
         echo ${{ github.event.pulissuel_request.labels.*.name }}
-        echo ${{ tojson(github.event.issue.labels.*.name) }}
-        echo ${{ fromjson(github.event.issue.labels.*.name) }}
       env:
        VAR1: ${{ contains(github.event.issue.labels.*.name, 'aaa') }}
        VAR2: ${{ contains(join(github.event.issue.labels.*.name, ', '),'aaa') }}
