@@ -13,16 +13,18 @@ jobs:
     steps:
     - name: one
       run: |
-        echo ${{ contains(github.event.pull_request.labels.*.name, 'aaa') }}
-        echo ${{contains(join(github.event.pull_request.labels.*.name, ', '),'aaa')}}
-        echo ${{contains(github.event.pull_request.labels.*.name,'needs')}}
+        echo ${{ contains(github.event.issue.labels.*.name, 'aaa') }}
+        echo ${{ contains(join(github.event.issue.labels.*.name, ', '),'aaa') }}
         echo $VAR1
         echo $VAR2
-        echo $VAR3
+        echo ${{ contains('Hello world', 'llo') }}
+        echo ${{ github.event.issue.labels }}
+        echo ${{ github.event.pulissuel_request.labels.*.name }}
+        echo ${{ tojson(github.event.issue.labels.*.name) }}
+        echo ${{ fromjson(github.event.issue.labels.*.name) }}
       env:
-       VAR1: ${{ contains(github.event.pull_request.labels.*.name, 'aaa') }}
-       VAR2: ${{contains(join(github.event.pull_request.labels.*.name, ', '),'aaa')}}
-       VAR3: ${{contains(github.event.pull_request.labels.*.name,'needs')}}
+       VAR1: ${{ contains(github.event.issue.labels.*.name, 'aaa') }}
+       VAR2: ${{ contains(join(github.event.issue.labels.*.name, ', '),'aaa') }}
 
 
   contains2:
@@ -32,37 +34,36 @@ jobs:
     steps:
     - name: two
       run: |
-        echo ${{ contains(github.event.pull_request.labels.*.name, 'aaa') }}
-        echo ${{ contains(join(github.event.pull_request.labels.*.name, ', '),'aaa') }}
-        echo ${{ contains(github.event.pull_request.labels.*.name,'needs') }}
+        echo ${{ contains(github.event.issue.labels.*.name, 'aaa') }}
+        echo ${{ contains(join(github.event.issue.labels.*.name, ', '),'aaa') }}
         echo $VAR1
         echo $VAR2
-        echo $VAR3
         echo ${{ contains('Hello world', 'llo') }}
-        echo ${{ github.event.pull_request.labels }}
-        echo ${{ github.event.pull_request.labels.*.name }}
-
+        echo ${{ github.event.issue.labels }}
+        echo ${{ github.event.pulissuel_request.labels.*.name }}
+        echo ${{ tojson(github.event.issue.labels.*.name) }}
+        echo ${{ fromjson(github.event.issue.labels.*.name) }}
       env:
-       VAR1: ${{ contains(github.event.pull_request.labels.*.name, 'aaa') }}
-       VAR2: ${{ contains(join(github.event.pull_request.labels.*.name, ', '),'aaa') }}
-       VAR3: ${{ contains(github.event.pull_request.labels.*.name,'needs') }}
+       VAR1: ${{ contains(github.event.issue.labels.*.name, 'aaa') }}
+       VAR2: ${{ contains(join(github.event.issue.labels.*.name, ', '),'aaa') }}
 
   contains3:
-    if: contains(join(github.event.pull_request.labels.*.name, ', '),'aaa')
+    if: contains(join(github.event.issue.labels.*.name, ', '),'aaa')
     runs-on: ubuntu-latest
 
     steps:
     - name: three
       run: |
-        echo ${{ contains(github.event.pull_request.labels.*.name, 'aaa') }}
-        echo ${{contains(join(github.event.pull_request.labels.*.name, ', '),'aaa')}}
-        echo ${{contains(github.event.pull_request.labels.*.name,'needs')}}
+        echo ${{ contains(github.event.issue.labels.*.name, 'aaa') }}
+        echo ${{ contains(join(github.event.issue.labels.*.name, ', '),'aaa') }}
         echo $VAR1
         echo $VAR2
-        echo $VAR3
+        echo ${{ contains('Hello world', 'llo') }}
+        echo ${{ github.event.issue.labels }}
+        echo ${{ github.event.pulissuel_request.labels.*.name }}
+        echo ${{ tojson(github.event.issue.labels.*.name) }}
+        echo ${{ fromjson(github.event.issue.labels.*.name) }}
       env:
-       VAR1: ${{ contains(github.event.pull_request.labels.*.name, 'aaa') }}
-       VAR2: ${{contains(join(github.event.pull_request.labels.*.name, ', '),'aaa')}}
-       VAR3: ${{contains(github.event.pull_request.labels.*.name,'needs')}}
-
+       VAR1: ${{ contains(github.event.issue.labels.*.name, 'aaa') }}
+       VAR2: ${{ contains(join(github.event.issue.labels.*.name, ', '),'aaa') }}
 
