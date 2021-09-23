@@ -33,15 +33,16 @@ jobs:
     - name: two
       run: |
         echo ${{ contains(github.event.pull_request.labels.*.name, 'aaa') }}
-        echo ${{contains(join(github.event.pull_request.labels.*.name, ', '),'aaa')}}
-        echo ${{contains(github.event.pull_request.labels.*.name,'needs')}}
+        echo ${{ contains(join(github.event.pull_request.labels.*.name, ', '),'aaa') }}
+        echo ${{ contains(github.event.pull_request.labels.*.name,'needs') }}
         echo $VAR1
         echo $VAR2
         echo $VAR3
+        echo ${{ contains('Hello world', 'llo') }}
       env:
        VAR1: ${{ contains(github.event.pull_request.labels.*.name, 'aaa') }}
-       VAR2: ${{contains(join(github.event.pull_request.labels.*.name, ', '),'aaa')}}
-       VAR3: ${{contains(github.event.pull_request.labels.*.name,'needs')}}
+       VAR2: ${{ contains(join(github.event.pull_request.labels.*.name, ', '),'aaa') }}
+       VAR3: ${{ contains(github.event.pull_request.labels.*.name,'needs') }}
 
   contains3:
     if: contains(join(github.event.pull_request.labels.*.name, ', '),'aaa')
