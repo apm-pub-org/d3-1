@@ -44,6 +44,7 @@ jobs:
        VAR3: ${{contains(github.event.pull_request.labels.*.name,'needs')}}
 
   contains3:
+    if: contains(join(github.event.pull_request.labels.*.name, ', '),'aaa')
     runs-on: ubuntu-latest
 
     steps:
