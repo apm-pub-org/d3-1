@@ -16,6 +16,9 @@ jobs:
       - name: event
         run: |
           echo $GITHUB_EVENT_NAME
+      - name: action
+        run: |
+          echo ${{ github.action }}
       - name: context
         env:
           GITHUB_CONTEXT: ${{ toJSON(github) }}
