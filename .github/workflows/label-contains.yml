@@ -1,69 +1,19 @@
 name: contains
 
 on:
-  issues:
-    types:
-      - labeled
-      
+  workflow_dispatch:
+
+env:
+  PROJECT_ID: a
+  IMAGE: static-site
+
 jobs:
-  contains:
-    if: (!contains(github.event.issue.labels.*.name, 'aaa'))
+  setup-build-publish-deploy:
+    name: Setup, Build, Publish, and Deploy
     runs-on: ubuntu-latest
 
     steps:
-    - name: one
-      run: |
-        echo ${{ contains(github.event.issue.labels.*.name, 'aaa') }}
-        echo ${{ contains(join(github.event.issue.labels.*.name, ', '),'aaa') }}
-        echo $VAR1
-        echo $VAR2
-        echo ${{ contains('Hello world', 'llo') }}
-        echo ${{ github.event.issue.labels }}
-        echo ${{ github.event.pulissuel_request.labels.*.name }}
-      env:
-       VAR1: ${{ contains(github.event.issue.labels.*.name, 'aaa') }}
-       VAR2: ${{ contains(join(github.event.issue.labels.*.name, ', '),'aaa') }}
-
-
-  contains2:
-    if: (contains(github.event.issue.labels.*.name, 'aaa'))
-    runs-on: ubuntu-latest
-
-    steps:
-    - name: two
-      run: |
-        echo ${{ contains(github.event.issue.labels.*.name, 'aaa') }}
-        echo ${{ contains(join(github.event.issue.labels.*.name, ', '),'aaa') }}
-        echo $VAR1
-        echo $VAR2
-        echo ${{ contains('Hello world', 'llo') }}
-        echo ${{ github.event.issue.labels }}
-        echo ${{ github.event.pulissuel_request.labels.*.name }}
-      env:
-       VAR1: ${{ contains(github.event.issue.labels.*.name, 'aaa') }}
-       VAR2: ${{ contains(join(github.event.issue.labels.*.name, ', '),'aaa') }}
-
-  contains3:
-    if: contains(join(github.event.issue.labels.*.name, ', '),'aaa')
-    runs-on: ubuntu-latest
-
-    steps:
-    - name: three
-      run: |
-        echo ${{ contains(github.event.issue.labels.*.name, 'aaa') }}
-        echo ${{ contains(join(github.event.issue.labels.*.name, ', '),'aaa') }}
-        echo $VAR1
-        echo $VAR2
-        echo ${{ contains('Hello world', 'llo') }}
-        echo ${{ github.event.issue.labels }}
-        echo ${{ github.event.pulissuel_request.labels.*.name }}
-      env:
-       VAR1: ${{ contains(github.event.issue.labels.*.name, 'aaa') }}
-       VAR2: ${{ contains(join(github.event.issue.labels.*.name, ', '),'aaa') }}
-
-  check-label:
-    runs-on: ubuntu-latest
-    steps:
-      - run: |-
-          echo ${{contains(join(github.event.issue.labels.*.name, ', '),'aaa')}}
-          echo ${{contains(github.event.issue.labels.*.name,'aaa')}}
+    - run: echo $IMAGE
+    - run: echo ${{ env.IMAGE}}
+    - run: echo $PROJECT_ID
+    - run: echo ${{ env.PROJECT_ID}}
