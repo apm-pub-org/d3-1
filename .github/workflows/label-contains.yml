@@ -16,6 +16,14 @@ jobs:
         echo ${{ contains(github.event.pull_request.labels.*.name, 'aaa') }}
         echo ${{contains(join(github.event.pull_request.labels.*.name, ', '),'aaa')}}
         echo ${{contains(github.event.pull_request.labels.*.name,'needs')}}
+        echo $VAR1
+        echo $VAR2
+        echo $VAR3
+      env:
+       VAR1: ${{ contains(github.event.pull_request.labels.*.name, 'aaa') }}
+       VAR2: ${{contains(join(github.event.pull_request.labels.*.name, ', '),'aaa')}}
+       VAR3: ${{contains(github.event.pull_request.labels.*.name,'needs')}}
+
 
   contains2:
     if: (contains(github.event.issue.labels.*.name, 'aaa'))
@@ -27,6 +35,13 @@ jobs:
         echo ${{ contains(github.event.pull_request.labels.*.name, 'aaa') }}
         echo ${{contains(join(github.event.pull_request.labels.*.name, ', '),'aaa')}}
         echo ${{contains(github.event.pull_request.labels.*.name,'needs')}}
+        echo $VAR1
+        echo $VAR2
+        echo $VAR3
+      env:
+       VAR1: ${{ contains(github.event.pull_request.labels.*.name, 'aaa') }}
+       VAR2: ${{contains(join(github.event.pull_request.labels.*.name, ', '),'aaa')}}
+       VAR3: ${{contains(github.event.pull_request.labels.*.name,'needs')}}
 
   contains3:
     runs-on: ubuntu-latest
@@ -37,5 +52,12 @@ jobs:
         echo ${{ contains(github.event.pull_request.labels.*.name, 'aaa') }}
         echo ${{contains(join(github.event.pull_request.labels.*.name, ', '),'aaa')}}
         echo ${{contains(github.event.pull_request.labels.*.name,'needs')}}
+        echo $VAR1
+        echo $VAR2
+        echo $VAR3
+      env:
+       VAR1: ${{ contains(github.event.pull_request.labels.*.name, 'aaa') }}
+       VAR2: ${{contains(join(github.event.pull_request.labels.*.name, ', '),'aaa')}}
+       VAR3: ${{contains(github.event.pull_request.labels.*.name,'needs')}}
 
 
