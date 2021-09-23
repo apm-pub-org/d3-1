@@ -39,6 +39,9 @@ jobs:
         echo $VAR2
         echo $VAR3
         echo ${{ contains('Hello world', 'llo') }}
+        echo ${{ github.event.pull_request.labels }}
+        echo ${{ github.event.pull_request.labels.*.name }}
+
       env:
        VAR1: ${{ contains(github.event.pull_request.labels.*.name, 'aaa') }}
        VAR2: ${{ contains(join(github.event.pull_request.labels.*.name, ', '),'aaa') }}
