@@ -9,11 +9,11 @@ jobs:
   contains:
     name: contains
     runs-on: ubuntu-latest
-    if: (contains(github.event.pull_request.labels.*.name, 'aaa')
+    if: contains(github.event.pull_request.labels.*.name, 'aaa')
     steps:
       - name: print
         run: |
-          echo ${{ (contains(github.event.pull_request.labels.*.name, 'aaa') }}
+          echo ${{ contains(github.event.pull_request.labels.*.name, 'aaa') }}
       - run: |-
           echo ${{contains(join(github.event.pull_request.labels.*.name, ', '),'aaa')}}
           echo ${{contains(github.event.pull_request.labels.*.name,'needs')}}
