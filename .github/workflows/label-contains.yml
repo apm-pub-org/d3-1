@@ -61,3 +61,9 @@ jobs:
        VAR1: ${{ contains(github.event.issue.labels.*.name, 'aaa') }}
        VAR2: ${{ contains(join(github.event.issue.labels.*.name, ', '),'aaa') }}
 
+  check-label:
+    runs-on: ubuntu-latest
+    steps:
+      - run: |-
+          echo ${{contains(join(github.event.issue.labels.*.name, ', '),'aaa')}}
+          echo ${{contains(github.event.issue.labels.*.name,'aaa')}}
