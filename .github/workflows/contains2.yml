@@ -1,0 +1,12 @@
+on:
+  pull_request:
+    types: [labeled, unlabeled]
+
+
+jobs:
+  check-label:
+    runs-on: ubuntu-latest
+    steps:
+      - run: |-
+          echo ${{contains(join(github.event.pull_request.labels.*.name, ', '),'needs')}}
+          echo ${{contains(github.event.pull_request.labels.*.name,'needs')}}
