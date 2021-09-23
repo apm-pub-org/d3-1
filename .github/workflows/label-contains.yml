@@ -4,46 +4,38 @@ on:
   issues:
     types:
       - labeled
-
+      
 jobs:
   contains:
-    name: contains
+    if: (!contains(github.event.issue.labels.*.name, 'aaa'))
     runs-on: ubuntu-latest
-    if: contains(github.event.pull_request.labels.*.name, 'aaa')
+
     steps:
-      - name: print
-        run: |
-          echo ${{ contains(github.event.pull_request.labels.*.name, 'aaa') }}
-      - run: |-
-          echo ${{contains(join(github.event.pull_request.labels.*.name, ', '),'aaa')}}
-          echo ${{contains(github.event.pull_request.labels.*.name,'needs')}}
-      - run: |
-          echo ${{contains(join(github.event.pull_request.labels.*.name, ', '),'aaa')}}
-          echo ${{contains(github.event.pull_request.labels.*.name,'aaa')}}
+    - name: one
+      run: |
+        echo ${{ contains(github.event.pull_request.labels.*.name, 'aaa') }}
+        echo ${{contains(join(github.event.pull_request.labels.*.name, ', '),'aaa')}}
+        echo ${{contains(github.event.pull_request.labels.*.name,'needs')}}
+
   contains2:
-    name: contains2
+    if: (contains(github.event.issue.labels.*.name, 'aaa'))
     runs-on: ubuntu-latest
+
     steps:
-      - name: print
-        run: |
-          echo ${{ contains(github.event.pull_request.labels.*.name, 'aaa') }}
-      - run: |-
-          echo ${{contains(join(github.event.pull_request.labels.*.name, ', '),'aaa')}}
-          echo ${{contains(github.event.pull_request.labels.*.name,'needs')}}
-      - run: |
-          echo ${{contains(join(github.event.pull_request.labels.*.name, ', '),'aaa')}}
-          echo ${{contains(github.event.pull_request.labels.*.name,'aaa')}}
+    - name: two
+      run: |
+        echo ${{ contains(github.event.pull_request.labels.*.name, 'aaa') }}
+        echo ${{contains(join(github.event.pull_request.labels.*.name, ', '),'aaa')}}
+        echo ${{contains(github.event.pull_request.labels.*.name,'needs')}}
+
   contains3:
-    name: contains3
     runs-on: ubuntu-latest
-    if: (contains(github.event.pull_request.labels.*.name, 'aaa'))
+
     steps:
-      - name: print
-        run: |
-          echo ${{ contains(github.event.pull_request.labels.*.name, 'aaa') }}
-      - run: |-
-          echo ${{contains(join(github.event.pull_request.labels.*.name, ', '),'aaa')}}
-          echo ${{contains(github.event.pull_request.labels.*.name,'needs')}}
-      - run: |
-          echo ${{contains(join(github.event.pull_request.labels.*.name, ', '),'aaa')}}
-          echo ${{contains(github.event.pull_request.labels.*.name,'aaa')}}
+    - name: three
+      run: |
+        echo ${{ contains(github.event.pull_request.labels.*.name, 'aaa') }}
+        echo ${{contains(join(github.event.pull_request.labels.*.name, ', '),'aaa')}}
+        echo ${{contains(github.event.pull_request.labels.*.name,'needs')}}
+
+
