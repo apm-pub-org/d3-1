@@ -6,11 +6,9 @@ name: Hubber contribution help
 
 on:
   pull_request:
-    types:
-      - opened
-  paths:
-    - 'content/**'
-    - 'data/**'
+    paths:
+      - 'content/**'
+      - 'data/**'
 
 jobs:
   if: github.repository == 'ske-test-org/test-org-repo' && github.actor != 'github-openapi-bot'
