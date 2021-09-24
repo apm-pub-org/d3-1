@@ -6,8 +6,8 @@ name: Hubber contribution help
 
 on:
   pull_request:
-    types:
-      - opened
+#     types:
+#       - opened
     paths:
       - 'content/**'
       - 'data/**'
