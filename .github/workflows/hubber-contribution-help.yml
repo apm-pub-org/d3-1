@@ -23,7 +23,7 @@ jobs:
       - id: membership_check
         uses: actions/github-script@2b34a689ec86a68d8ab9478298f91d5401337b7d
         with:
-          github-token: ${{ secrets.SECRET }}
+          github-token: ${{ secrets.NOT_A_PAT }}
           script: |
             const out = await github.teams.getMembershipForUserInOrg({
                 org: 'github',
