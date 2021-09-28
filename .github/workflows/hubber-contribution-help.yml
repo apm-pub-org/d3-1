@@ -8,6 +8,7 @@ on:
   pull_request:
     types:
       - opened
+      - reopened
     paths:
       - 'content/**'
       - 'data/**'
@@ -24,6 +25,12 @@ jobs:
         with:
           github-token: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
           script: |
+            const out = await github.teams.getMembershipForUserInOrg({
+                org: 'github',
+                team_slug: 'docs',
+                username: context.payload.sender.login,
+              })
+              console.log(out)
             try {
               await github.teams.getMembershipForUserInOrg({
                 org: 'github',
