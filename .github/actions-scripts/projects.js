@@ -164,7 +164,7 @@ export function generateUpdateProjectNextItemFieldMutation({
     // Strip "=" out of the item ID when creating the mutation ID to avoid a GraphQL parsing error
     // (statistically, this should still give us a unique mutation ID)
     return `
-      set_${fieldID.substr(1)}_item_${item.replaceAll('=', '')}: updateProjectNextItemField(input: {
+      set_${fieldID.substr(1)}_item_${item.replace(/=/g, '')}: updateProjectNextItemField(input: {
         projectId: $project
         itemId: "${item}"
         fieldId: ${fieldID}
