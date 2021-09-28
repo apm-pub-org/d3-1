@@ -114,6 +114,9 @@ async function run() {
     feature = features.join()
   }
 
+  console.log(`size is: ${sizeType}`)
+  console.log(`feature is: ${feature}`)
+
   // Generate a mutation to populate fields for the new project item
   const updateProjectNextItemMutation = generateUpdateProjectNextItemFieldMutation({
     item: newItemID,
