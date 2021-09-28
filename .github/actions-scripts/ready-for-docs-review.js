@@ -42,6 +42,7 @@ async function run() {
       }
     `,
     {
+      id: process.env.ITEM_NODE_ID,
       organization: process.env.ORGANIZATION,
       projectNumber: parseInt(process.env.PROJECT_NUMBER),
       headers: {
