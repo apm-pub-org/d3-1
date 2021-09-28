@@ -112,7 +112,7 @@ async function run() {
     }
 
     // Set the feature
-    feature = features.join()
+    feature = Array.from(features).join()
   }
 
   console.log(`size is: ${sizeType}`)
