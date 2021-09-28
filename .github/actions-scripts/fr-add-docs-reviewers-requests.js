@@ -118,8 +118,8 @@ async function run() {
   const reviewDueDateID = findFieldID('Review due date', data)
   const statusID = findFieldID('Status', data)
   const featureID = findFieldID('Feature', data)
-  const notesID = findFieldID('Notes', data)
   const contributorTypeID = findFieldID('Contributor type', data)
+  const sizeTypeID = findFieldID('Size', data)
   const authorID = findFieldID('Author', data)
 
   // Get the ID of the single select values that we want to set
@@ -156,8 +156,6 @@ async function run() {
       author: newItemAuthors[index],
       turnaround: 2,
       feature: 'OpenAPI schema update',
-      notes:
-        'Notes on how to review: https://github.com/github/docs-content/blob/main/docs-content-docs/docs-content-workflows/reviews-and-feedback/review-process.md#reviewing-openapi-pull-requests',
     })
     const contributorType = (await isDocsTeamMember(newItemAuthors[index]))
       ? docsMemberTypeID
@@ -172,8 +170,9 @@ async function run() {
       reviewDueDateID: reviewDueDateID,
       contributorTypeID: contributorTypeID,
       contributorType: contributorType,
+      sizeTypeID: sizeTypeID,
+      sizeType: "", // Although we aren't populating size, we are passing the variable so that we can use the shared mutation function
       featureID: featureID,
-      notesID: notesID,
       authorID: authorID,
       headers: {
         authorization: `token ${process.env.TOKEN}`,

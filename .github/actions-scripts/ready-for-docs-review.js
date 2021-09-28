@@ -8,11 +8,14 @@ import {
   generateUpdateProjectNextItemFieldMutation,
 } from './projects.js'
 
+// Author: I think we could add whether the author is a first time contributor. This info exists, I just need to think about the best way to get it from the API.
+
+
 async function run() {
   // Get info about the docs-content review board project
   const data = await graphql(
     `
-      query ($organization: String!, $projectNumber: Int!) {
+      query ($organization: String!, $projectNumber: Int!, $id: ID!) {
         organization(login: $organization) {
           projectNext(number: $projectNumber) {
             id
@@ -21,6 +24,17 @@ async function run() {
                 id
                 name
                 settings
+              }
+            }
+          }
+        }
+        item: node(id: $id){
+          ... on PullRequest {
+            files(first: 100) {
+              nodes{
+                additions
+                deletions
+                path
               }
             }
           }
@@ -46,6 +60,7 @@ async function run() {
   const statusID = findFieldID('Status', data)
   const featureID = findFieldID('Feature', data)
   const contributorTypeID = findFieldID('Contributor type', data)
+  const sizeTypeID = findFieldID('Size', data)
   const authorID = findFieldID('Author', data)
 
   // Get the ID of the single select values that we want to set
@@ -53,15 +68,58 @@ async function run() {
   const hubberTypeID = findSingleSelectID('Hubber or partner', 'Contributor type', data)
   const docsMemberTypeID = findSingleSelectID('Docs team', 'Contributor type', data)
   const osContributorTypeID = findSingleSelectID('OS contributor', 'Contributor type', data)
+  const sizeXS = findSingleSelectID('XS', 'Size', data)
+  const sizeS = findSingleSelectID('S', 'Size', data)
+  const sizeM = findSingleSelectID('M', 'Size', data)
+  const sizeL = findSingleSelectID('L', 'Size', data)
 
   // Add the PR to the project
   const newItemID = await addItemToProject(process.env.ITEM_NODE_ID, projectID)
+
+  // If the item is a PR, determine the feature and size
+  let feature = ''
+  let sizeType = '' // You don't need to use a field ID if you want the value to be empty
+  if (Object.keys(data.item).length) {
+    // Get the 
+    // - number of files changed
+    // - total number of additions/deletions
+    // - affected docs sets (not considering changes to data/assets)
+    let numFiles = 0
+    let numChanges = 0
+    let features = new Set([])
+    const files = data.item.files.nodes.forEach(node => {
+      numFiles += 1
+      numChanges += node.additions
+      numChanges += node.deletions
+      // To determine the feature, we are only looking at `content/*` paths
+      // and then pulling out the second part of the path, which corresponds to the docs set
+      const pathComponents = node.path.split('/')
+      if (pathComponents[0] === 'content'){
+        features.add(pathComponents[1])
+      }
+    });
+
+    // Determine the size
+    if (numFiles < 5 && numChanges < 25) {
+      sizeType = sizeXS
+    } else if (numFiles < 5 && numChanges < 25) {
+      sizeType = sizeS
+    } else if(numFiles < 5 && numChanges < 25) {
+      sizeType = sizeM
+    } else {
+      sizeType = sizeL
+    }
+
+    // Set the feature
+    feature = features.join()
+  }
 
   // Generate a mutation to populate fields for the new project item
   const updateProjectNextItemMutation = generateUpdateProjectNextItemFieldMutation({
     item: newItemID,
     author: process.env.AUTHOR_LOGIN,
     turnaround: 2,
+    feature: feature,
   })
 
   // Determine which variable to use for the contributor type
@@ -84,6 +142,8 @@ async function run() {
     reviewDueDateID: reviewDueDateID,
     contributorTypeID: contributorTypeID,
     contributorType: contributorType,
+    sizeTypeID: sizeTypeID,
+    sizeType: sizeType,
     featureID: featureID,
     authorID: authorID,
     headers: {
