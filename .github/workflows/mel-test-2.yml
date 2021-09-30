@@ -5,6 +5,22 @@ on:
       - opened
       - reopened # todo remove
 jobs:
+  job1:
+    name: job1
+    runs-on: ubuntu-latest
+    outputs: 
+      output1: ${{ steps.parse_issue.outputs.result }}
+    steps:
+      - name: Parse release issue
+        uses: actions/github-script@2b34a689ec86a68d8ab9478298f91d5401337b7d
+        id: parse_issue
+        with:
+          script: |
+            return {
+                docsNeeded: true,
+                notNeded: false,
+              };
+
   parse_release_issue:
     runs-on: ubuntu-latest
 
