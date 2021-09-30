@@ -126,13 +126,31 @@ jobs:
         run: |
           gh issue edit $NEW_ISSUE --add-label "GHAE"
           
-      - name: always label
+      - name: print
+        if: always()
         env:
-          GITHUB_TOKEN: ${{secrets.PERSONAL_ACCESS_TOKEN}}
-          NEW_ISSUE: ${{ env.NEW_ISSUE }}
-        run: |
-          gh issue edit $NEW_ISSUE --add-label "bug"
-          
+          PRINT: ${{ needs.parse_release_issue.outputs.output }}
+        run: echo $PRINT
+        
+      - name: print2
+        if: always()
+        env:
+          PRINT: ${{ needs.parse_release_issue.outputs.output.tier }}
+        run: echo $PRINT
+        
+      - name: print3
+        if: always()
+        env:
+          PRINT: ${{ fromJSON(needs.parse_release_issue.outputs.output).tier }}
+        run: echo $PRINT
+
+      - name: print3
+        if: always()
+        env:
+          PRINT: ${{ toJSON(needs.parse_release_issue.outputs.output).tier }}
+        run: echo $PRINT
+
+
       - name: Test if
         if: ${{ fromJSON(needs.parse_release_issue.outputs.output).tier=='Tier 3' }}
         run: echo "yry"
