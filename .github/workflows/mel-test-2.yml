@@ -17,6 +17,7 @@ jobs:
         id: parse_issue
         with:
           script: |
+            console.log('start)
             const labels = context.payload.issue.labels;
             let tier = "unknown"
             for (const label of labels) {
@@ -95,7 +96,7 @@ jobs:
             - [ ] GHES 3.3 (future)
             - [ ] GHES 3.4 (future)`:""}
             `
-
+            console.log('end')
             return {
                 newTitle: newTitle,
                 docsNeeded: docsNeeded,
