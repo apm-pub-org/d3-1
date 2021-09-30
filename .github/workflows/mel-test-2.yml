@@ -16,9 +16,81 @@ jobs:
         id: parse_issue
         with:
           script: |
+            const labels = context.payload.issue.labels;
+            let tier = "unknown"
+            for (const label of labels) {
+              if (['Tier 1','Tier 2','Tier 3','Tier 4'].includes(label.name)){
+                tier = label.name
+                break
+              }
+            }
+            let phase = "unknown"
+            for (const label of labels) {
+              if (['Alpha','Private Beta','Public Beta','Limited Public Beta', 'GA'].includes(label.name)){
+                phase = label.name
+                break
+              }
+            }
+            const body = context.payload.issue.body;
+            function getStringBetween(input, before, after) {
+              // i = case insensitive, s = match newlines
+              re = new RegExp(before + "(.*?)" + after, "is");
+              const result = input.match(re);
+              if (result) {
+                return result[1].trim();
+              } else {
+                console.log(
+                  `String between ${before} and ${after} was not found. Check if the release template changed.`
+                );
+                return result;
+              }
+            }
+            // Pull out info from the release issue
+            const shipDate = getStringBetween(body, "Expected ship date", "###");
+            const docsNeeded = getStringBetween(body, "Are docs needed", "###");
+            const ghesApplicable = getStringBetween(body, "Will this feature, in its current release phase, flow into GitHub Enterprise Server\\?", "###")==="Yes";
+            const ghaeApplicable = getStringBetween(body, "Will this feature, in its current release phase, flow into GitHub AE\\?", "###")==="Yes";
+            const title = context.payload.issue.title;
+            const author = context.payload.issue.user.login;
+            const issue = context.payload.issue.html_url;
+            const newTitle = `[${shipDate}]: ${title} (${phase})`
+            const newBody = `### Link to the release issue
+            - ${issue}
+            ${tier==="Tier 3"||tier==="Tier 4"?"### If this release has a small docs impact, are you able to make the docs update yourself in the docs-internal repo?
+            Please select one, @${author}:
+            - [ ] Yes!
+            - [ ] Yes, but with support
+            - [ ] No, I'm not able
+            - [ ] No, but I know someone who can (ping them in the next section)":""}
+            ### Outstanding questions for the release DRI
+            Please answer all questions, @${author}:
+            ${tier==="Tier 3"||tier==="Tier 4"?"- Do you think we'll need to create a new article to document this release? (If you're not sure, please say so.)
+            - What existing documentation will likely need to be updated for this release and how should they be updated?":""} 
+            - How would a docs team member access this feature for testing and screenshots?
+            - What is the timeline for rolling to GHAE?
+            - What is the relevant Slack channel?
+            - Will any content require legal review?
+              - [ ] Yes
+              - [ ] No 
+            - Will any content require security review?
+              - [ ] Yes
+              - [ ] No 
+              ${tier==="Tier 3"||tier==="Tier 4"?"- If you answered that you can't open the PR but you know someone who can, ping them here. @${author}":""}
+            ${ghesApplicable ? `### Specific GHES version(s)
+            Please select the first version that applies to this release, @${author}:
+            - [ ] GHES 2.22
+            - [ ] GHES 3.0
+            - [ ] GHES 3.1
+            - [ ] GHES 3.2
+            - [ ] GHES 3.3 (future)
+            - [ ] GHES 3.4 (future)`:""}
+            `
             return {
-                docsNeeded: true,
-                notNeded: false,
+                newTitle: newTitle,
+                docsNeeded: docsNeeded,
+                newBody: newBody,
+                ghaeApplicable: ghaeApplicable, 
+                tier: tier,
               };
 
   open_docs_issue:
