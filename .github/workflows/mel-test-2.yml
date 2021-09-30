@@ -135,7 +135,7 @@ jobs:
           gh issue edit $NEW_ISSUE --add-label "Tier 3 or 4"
           
       - name: Label docs content issue with tier label 
-        if: ${{ fromJSON(needs.parse_release_issue.outputs.output).tier=="Tier 1"||fromJSON(needs.parse_release_issue.outputs.output).tier=="Tier 2" }}
+        if: ${{ fromJSON(needs.parse_release_issue.outputs.output).tier=='Tier 1'||fromJSON(needs.parse_release_issue.outputs.output).tier=='Tier 2' }}
         env:
           GITHUB_TOKEN: ${{secrets.PERSONAL_ACCESS_TOKEN}}
           NEW_ISSUE: ${{ env.NEW_ISSUE }}
