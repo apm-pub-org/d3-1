@@ -121,7 +121,7 @@ jobs:
           ISSUE_TITLE: ${{ fromJSON(needs.parse_release_issue.outputs.output).newTitle }}
 
       - name: Label release issue with GHAE if applicable
-        if: fromJSON(needs.parse_release_issue.outputs.result).ghaeApplicable
+        if: fromJSON(needs.parse_release_issue.outputs.output).ghaeApplicable
         env:
           GITHUB_TOKEN: ${{secrets.PERSONAL_ACCESS_TOKEN}}
           NEW_ISSUE: ${{ env.NEW_ISSUE }}
