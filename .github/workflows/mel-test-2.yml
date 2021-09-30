@@ -127,7 +127,7 @@ jobs:
           gh issue edit $NEW_ISSUE --add-label "GHAE"
           
       - name: Label docs content issue with tier label 
-        if: ${{ fromJSON(needs.parse_release_issue.outputs.output).tier=="Tier 3"||fromJSON(needs.parse_release_issue.outputs.output).tier=="Tier 4" }}
+        if: ${{ fromJSON(needs.parse_release_issue.outputs.output).tier=='Tier 3' }}
         env:
           GITHUB_TOKEN: ${{secrets.PERSONAL_ACCESS_TOKEN}}
           NEW_ISSUE: ${{ env.NEW_ISSUE }}
