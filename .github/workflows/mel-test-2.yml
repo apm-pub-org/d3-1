@@ -15,7 +15,6 @@ jobs:
         uses: actions/github-script@2b34a689ec86a68d8ab9478298f91d5401337b7d
         id: parse_issue
         with:
-          result-encoding: string
           script: |
             const labels = context.payload.issue.labels;
             let tier = "unknown"
@@ -102,6 +101,8 @@ jobs:
                 newBody: newBody,
                 ghaeApplicable: ghaeApplicable, 
                 tier: tier,
+                test: true,
+                test2: false,
               };
 
 
@@ -126,6 +127,23 @@ jobs:
           NEW_ISSUE: ${{ env.NEW_ISSUE }}
         run: |
           gh issue edit $NEW_ISSUE --add-label "GHAE"
+          
+      - name: test-true
+        if: fromJSON(needs.parse_release_issue.outputs.result).test
+        env:
+          GITHUB_TOKEN: ${{secrets.PERSONAL_ACCESS_TOKEN}}
+          NEW_ISSUE: ${{ env.NEW_ISSUE }}
+        run: |
+          gh issue edit $NEW_ISSUE --add-label "bug"
+
+      - name: test-false
+        if: fromJSON(needs.parse_release_issue.outputs.result).test2
+        env:
+          GITHUB_TOKEN: ${{secrets.PERSONAL_ACCESS_TOKEN}}
+          NEW_ISSUE: ${{ env.NEW_ISSUE }}
+        run: |
+          gh issue edit $NEW_ISSUE --add-label "documentation"
+
           
       - name: print
         if: always()
