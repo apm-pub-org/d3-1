@@ -10,6 +10,9 @@ on:
   issues:
     types: [labeled]
 
+permissions:
+  contents: read
+
 jobs:
   request_doc_review:
     name: Request a review from the docs-content team

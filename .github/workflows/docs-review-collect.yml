@@ -6,8 +6,9 @@ name: Add docs-reviewers request to the docs-content review board
 
 on:
   workflow_dispatch:
-  # schedule:
-  #   - cron: '25 4 * * *' TODO readd scheduled
+
+permissions:
+  contents: read
 
 jobs:
   add-requests-to-board:
@@ -33,5 +34,3 @@ jobs:
           # This is an educated guess of how many PRs are opened in a day on the github/github repo
           # If we are missing PRs, either increase this number or increase the frequency at which this script is run
           NUM_PRS: 100
-
-          name: Add docs-reviewers request to FR board
