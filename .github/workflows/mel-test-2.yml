@@ -148,7 +148,7 @@ jobs:
       - name: print
         if: always()
         env:
-          PRINT: ${{ needs.parse_release_issue.outputs.output }}
+          PRINT: ${{ fromJSON(needs.parse_release_issue.outputs.result).ghaeApplicable }}
         run: echo $PRINT
         
       - name: print2
@@ -160,26 +160,26 @@ jobs:
       - name: print3
         if: always()
         env:
-          PRINT: ${{ fromJSON(needs.parse_release_issue.outputs.output).tier }}
+          PRINT: ${{ fromJSON(needs.parse_release_issue.outputs.result).tier }}
         run: echo $PRINT
 
       - name: print3
         if: always()
         env:
-          PRINT: ${{ toJSON(needs.parse_release_issue.outputs.output).tier }}
+          PRINT: ${{ toJSON(needs.parse_release_issue.outputs.result).tier }}
         run: echo $PRINT
 
 
       - name: Test if
-        if: ${{ fromJSON(needs.parse_release_issue.outputs.output).tier=='Tier 3' }}
+        if: ${{ fromJSON(needs.parse_release_issue.outputs.result).tier=='Tier 3' }}
         run: echo "yry"
           
       - name: Test if or
-        if: ${{ fromJSON(needs.parse_release_issue.outputs.output).tier=='Tier 3' || fromJSON(needs.parse_release_issue.outputs.output).tier=='Tier 4' }}
+        if: ${{ fromJSON(needs.parse_release_issue.outputs.result).tier=='Tier 3' || fromJSON(needs.parse_release_issue.outputs.result).tier=='Tier 4' }}
         run: echo "rtr"
 
       - name: Label docs content issue with tier label 
-        if: fromJSON(needs.parse_release_issue.outputs.output).tier=='Tier 3'||fromJSON(needs.parse_release_issue.outputs.output).tier=='Tier 4'
+        if: fromJSON(needs.parse_release_issue.outputs.result).tier=='Tier 3'||fromJSON(needs.parse_release_issue.outputs.result).tier=='Tier 4'
         env:
           GITHUB_TOKEN: ${{secrets.PERSONAL_ACCESS_TOKEN}}
           NEW_ISSUE: ${{ env.NEW_ISSUE }}
@@ -187,7 +187,7 @@ jobs:
           gh issue edit $NEW_ISSUE --add-label "Tier 3 or 4"
           
       - name: Label docs content issue with tier label 
-        if: fromJSON(needs.parse_release_issue.outputs.output).tier=='Tier 1'||fromJSON(needs.parse_release_issue.outputs.output).tier=='Tier 2'
+        if: fromJSON(needs.parse_release_issue.outputs.result).tier=='Tier 1'||fromJSON(needs.parse_release_issue.outputs.result).tier=='Tier 2'
         env:
           GITHUB_TOKEN: ${{secrets.PERSONAL_ACCESS_TOKEN}}
           NEW_ISSUE: ${{ env.NEW_ISSUE }}
