@@ -5,8 +5,8 @@ on:
       - opened
       - reopened # todo remove
 jobs:
-  job1:
-    name: job1
+  parse_release_issue:
+    name: parse_release_issue
     runs-on: ubuntu-latest
     outputs: 
       output1: ${{ steps.parse_issue.outputs.result }}
@@ -21,32 +21,10 @@ jobs:
                 notNeded: false,
               };
 
-  parse_release_issue:
-    runs-on: ubuntu-latest
-
-    outputs:
-      output: ${{ steps.parse_issue.outputs.result }}
-
-    steps:
-      - name: Parse release issue
-        uses: actions/github-script@2b34a689ec86a68d8ab9478298f91d5401337b7d
-        id: parse_issue
-        with:
-          script: |
-            console.log('start)
-
-            return {
-                newTitle: "title",
-                docsNeeded: true,
-                newBody: 'body",
-                ghaeApplicable: true, 
-                tier: "Tier 3",
-              };
-
   open_docs_issue:
     runs-on: ubuntu-latest
     needs: parse_release_issue
-    if: fromJSON(needs.parse_release_issue.outputs.output).docsNeeded
+    if: fromJSON(needs.parse_release_issue.outputs.output1).docsNeeded
     steps:
       - name: Create an issue in the docs-content repo
         run: |
@@ -58,7 +36,7 @@ jobs:
           ISSUE_TITLE: ${{ fromJSON(needs.parse_release_issue.outputs.output).newTitle }}
 
       - name: Label release issue with GHAE if applicable
-        if: fromJSON(needs.parse_release_issue.outputs.output).ghaeApplicable
+        if: fromJSON(needs.parse_release_issue.outputs.output1).ghaeApplicable
         env:
           GITHUB_TOKEN: ${{secrets.PERSONAL_ACCESS_TOKEN}}
           NEW_ISSUE: ${{ env.NEW_ISSUE }}
@@ -66,7 +44,7 @@ jobs:
           gh issue edit $NEW_ISSUE --add-label "GHAE"
           
       - name: Label docs content issue with tier label 
-        if: ${{ fromJSON(needs.parse_release_issue.outputs.output).tier=='Tier 3' }}
+        if: ${{ fromJSON(needs.parse_release_issue.outputs.output1).tier=='Tier 3' }}
         env:
           GITHUB_TOKEN: ${{secrets.PERSONAL_ACCESS_TOKEN}}
           NEW_ISSUE: ${{ env.NEW_ISSUE }}
@@ -74,7 +52,7 @@ jobs:
           gh issue edit $NEW_ISSUE --add-label "Tier 3 or 4"
           
       - name: Label docs content issue with tier label 
-        if: ${{ fromJSON(needs.parse_release_issue.outputs.output).tier=='Tier 1'||fromJSON(needs.parse_release_issue.outputs.output).tier=='Tier 2' }}
+        if: ${{ fromJSON(needs.parse_release_issue.outputs.output1).tier=='Tier 1'||fromJSON(needs.parse_release_issue.outputs.output).tier=='Tier 2' }}
         env:
           GITHUB_TOKEN: ${{secrets.PERSONAL_ACCESS_TOKEN}}
           NEW_ISSUE: ${{ env.NEW_ISSUE }}
