@@ -4,6 +4,9 @@ on:
     types:
       - opened
       - reopened # todo remove
+      
+# permissions:
+
 jobs:
   parse_release_issue:
     runs-on: ubuntu-latest
@@ -154,3 +157,10 @@ jobs:
           NEW_ISSUE: ${{ env.NEW_ISSUE }}
         run: |
           gh issue edit $NEW_ISSUE --add-label "Tier 1 or 2"
+
+      - name: Label release issue with docs
+        env:
+          GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
+          RELEASE_ISSUE: ${{ github.event.issue.html_url }}
+        run: |
+          gh issue edit $RELEASE_ISSUE --add-label "docs"
