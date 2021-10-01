@@ -96,14 +96,6 @@ jobs:
             - [ ] GHES 3.3 (future)
             - [ ] GHES 3.4 (future)`:""}
             `
-            console.log('docs:')
-            console.log(getStringBetween(body, "Are docs needed", "###"))
-            console.log(getStringBetween(body, "Are docs needed", "###")==="Yes")
-            console.log(docsNeeded)
-            console.log('ae:')
-            console.log(getStringBetween(body, "Will this feature, in its current release phase, flow into GitHub AE\\?", "###"))
-            console.log(getStringBetween(body, "Will this feature, in its current release phase, flow into GitHub AE\\?", "###")==="Yes")
-            console.log(ghaeApplicable)
 
             return {
                 newTitle: newTitle,
