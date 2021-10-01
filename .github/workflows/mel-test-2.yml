@@ -5,7 +5,8 @@ on:
       - opened
       - reopened # todo remove
       
-# permissions:
+permissions:
+ issues: write
 
 jobs:
   parse_release_issue:
