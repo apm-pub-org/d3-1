@@ -131,14 +131,14 @@ jobs:
           new_issue_url="$(gh issue create --title "$ISSUE_TITLE" --body "$ISSUE_BODY" --repo ske-test-org/second-repo)"
           echo 'NEW_ISSUE='$new_issue_url >> $GITHUB_ENV
         env:
-          GITHUB_TOKEN: ${{secrets.PERSONAL_ACCESS_TOKEN}}
+          GITHUB_TOKEN: ${{secrets.minscope}}
           ISSUE_BODY: ${{ fromJSON(needs.parse_release_issue.outputs.output).newBody }}
           ISSUE_TITLE: ${{ fromJSON(needs.parse_release_issue.outputs.output).newTitle }}
 
       - name: Label release issue with GHAE if applicable
         if: fromJSON(needs.parse_release_issue.outputs.output).ghaeApplicable
         env:
-          GITHUB_TOKEN: ${{secrets.PERSONAL_ACCESS_TOKEN}}
+          GITHUB_TOKEN: ${{secrets.minscope}}
           NEW_ISSUE: ${{ env.NEW_ISSUE }}
         run: |
           gh issue edit $NEW_ISSUE --add-label "GHAE"
@@ -146,7 +146,7 @@ jobs:
       - name: Label docs content issue with tier label 
         if: fromJSON(needs.parse_release_issue.outputs.output).tier=='Tier 3'||fromJSON(needs.parse_release_issue.outputs.output).tier=='Tier 4'
         env:
-          GITHUB_TOKEN: ${{secrets.PERSONAL_ACCESS_TOKEN}}
+          GITHUB_TOKEN: ${{secrets.minscope}}
           NEW_ISSUE: ${{ env.NEW_ISSUE }}
         run: |
           gh issue edit $NEW_ISSUE --add-label "Tier 3 or 4"
@@ -154,7 +154,7 @@ jobs:
       - name: Label docs content issue with tier label 
         if: fromJSON(needs.parse_release_issue.outputs.output).tier=='Tier 1'||fromJSON(needs.parse_release_issue.outputs.output).tier=='Tier 2'
         env:
-          GITHUB_TOKEN: ${{secrets.PERSONAL_ACCESS_TOKEN}}
+          GITHUB_TOKEN: ${{secrets.minscope}}
           NEW_ISSUE: ${{ env.NEW_ISSUE }}
         run: |
           gh issue edit $NEW_ISSUE --add-label "Tier 1 or 2"
