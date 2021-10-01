@@ -48,7 +48,7 @@ jobs:
             }
             // Pull out info from the release issue
             const shipDate = getStringBetween(body, "Expected ship date", "###");
-            const docsNeeded = getStringBetween(body, "Are docs needed", "###");
+            const docsNeeded = getStringBetween(body, "Are docs needed", "###")==="Yes";
             const ghesApplicable = getStringBetween(body, "Will this feature, in its current release phase, flow into GitHub Enterprise Server\\?", "###")==="Yes";
             const ghaeApplicable = getStringBetween(body, "Will this feature, in its current release phase, flow into GitHub AE\\?", "###")==="Yes";
 
