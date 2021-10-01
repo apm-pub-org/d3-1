@@ -6,10 +6,11 @@ on:
       - reopened # todo remove
 jobs:
   parse_release_issue:
-    name: parse_release_issue
     runs-on: ubuntu-latest
-    outputs: 
+
+    outputs:
       output: ${{ steps.parse_issue.outputs.result }}
+
     steps:
       - name: Parse release issue
         uses: actions/github-script@2b34a689ec86a68d8ab9478298f91d5401337b7d
@@ -94,6 +95,8 @@ jobs:
             - [ ] GHES 3.3 (future)
             - [ ] GHES 3.4 (future)`:""}
             `
+            console.log(docsNeeded)
+            console.log(ghaeApplicable)
 
             return {
                 newTitle: newTitle,
@@ -101,10 +104,7 @@ jobs:
                 newBody: newBody,
                 ghaeApplicable: ghaeApplicable, 
                 tier: tier,
-                test: true,
-                test2: false,
               };
-
 
   open_docs_issue:
     runs-on: ubuntu-latest
@@ -129,7 +129,7 @@ jobs:
           gh issue edit $NEW_ISSUE --add-label "GHAE"
           
       - name: Label docs content issue with tier label 
-        if: fromJSON(needs.parse_release_issue.outputs.output).tier=="Tier 3"||fromJSON(needs.parse_release_issue.outputs.output).tier=="Tier 4"
+        if: fromJSON(needs.parse_release_issue.outputs.output).tier=='Tier 3'||fromJSON(needs.parse_release_issue.outputs.output).tier=='Tier 4'
         env:
           GITHUB_TOKEN: ${{secrets.PERSONAL_ACCESS_TOKEN}}
           NEW_ISSUE: ${{ env.NEW_ISSUE }}
@@ -137,7 +137,7 @@ jobs:
           gh issue edit $NEW_ISSUE --add-label "Tier 3 or 4"
           
       - name: Label docs content issue with tier label 
-        if: fromJSON(needs.parse_release_issue.outputs.output).tier=="Tier 1"||fromJSON(needs.parse_release_issue.outputs.output).tier=="Tier 2"
+        if: fromJSON(needs.parse_release_issue.outputs.output).tier=='Tier 1'||fromJSON(needs.parse_release_issue.outputs.output).tier=='Tier 2'
         env:
           GITHUB_TOKEN: ${{secrets.PERSONAL_ACCESS_TOKEN}}
           NEW_ISSUE: ${{ env.NEW_ISSUE }}
