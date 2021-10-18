@@ -14,7 +14,9 @@ jobs:
 
       - name: Get project data
         env:
-          GITHUB_TOKEN: ${{ steps.generate_token.outputs.token }}
+#           GITHUB_TOKEN: ${{ steps.generate_token.outputs.token }}
+          GITHUB_TOKEN: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
+
           ORGANIZATION: "ske-test-org"
           PROJECT_NUMBER: "test-org-repo"
         run: |
