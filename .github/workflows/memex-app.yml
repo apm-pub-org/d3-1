@@ -1,7 +1,7 @@
 name: memex app
-# on: workflow_dispatch
-on:
-  pull_request:
+on: workflow_dispatch
+# on:
+#   pull_request:
 
 jobs:
   automate:
@@ -13,6 +13,12 @@ jobs:
         with:
           app_id: ${{ secrets.GH_APP_ID }}
           private_key: ${{ secrets.GH_APP_PEM }}
+
+      - name: open issue
+        env:
+          GITHUB_TOKEN: ${{ steps.generate_token.outputs.token }}
+        run: |
+          gh issue create --title "test app create" --body "yey"
 
       - name: Get project data
         env:
@@ -41,24 +47,24 @@ jobs:
 
           echo 'PROJECT_ID='$(jq '.data.organization.projectNext.id' project_data.json) >> $GITHUB_ENV
           
-      - name: Echo
-        run: |
-          echo $PROJECT_ID
+#       - name: Echo
+#         run: |
+#           echo $PROJECT_ID
 
-      - name: Add PR to project
-        env:
-          GITHUB_TOKEN: ${{ steps.generate_token.outputs.token }}
-          PR_ID: ${{ github.event.pull_request.node_id }}
-        run: |
-          item_id="$( gh api graphql --header 'GraphQL-Features: projects_next_graphql' -f query='
-            mutation($project:ID!, $pr:ID!) {
-              addProjectNextItem(input: {projectId: $project, contentId: $pr}) {
-                projectNextItem {
-                  id
-                }
-              }
-            }' -f project=$PROJECT_ID -f pr=$PR_ID --jq '.data.addProjectNextItem.projectNextItem.id')"
+#       - name: Add PR to project
+#         env:
+#           GITHUB_TOKEN: ${{ steps.generate_token.outputs.token }}
+#           PR_ID: ${{ github.event.pull_request.node_id }}
+#         run: |
+#           item_id="$( gh api graphql --header 'GraphQL-Features: projects_next_graphql' -f query='
+#             mutation($project:ID!, $pr:ID!) {
+#               addProjectNextItem(input: {projectId: $project, contentId: $pr}) {
+#                 projectNextItem {
+#                   id
+#                 }
+#               }
+#             }' -f project=$PROJECT_ID -f pr=$PR_ID --jq '.data.addProjectNextItem.projectNextItem.id')"
           
-          echo 'ITEM_ID='$item_id >> $GITHUB_ENV
+#           echo 'ITEM_ID='$item_id >> $GITHUB_ENV
 
 
