@@ -76,59 +76,59 @@ jobs:
             const issue = context.payload.issue.html_url
             const newTitle = `[${shipDate}]: ${title} (${phase})`
             const newBody = `### Link to the release issue
-                        - ${issue}
+            - ${issue}
 
-                        ${
-                          tier === 'Tier 3' || tier === 'Tier 4'
-                            ? `### If this release has a small docs impact, are you able to make the docs update yourself in the docs-internal repo?
+            ${
+              tier === 'Tier 3' || tier === 'Tier 4'
+                ? `### If this release has a small docs impact, are you able to make the docs update yourself in the docs-internal repo?
 
-                        Please select one, @${author}:
+            Please select one, @${author}:
 
-                        - [ ] Yes!
-                        - [ ] Yes, but with support
-                        - [ ] No, I'm not able
-                        - [ ] No, but I know someone who can (ping them in the next section)`
-                            : ''
-                        }
+            - [ ] Yes!
+            - [ ] Yes, but with support
+            - [ ] No, I'm not able
+            - [ ] No, but I know someone who can (ping them in the next section)`
+                : ''
+            }
 
-                        ### Outstanding questions for the release DRI
+            ### Outstanding questions for the release DRI
 
-                        Please answer all questions, @${author}:
-                        ${
-                          tier === 'Tier 3' || tier === 'Tier 4'
-                            ? `- Do you think we'll need to create a new article to document this release? (If you're not sure, please say so.)
-                        - What existing documentation will likely need to be updated for this release and how should they be updated?`
-                            : ''
-                        } 
-                        - How would a docs team member access this feature for testing and screenshots?
-                        - What is the timeline for rolling to GHAE?
-                        - What is the relevant Slack channel?
-                        - Will any content require legal review?
-                          - [ ] Yes
-                          - [ ] No 
-                        - Will any content require security review?
-                          - [ ] Yes
-                          - [ ] No 
-                          ${
-                            tier === 'Tier 3' || tier === 'Tier 4'
-                              ? `- If you answered that you can't open the PR but you know someone who can, ping them here. @${author}`
-                              : ''
-                          }
+            Please answer all questions, @${author}:
+            ${
+              tier === 'Tier 3' || tier === 'Tier 4'
+                ? `- Do you think we'll need to create a new article to document this release? (If you're not sure, please say so.)
+            - What existing documentation will likely need to be updated for this release and how should they be updated?`
+                : ''
+            } 
+            - How would a docs team member access this feature for testing and screenshots?
+            - What is the timeline for rolling to GHAE?
+            - What is the relevant Slack channel?
+            - Will any content require legal review?
+              - [ ] Yes
+              - [ ] No 
+            - Will any content require security review?
+              - [ ] Yes
+              - [ ] No 
+              ${
+                tier === 'Tier 3' || tier === 'Tier 4'
+                  ? `- If you answered that you can't open the PR but you know someone who can, ping them here. @${author}`
+                  : ''
+              }
 
-                        ${
-                          ghesApplicable
-                            ? `### Specific GHES version(s)
+            ${
+              ghesApplicable
+                ? `### Specific GHES version(s)
 
-                        Please select the first version that applies to this release, @${author}:
-                        - [ ] GHES 2.22
-                        - [ ] GHES 3.0
-                        - [ ] GHES 3.1
-                        - [ ] GHES 3.2
-                        - [ ] GHES 3.3 (future)
-                        - [ ] GHES 3.4 (future)`
-                            : ''
-                        }
-                        `
+            Please select the first version that applies to this release, @${author}:
+            - [ ] GHES 2.22
+            - [ ] GHES 3.0
+            - [ ] GHES 3.1
+            - [ ] GHES 3.2
+            - [ ] GHES 3.3 (future)
+            - [ ] GHES 3.4 (future)`
+                : ''
+            }
+            `
 
             return {
               newTitle: newTitle,
