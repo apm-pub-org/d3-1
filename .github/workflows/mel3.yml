@@ -4,9 +4,9 @@ on:
     types:
       - opened
       - reopened # todo remove
-      
+
 permissions:
- issues: write
+  issues: write
 
 jobs:
   parse_release_issue:
@@ -21,94 +21,123 @@ jobs:
         id: parse_issue
         with:
           script: |
-            const labels = context.payload.issue.labels;
-            let tier = "unknown"
+            const labels = context.payload.issue.labels
+
+            let tier = 'unknown'
             for (const label of labels) {
-              if (['Tier 1','Tier 2','Tier 3','Tier 4'].includes(label.name)){
+              if (['Tier 1', 'Tier 2', 'Tier 3', 'Tier 4'].includes(label.name)) {
                 tier = label.name
                 break
               }
             }
-            let phase = "unknown"
+
+            let phase = 'unknown'
             for (const label of labels) {
-              if (['Alpha','Private Beta','Public Beta','Limited Public Beta', 'GA'].includes(label.name)){
+              if (['Alpha', 'Private Beta', 'Public Beta', 'Limited Public Beta', 'GA'].includes(label.name)) {
                 phase = label.name
                 break
               }
             }
-            const body = context.payload.issue.body;
+
             function getStringBetween(input, before, after) {
               // i = case insensitive, s = match newlines
-              re = new RegExp(before + "(.*?)" + after, "is");
-              const result = input.match(re);
+              const re = new RegExp(before + '(.*?)' + after, 'is')
+              const result = input.match(re)
               if (result) {
-                return result[1].trim();
+                return result[1].trim()
               } else {
                 console.log(
                   `String between ${before} and ${after} was not found. Check if the release template changed.`
-                );
-                return result;
+                )
+                return result
               }
             }
-            // Pull out info from the release issue
-            const shipDate = getStringBetween(body, "Expected ship date", "###");
-            const docsTBD = getStringBetween(body, "Are docs needed\\?", "###")==="TBD";
-            const openDocsIssue = getStringBetween(body, "Are docs needed\\?", "###")!=="No";
-            const ghesApplicable = getStringBetween(body, "Will this feature, in its current release phase, flow into GitHub Enterprise Server\\?", "###")==="Yes";
-            const ghaeApplicable = getStringBetween(body, "Will this feature, in its current release phase, flow into GitHub AE\\?", "###")==="Yes";
 
+            // Pull out info from the release issue body
+            const body = context.payload.issue.body
+            const shipDate = getStringBetween(body, 'Expected ship date', '###')
+            const docsTBD = getStringBetween(body, 'Are docs needed\\?', '###') === 'TBD'
+            const openDocsIssue = getStringBetween(body, 'Are docs needed\\?', '###') !== 'No'
+            const ghesApplicable =
+              getStringBetween(
+                body,
+                'Will this feature, in its current release phase, flow into GitHub Enterprise Server\\?',
+                '###'
+              ) === 'Yes'
+            const ghaeApplicable =
+              getStringBetween(
+                body,
+                'Will this feature, in its current release phase, flow into GitHub AE\\?',
+                '###'
+              ) === 'Yes'
 
-            const title = context.payload.issue.title;
-            const author = context.payload.issue.user.login;
-            const issue = context.payload.issue.html_url;
+            const title = context.payload.issue.title
+            const author = context.payload.issue.user.login
+            const issue = context.payload.issue.html_url
             const newTitle = `[${shipDate}]: ${title} (${phase})`
             const newBody = `### Link to the release issue
-            - ${issue}
+                        - ${issue}
 
-            ${tier==="Tier 3"||tier==="Tier 4"?`### If this release has a small docs impact, are you able to make the docs update yourself in the docs-internal repo?
+                        ${
+                          tier === 'Tier 3' || tier === 'Tier 4'
+                            ? `### If this release has a small docs impact, are you able to make the docs update yourself in the docs-internal repo?
 
-            Please select one, @${author}:
+                        Please select one, @${author}:
 
-            - [ ] Yes!
-            - [ ] Yes, but with support
-            - [ ] No, I'm not able
-            - [ ] No, but I know someone who can (ping them in the next section)`:""}
+                        - [ ] Yes!
+                        - [ ] Yes, but with support
+                        - [ ] No, I'm not able
+                        - [ ] No, but I know someone who can (ping them in the next section)`
+                            : ''
+                        }
 
-            ### Outstanding questions for the release DRI
+                        ### Outstanding questions for the release DRI
 
-            Please answer all questions, @${author}:
-            ${tier==="Tier 3"||tier==="Tier 4"?`- Do you think we'll need to create a new article to document this release? (If you're not sure, please say so.)
-            - What existing documentation will likely need to be updated for this release and how should they be updated?`:""} 
-            - How would a docs team member access this feature for testing and screenshots?
-            - What is the timeline for rolling to GHAE?
-            - What is the relevant Slack channel?
-            - Will any content require legal review?
-              - [ ] Yes
-              - [ ] No 
-            - Will any content require security review?
-              - [ ] Yes
-              - [ ] No 
-              ${tier==="Tier 3"||tier==="Tier 4"?"- If you answered that you can't open the PR but you know someone who can, ping them here. @${author}":""}
+                        Please answer all questions, @${author}:
+                        ${
+                          tier === 'Tier 3' || tier === 'Tier 4'
+                            ? `- Do you think we'll need to create a new article to document this release? (If you're not sure, please say so.)
+                        - What existing documentation will likely need to be updated for this release and how should they be updated?`
+                            : ''
+                        } 
+                        - How would a docs team member access this feature for testing and screenshots?
+                        - What is the timeline for rolling to GHAE?
+                        - What is the relevant Slack channel?
+                        - Will any content require legal review?
+                          - [ ] Yes
+                          - [ ] No 
+                        - Will any content require security review?
+                          - [ ] Yes
+                          - [ ] No 
+                          ${
+                            tier === 'Tier 3' || tier === 'Tier 4'
+                              ? `- If you answered that you can't open the PR but you know someone who can, ping them here. @${author}`
+                              : ''
+                          }
 
-            ${ghesApplicable ? `### Specific GHES version(s)
+                        ${
+                          ghesApplicable
+                            ? `### Specific GHES version(s)
 
-            Please select the first version that applies to this release, @${author}:
-            - [ ] GHES 2.22
-            - [ ] GHES 3.0
-            - [ ] GHES 3.1
-            - [ ] GHES 3.2
-            - [ ] GHES 3.3 (future)
-            - [ ] GHES 3.4 (future)`:""}
-            `
+                        Please select the first version that applies to this release, @${author}:
+                        - [ ] GHES 2.22
+                        - [ ] GHES 3.0
+                        - [ ] GHES 3.1
+                        - [ ] GHES 3.2
+                        - [ ] GHES 3.3 (future)
+                        - [ ] GHES 3.4 (future)`
+                            : ''
+                        }
+                        `
 
             return {
-                newTitle: newTitle,
-                openDocsIssue: openDocsIssue,
-                docsTBD: docsTBD,
-                newBody: newBody,
-                ghaeApplicable: ghaeApplicable, 
-                tier: tier,
-              };
+              newTitle: newTitle,
+              openDocsIssue: openDocsIssue,
+              docsTBD: docsTBD,
+              newBody: newBody,
+              ghaeApplicable: ghaeApplicable,
+              tier: tier,
+            }
 
   label_docs_na:
     runs-on: ubuntu-latest
@@ -127,35 +156,35 @@ jobs:
     needs: parse_release_issue
     if: fromJSON(needs.parse_release_issue.outputs.output).openDocsIssue
     steps:
-      - name: Create an issue in the docs-content repo
+      - name: Create an issue in the docs-content repo # TODO make sure to change repo
         run: |
-          new_issue_url="$(gh issue create --title "$ISSUE_TITLE" --body "$ISSUE_BODY" --repo myarb-test-org/fake-docs-content)"
+          new_issue_url="$(gh issue create --title "$ISSUE_TITLE" --body "$ISSUE_BODY" --repo ske-test-org/test-rog-repo)"
           echo 'NEW_ISSUE='$new_issue_url >> $GITHUB_ENV
         env:
-          GITHUB_TOKEN: ${{secrets.MEL_PAT}}
+          GITHUB_TOKEN: ${{secrets.PERSONAL_ACCESS_TOKEN}}
           ISSUE_BODY: ${{ fromJSON(needs.parse_release_issue.outputs.output).newBody }}
           ISSUE_TITLE: ${{ fromJSON(needs.parse_release_issue.outputs.output).newTitle }}
 
       - name: Label release issue with GHAE if applicable
         if: fromJSON(needs.parse_release_issue.outputs.output).ghaeApplicable
         env:
-          GITHUB_TOKEN: ${{secrets.MEL_PAT}}
+          GITHUB_TOKEN: ${{secrets.PERSONAL_ACCESS_TOKEN}}
           NEW_ISSUE: ${{ env.NEW_ISSUE }}
         run: |
           gh issue edit $NEW_ISSUE --add-label "GHAE"
-          
-      - name: Label docs content issue with tier label 
-        if: fromJSON(needs.parse_release_issue.outputs.output).tier=='Tier 3'||fromJSON(needs.parse_release_issue.outputs.output).tier=='Tier 4'
+
+      - name: Label docs content issue with tier label
+        if: fromJSON(needs.parse_release_issue.outputs.output).tier=='Tier 3' || fromJSON(needs.parse_release_issue.outputs.output).tier=='Tier 4'
         env:
-          GITHUB_TOKEN: ${{secrets.MEL_PAT}}
+          GITHUB_TOKEN: ${{secrets.PERSONAL_ACCESS_TOKEN}}
           NEW_ISSUE: ${{ env.NEW_ISSUE }}
         run: |
           gh issue edit $NEW_ISSUE --add-label "Tier 3 or 4"
-          
-      - name: Label docs content issue with tier label 
-        if: fromJSON(needs.parse_release_issue.outputs.output).tier=='Tier 1'||fromJSON(needs.parse_release_issue.outputs.output).tier=='Tier 2'
+
+      - name: Label docs content issue with tier label
+        if: fromJSON(needs.parse_release_issue.outputs.output).tier=='Tier 1' || fromJSON(needs.parse_release_issue.outputs.output).tier=='Tier 2'
         env:
-          GITHUB_TOKEN: ${{secrets.MEL_PAT}}
+          GITHUB_TOKEN: ${{secrets.PERSONAL_ACCESS_TOKEN}}
           NEW_ISSUE: ${{ env.NEW_ISSUE }}
         run: |
           gh issue edit $NEW_ISSUE --add-label "Tier 1 or 2"
@@ -167,3 +196,19 @@ jobs:
           RELEASE_ISSUE: ${{ github.event.issue.html_url }}
         run: |
           gh issue edit $RELEASE_ISSUE --add-label "docs"
+
+      - name: Label release issue with docs TBD if applicable
+        if: ${{ fromJSON(needs.parse_release_issue.outputs.output).docsTBD }}
+        env:
+          GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
+          RELEASE_ISSUE: ${{ github.event.issue.html_url }}
+        run: |
+          gh issue edit $RELEASE_ISSUE --add-label "docs - TBD"
+
+      - name: Label docs issue with docs TBD if applicable
+        if: ${{ fromJSON(needs.parse_release_issue.outputs.output).docsTBD }}
+        env:
+          GITHUB_TOKEN: ${{secrets.PERSONAL_ACCESS_TOKEN}}
+          NEW_ISSUE: ${{ env.NEW_ISSUE }}
+        run: |
+          gh issue edit $NEW_ISSUE --add-label "docs - TBD"
