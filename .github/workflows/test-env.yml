@@ -3,6 +3,7 @@ name: Test env
 on:
   workflow_dispatch:
   push:
+    branches: "main"
 
 jobs:
   test-env:
@@ -12,6 +13,4 @@ jobs:
     runs-on: ubuntu-latest
     steps: 
     - name: test-env
-      run: gh api repos/ske-test-org/test-org-repo/deployments -f ref='cacc5a280f04c416b1cad11a26224e2200566be2' -f environment='nodeploy2' -F auto_merge=false -f "required_contexts=[]"
-      env:
-        GITHUB_TOKEN: ${{secrets.PERSONAL_ACCESS_TOKEN}}
+      run: echo "YO"
