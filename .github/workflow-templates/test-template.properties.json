@@ -1,13 +1,13 @@
 {
-    "name": "Test template",
-    "description": "Test template.",
+    "name": "Organization Workflow",
+    "description": "Organization CI workflow template.",
     "iconName": "example-icon",
     "categories": [
-        "Python"
+        "Go"
     ],
     "filePatterns": [
         "package.json$",
-        "*.py",
+        "^Dockerfile",
         ".*\\.md$"
     ]
 }
