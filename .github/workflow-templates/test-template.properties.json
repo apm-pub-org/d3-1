@@ -1,0 +1,13 @@
+{
+    "name": "Test template",
+    "description": "Test template.",
+    "iconName": "example-icon",
+    "categories": [
+        "Python"
+    ],
+    "filePatterns": [
+        "package.json$",
+        "*.py",
+        ".*\\.md$"
+    ]
+}
