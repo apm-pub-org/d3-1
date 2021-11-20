@@ -16,56 +16,30 @@ jobs:
       VAL_FROM_SECRET: initial
 
     steps:
-      - name: a
-        id: step_one
-        run: |
-          echo "action_state=$yellow" >> $GITHUB_ENV
-      - name: aa
-        id: step_two
-        run: |
-          echo "${{ env.action_state }}"
-
-      - name: b
-        id: step_one1
-        run: |
-          echo "action_state=%$yellow" >> $GITHUB_ENV
-      - name: bb
-        id: step_two1
-        run: |
-          echo "${{ env.action_state }}"
-
-      - name: c
-        id: step_one2
-        run: |
-          echo "action_state=yellow" >> $GITHUB_ENV
-      - run: |
-          echo "${{ env.action_state }}"
-
       - name: d
-        id: step_one3
         run: |
           echo "action_state=\$yellow" >> $GITHUB_ENV
       - run: |
           echo "${{ env.action_state }}"
 
-
       - name: e
-        id: step_one4
         run: |
           echo 'action_state=$yellow' >> $GITHUB_ENV
       - run: |
           echo '${{ env.action_state }}'
 
-      - name: f
-        id: step_one5
+      - shell: pwsh
+        name: d
         run: |
-          echo 'action_state=\$yellow' >> $GITHUB_ENV
-      - run: |
-          echo '${{ env.action_state }}'
+          echo "action_state=\$yellow" >> $GITHUB_ENV
+      - shell: pwsh
+        run: |
+          echo "${{ env.action_state }}"
 
-      - name: h
-        id: step_one6
+      - shell: pwsh
+        name: e
         run: |
-          echo 'action_state=%$yellow' >> $GITHUB_ENV
-      - run: |
+          echo 'action_state=$yellow' >> $GITHUB_ENV
+      - shell: pwsh
+        run: |
           echo '${{ env.action_state }}'
