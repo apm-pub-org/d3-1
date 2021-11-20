@@ -1,0 +1,56 @@
+name: Dollar
+
+on:
+  workflow_dispatch:
+    inputs:
+      server:
+        description: 'Server to deploy to (staging|test|prod)'
+        required: true
+        default: 'staging'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    env:
+      TEST_VALUE: initial
+      VAL_FROM_SECRET: initial
+
+    steps:
+      - shell: pwsh
+        run: |
+          TEMPLATE="$fgfdg"
+          echo "TEMPLATE<<EOF" >> $GITHUB_ENV
+          echo "$TEMPLATE" >> $GITHUB_ENV
+          echo "EOF" >> $GITHUB_ENV
+
+      - shell: pwsh
+        run: |
+          echo $TEMPLATE
+
+      - shell: pwsh
+        run: |
+          echo "TEST_VALUE=$test"  | Out-File -FilePath $Env:GITHUB_ENV -Encoding utf8 -Append
+          echo "VAL_FROM_SECRET=${{ secrets.SECRET_VALUE }}"  | Out-File -FilePath $Env:GITHUB_ENV -Encoding utf8 -Append
+          echo "Running on test (${{ github.event.inputs.server }}) environment"
+
+      - shell: pwsh 
+        run: |
+          echo "TEST_VALUE='${{ env.TEST_VALUE }}' and VAL_FROM_SECRET='${{ env.VAL_FROM_SECRET }}'"
+
+      - shell: pwsh
+        run: |
+          echo 'TEST_VALUE=$test' | Out-File -FilePath $Env:GITHUB_ENV -Encoding utf8 -Append
+          echo 'VAL_FROM_SECRET=${{ secrets.SECRET_VALUE }}' | Out-File -FilePath $Env:GITHUB_ENV -Encoding utf8 -Append
+
+      - shell: pwsh 
+        run: |
+          echo "TEST_VALUE='${{ env.TEST_VALUE }}' and VAL_FROM_SECRET='${{ env.VAL_FROM_SECRET }}'"
+
+      - shell: pwsh
+        run: |
+          echo "TEST_VALUE='$test'"  | Out-File -FilePath $Env:GITHUB_ENV -Encoding utf8 -Append
+          echo "VAL_FROM_SECRET='${{ secrets.SECRET_VALUE }}'" | Out-File -FilePath $Env:GITHUB_ENV -Encoding utf8 -Append
+
+      - shell: pwsh 
+        run: |
+          echo "TEST_VALUE='${{ env.TEST_VALUE }}' and VAL_FROM_SECRET='${{ env.VAL_FROM_SECRET }}'"
