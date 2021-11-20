@@ -42,3 +42,40 @@ jobs:
         id: step_two2
         run: |
           echo "${{ env.action_state }}"
+
+      - name: Set the value
+        id: step_one3
+        run: |
+          echo "action_state=\$yellow" >> $GITHUB_ENV
+      - name: Use the value
+        id: step_two3
+        run: |
+          echo "${{ env.action_state }}"
+
+
+      - name: Set the value
+        id: step_one4
+        run: |
+          echo 'action_state=$yellow' >> $GITHUB_ENV
+      - name: Use the value
+        id: step_two4
+        run: |
+          echo '${{ env.action_state }}'
+
+      - name: Set the value
+        id: step_one5
+        run: |
+          echo 'action_state=\$yellow' >> $GITHUB_ENV
+      - name: Use the value
+        id: step_two5
+        run: |
+          echo '${{ env.action_state }}'
+
+      - name: Set the value
+        id: step_one6
+        run: |
+          echo 'action_state=%$yellow' >> $GITHUB_ENV
+      - name: Use the value
+        id: step_two6
+        run: |
+          echo '${{ env.action_state }}'
