@@ -25,6 +25,24 @@ jobs:
         run: |
           echo "${{ env.action_state }}"
 
+      - name: Set the value
+        id: step_one1
+        run: |
+          echo "action_state=/$yellow" >> $GITHUB_ENV
+      - name: Use the value
+        id: step_two1
+        run: |
+          echo "${{ env.action_state }}"
+
+      - name: Set the value
+        id: step_one2
+        run: |
+          echo "action_state=yellow" >> $GITHUB_ENV
+      - name: Use the value
+        id: step_two2
+        run: |
+          echo "${{ env.action_state }}"
+
       - shell: pwsh
         run: |
           echo "SAR=$test" >> $GITHUB_ENV
