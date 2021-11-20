@@ -18,9 +18,16 @@ jobs:
     steps:
       - shell: pwsh
         run: |
-          TEMPLATE="$fgfdg"
+          echo "SAR=$test" >> $GITHUB_ENV
+
+      - shell: pwsh
+        run: |
+          echo $SAR
+
+      - shell: pwsh
+        run: |
           echo "TEMPLATE<<EOF" >> $GITHUB_ENV
-          echo "$TEMPLATE" >> $GITHUB_ENV
+          echo "$test" >> $GITHUB_ENV
           echo "EOF" >> $GITHUB_ENV
 
       - shell: pwsh
