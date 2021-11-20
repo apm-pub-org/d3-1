@@ -16,66 +16,56 @@ jobs:
       VAL_FROM_SECRET: initial
 
     steps:
-      - name: Set the value
+      - name: a
         id: step_one
         run: |
           echo "action_state=$yellow" >> $GITHUB_ENV
-      - name: Use the value
+      - name: aa
         id: step_two
         run: |
           echo "${{ env.action_state }}"
 
-      - name: Set the value
+      - name: b
         id: step_one1
         run: |
           echo "action_state=%$yellow" >> $GITHUB_ENV
-      - name: Use the value
+      - name: bb
         id: step_two1
         run: |
           echo "${{ env.action_state }}"
 
-      - name: Set the value
+      - name: c
         id: step_one2
         run: |
           echo "action_state=yellow" >> $GITHUB_ENV
-      - name: Use the value
-        id: step_two2
-        run: |
+      - run: |
           echo "${{ env.action_state }}"
 
-      - name: Set the value
+      - name: d
         id: step_one3
         run: |
           echo "action_state=\$yellow" >> $GITHUB_ENV
-      - name: Use the value
-        id: step_two3
-        run: |
+      - run: |
           echo "${{ env.action_state }}"
 
 
-      - name: Set the value
+      - name: e
         id: step_one4
         run: |
           echo 'action_state=$yellow' >> $GITHUB_ENV
-      - name: Use the value
-        id: step_two4
-        run: |
+      - run: |
           echo '${{ env.action_state }}'
 
-      - name: Set the value
+      - name: f
         id: step_one5
         run: |
           echo 'action_state=\$yellow' >> $GITHUB_ENV
-      - name: Use the value
-        id: step_two5
-        run: |
+      - run: |
           echo '${{ env.action_state }}'
 
-      - name: Set the value
+      - name: h
         id: step_one6
         run: |
           echo 'action_state=%$yellow' >> $GITHUB_ENV
-      - name: Use the value
-        id: step_two6
-        run: |
+      - run: |
           echo '${{ env.action_state }}'
