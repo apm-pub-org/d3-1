@@ -20,13 +20,13 @@ jobs:
         run: |
           echo "action_state=\$yellow" >> $GITHUB_ENV
       - run: |
-          echo "${{ env.action_state }}"
+          echo IT IS "${{ env.action_state }}"
 
       - name: e
         run: |
           echo 'action_state=$yellow' >> $GITHUB_ENV
       - run: |
-          echo '${{ env.action_state }}'
+          echo  IT IS '${{ env.action_state }}'
 
       - shell: pwsh
         name: d
@@ -34,7 +34,7 @@ jobs:
           echo "action_state=\$yellow" >> $GITHUB_ENV
       - shell: pwsh
         run: |
-          echo "${{ env.action_state }}"
+          echo  IT IS "${{ env.action_state }}"
 
       - shell: pwsh
         name: e
@@ -42,4 +42,4 @@ jobs:
           echo 'action_state=$yellow' >> $GITHUB_ENV
       - shell: pwsh
         run: |
-          echo '${{ env.action_state }}'
+          echo  IT IS '${{ env.action_state }}'
