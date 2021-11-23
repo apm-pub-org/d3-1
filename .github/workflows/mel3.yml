@@ -1,4 +1,4 @@
-name: NEW Automatically open a docs-content tracking issue
+name: NEW Automatically open a docs-content tracking issue # todo
 on:
   issues:
     types:
@@ -56,7 +56,6 @@ jobs:
             const docsAnswer = getStringBetween(body, 'Will this feature require documentation\\?', '###')
             const docsTBD = (docsAnswer === 'TBD')
             const openDocsIssue = (docsAnswer === 'TBD' || docsAnswer === 'Yes. Automatically create a docs issue for me')
-
             let releaseLabelToAdd
             switch (docsAnswer) {
               case 'TBD':
@@ -155,7 +154,7 @@ jobs:
     runs-on: ubuntu-latest
     needs: parse_release_issue
     steps:
-      - name: Test
+      - name: Test # todo delete
         run: echo ${{ fromJSON(needs.parse_release_issue.outputs.output).releaseLabelToAdd }}
 
       - name: Label release issue with docs if applicable
@@ -166,6 +165,10 @@ jobs:
           LABEL: ${{ fromJSON(needs.parse_release_issue.outputs.output).releaseLabelToAdd }}
         run: |
           gh issue edit $RELEASE_ISSUE --add-label $LABEL
+
+      - name: Test parse # todo delete
+        if: ${{ fromJSON(needs.parse_release_issue.outputs.output).releaseLabelToAdd == 'docs - TBD'}}
+        run: echo TRUE
 
   open_docs_issue:
     runs-on: ubuntu-latest
