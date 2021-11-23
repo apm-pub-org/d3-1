@@ -159,7 +159,7 @@ jobs:
           RELEASE_ISSUE: ${{ github.event.issue.html_url }}
           LABEL: ${{ fromJSON(needs.parse_release_issue.outputs.output).releaseLabelToAdd }}
         run: |
-          gh issue edit $RELEASE_ISSUE --add-label $LABEL
+          gh issue edit $RELEASE_ISSUE --add-label '$LABEL'
 
   open_docs_issue:
     runs-on: ubuntu-latest
