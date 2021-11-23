@@ -34,53 +34,53 @@ jobs:
           GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
           LABEL: ${{ fromJSON(needs.parse_release_issue.outputs.output).label1 }}
         run: |
-          gh issue edit 138 --add-label $LABEL
+          gh issue edit 138 --add-label $LABEL --repo ske-test-org/test-org-repo
       - name: Label2
         continue-on-error: true
         env:
           GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
           LABEL: ${{ fromJSON(needs.parse_release_issue.outputs.output).label2 }}
         run: |
-          gh issue edit 138 --add-label $LABEL
+          gh issue edit 138 --add-label $LABEL --repo ske-test-org/test-org-repo
       - name: Label3
         continue-on-error: true
         env:
           GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
           LABEL: ${{ fromJSON(needs.parse_release_issue.outputs.output).label3 }}
         run: |
-          gh issue edit 138 --add-label $LABEL
+          gh issue edit 138 --add-label $LABEL --repo ske-test-org/test-org-repo
       - name: Label4
         continue-on-error: true
         env:
           GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
           LABEL: ${{ fromJSON(needs.parse_release_issue.outputs.output).label4 }}
         run: |
-          gh issue edit 138 --add-label $LABEL
+          gh issue edit 138 --add-label $LABEL --repo ske-test-org/test-org-repo
       - name: Label5
         continue-on-error: true
         env:
           GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
           LABEL: ${{ fromJSON(needs.parse_release_issue.outputs.output).label5 }}
         run: |
-          gh issue edit 138 --add-label $LABEL
+          gh issue edit 138 --add-label $LABEL --repo ske-test-org/test-org-repo
       - name: Label6
         continue-on-error: true
         env:
           GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
           LABEL: ${{ fromJSON(needs.parse_release_issue.outputs.output).label6 }}
         run: |
-          gh issue edit 138 --add-label $LABEL
+          gh issue edit 138 --add-label $LABEL --repo ske-test-org/test-org-repo
       - name: Label7
         continue-on-error: true
         env:
           GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
           LABEL: ${{ fromJSON(needs.parse_release_issue.outputs.output).label1 }}
         run: |
-          gh issue edit 138 --add-label "$LABEL"
+          gh issue edit 138 --add-label "$LABEL" --repo ske-test-org/test-org-repo
       - name: Label8
         continue-on-error: true
         env:
           GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
           LABEL: ${{ fromJSON(needs.parse_release_issue.outputs.output).label2 }}
         run: |
-          gh issue edit 138 --add-label "$LABEL"
+          gh issue edit 138 --add-label "$LABEL" --repo ske-test-org/test-org-repo
