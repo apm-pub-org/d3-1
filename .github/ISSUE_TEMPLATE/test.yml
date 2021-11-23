@@ -1,4 +1,4 @@
-name: Bug Report
+name: Issue form test
 description: File a bug report
 title: "[Bug]: "
 labels: [bug, triage]
@@ -60,3 +60,12 @@ body:
     options:
     - label: I agree to follow this project's Code of Conduct
       required: true
+- type: dropdown
+  attributes:
+    label: Will this feature require documentation?
+    description: If you're not sure, please select TBD to explore possible Docs impact with the Docs team.
+    options:
+      - "Yes"
+      - "No"
+      - "TBD"
+      - "Yes--A docs issue already exists and I will link it below"
