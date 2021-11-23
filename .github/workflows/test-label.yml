@@ -70,3 +70,17 @@ jobs:
           LABEL: ${{ fromJSON(needs.parse_release_issue.outputs.output).label6 }}
         run: |
           gh issue edit 138 --add-label $LABEL
+      - name: Label7
+        continue-on-error: true
+        env:
+          GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
+          LABEL: ${{ fromJSON(needs.parse_release_issue.outputs.output).label1 }}
+        run: |
+          gh issue edit 138 --add-label "$LABEL"
+      - name: Label8
+        continue-on-error: true
+        env:
+          GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
+          LABEL: ${{ fromJSON(needs.parse_release_issue.outputs.output).label2 }}
+        run: |
+          gh issue edit 138 --add-label "$LABEL"
