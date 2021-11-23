@@ -55,7 +55,7 @@ jobs:
             const shipDate = getStringBetween(body, 'Expected ship date', '###')
             const docsAnswer = getStringBetween(body, 'Will this feature require documentation\\?', '###')
             const docsTBD = (docsAnswer === 'TBD')
-            const openDocsIssue = (docsAnswer === 'TBD' || 'Yes. Automatically create a docs issue for me')
+            const openDocsIssue = (docsAnswer === 'TBD' || docsAnswer === 'Yes. Automatically create a docs issue for me')
 
             let releaseLabelToAdd
             switch (docsAnswer) {
