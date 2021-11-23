@@ -1,0 +1,72 @@
+name: test label
+on:
+  workflow_dispatch
+
+jobs:
+  parse_release_issue:
+    runs-on: ubuntu-latest
+
+    outputs:
+      output: ${{ steps.parse_issue.outputs.result }}
+
+    steps:
+      - name: Parse release issue
+        uses: actions/github-script@2b34a689ec86a68d8ab9478298f91d5401337b7d
+        id: parse_issue
+        with:
+          script: |
+            return {
+              label1: "docs - TBD",
+              label2: 'docs - TBD',
+              label3: '"docs - TBD"',
+              label4: "'docs - TBD'",
+              label5: "\"docs - TBD\"",
+              label6: `docs - TBD`,
+            }
+
+  label_release_issue:
+    runs-on: ubuntu-latest
+    needs: parse_release_issue
+    steps:
+      - name: Label1
+        continue-on-error: true
+        env:
+          GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
+          LABEL: ${{ fromJSON(needs.parse_release_issue.outputs.output).label1 }}
+        run: |
+          gh issue edit 138 --add-label $LABEL
+      - name: Label2
+        continue-on-error: true
+        env:
+          GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
+          LABEL: ${{ fromJSON(needs.parse_release_issue.outputs.output).label2 }}
+        run: |
+          gh issue edit 138 --add-label $LABEL
+      - name: Label3
+        continue-on-error: true
+        env:
+          GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
+          LABEL: ${{ fromJSON(needs.parse_release_issue.outputs.output).label3 }}
+        run: |
+          gh issue edit 138 --add-label $LABEL
+      - name: Label4
+        continue-on-error: true
+        env:
+          GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
+          LABEL: ${{ fromJSON(needs.parse_release_issue.outputs.output).label4 }}
+        run: |
+          gh issue edit 138 --add-label $LABEL
+      - name: Label5
+        continue-on-error: true
+        env:
+          GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
+          LABEL: ${{ fromJSON(needs.parse_release_issue.outputs.output).label5 }}
+        run: |
+          gh issue edit 138 --add-label $LABEL
+      - name: Label6
+        continue-on-error: true
+        env:
+          GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
+          LABEL: ${{ fromJSON(needs.parse_release_issue.outputs.output).label6 }}
+        run: |
+          gh issue edit 138 --add-label $LABEL
