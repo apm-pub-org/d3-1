@@ -156,52 +156,6 @@ jobs:
         env:
           GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
           RELEASE_ISSUE: ${{ github.event.issue.html_url }}
-          LABEL: ${{ fromJSON(needs.parse_release_issue.outputs.output).releaseLabelToAdd }}
+          LABEL: ${{ toJSON(fromJSON(needs.parse_release_issue.outputs.output).releaseLabelToAdd) }}
         run: |
           gh issue edit $RELEASE_ISSUE --add-label $LABEL
-
-  open_docs_issue:
-    runs-on: ubuntu-latest
-    needs: parse_release_issue
-    if: fromJSON(needs.parse_release_issue.outputs.output).openDocsIssue
-    steps:
-      - name: Create an issue in the docs-content repo # todo change repo name back and secrets back
-        run: |
-          new_issue_url="$(gh issue create --title "$ISSUE_TITLE" --body "$ISSUE_BODY" --repo ske-test-org/second-repo)"
-          echo 'NEW_ISSUE='$new_issue_url >> $GITHUB_ENV
-        env:
-          GITHUB_TOKEN: ${{secrets.PERSONAL_ACCESS_TOKEN}}
-          ISSUE_BODY: ${{ fromJSON(needs.parse_release_issue.outputs.output).newBody }}
-          ISSUE_TITLE: ${{ fromJSON(needs.parse_release_issue.outputs.output).newTitle }}
-
-      - name: Label docs content issue with GHAE if applicable
-        if: fromJSON(needs.parse_release_issue.outputs.output).ghaeApplicable
-        env:
-          GITHUB_TOKEN: ${{secrets.PERSONAL_ACCESS_TOKEN}}
-          NEW_ISSUE: ${{ env.NEW_ISSUE }}
-        run: |
-          gh issue edit $NEW_ISSUE --add-label "GHAE"
-
-      - name: Label docs content issue with tier 3/4 label if applicable
-        if: fromJSON(needs.parse_release_issue.outputs.output).tier=='Tier 3' || fromJSON(needs.parse_release_issue.outputs.output).tier=='Tier 4'
-        env:
-          GITHUB_TOKEN: ${{secrets.PERSONAL_ACCESS_TOKEN}}
-          NEW_ISSUE: ${{ env.NEW_ISSUE }}
-        run: |
-          gh issue edit $NEW_ISSUE --add-label "Tier 3 or tier 4"
-
-      - name: Label docs content issue with tier 1/2 label if applicable
-        if: fromJSON(needs.parse_release_issue.outputs.output).tier=='Tier 1' || fromJSON(needs.parse_release_issue.outputs.output).tier=='Tier 2'
-        env:
-          GITHUB_TOKEN: ${{secrets.PERSONAL_ACCESS_TOKEN}}
-          NEW_ISSUE: ${{ env.NEW_ISSUE }}
-        run: |
-          gh issue edit $NEW_ISSUE --add-label "Tier 1 or tier 2"
-
-      - name: Label docs issue with docs TBD if applicable
-        if: ${{ fromJSON(needs.parse_release_issue.outputs.output).releaseLabelToAdd == 'docs - TBD'}}
-        env:
-          GITHUB_TOKEN: ${{secrets.PERSONAL_ACCESS_TOKEN}}
-          NEW_ISSUE: ${{ env.NEW_ISSUE }}
-        run: |
-          gh issue edit $NEW_ISSUE --add-label "docs - TBD"
