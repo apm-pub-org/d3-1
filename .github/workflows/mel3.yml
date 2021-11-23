@@ -54,7 +54,7 @@ jobs:
             const body = context.payload.issue.body
             const shipDate = getStringBetween(body, 'Expected ship date', '###')
             const docsAnswer = getStringBetween(body, 'Will this feature require documentation\\?', '###')
-            const openDocsIssue = (docsAnswer === 'TBD' || docsAnswer === 'Yes. Automatically create a docs issue for me')
+            const openDocsIssue = (docsAnswer === 'TBD' || docsAnswer === 'Yes--Automatically create a docs issue for me')
             let releaseLabelToAdd
             switch (docsAnswer) {
               case 'TBD':
