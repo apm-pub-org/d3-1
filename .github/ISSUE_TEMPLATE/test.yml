@@ -66,6 +66,17 @@ body:
     description: If you're not sure, please select TBD to explore possible Docs impact with the Docs team.
     options:
       - "Yes"
+      - "Yes. Automatically create a docs issue for me"
+      - "Yes. A docs issue already exists and I will link it below"
       - "No"
       - "TBD"
-      - "Yes--A docs issue already exists and I will link it below"
+  validations:
+    required: true
+- type: input
+  id: docs-issue
+  attributes:
+    label: Pre-existing docs issue
+    description: If a docs issue is already open, add it here
+    placeholder: https://github.com/github/docs-content/issues/12345
+  validations:
+    required: false
