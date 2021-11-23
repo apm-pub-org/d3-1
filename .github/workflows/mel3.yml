@@ -58,7 +58,7 @@ jobs:
             let releaseLabelToAdd
             switch (docsAnswer) {
               case 'TBD':
-                releaseLabelToAdd = "\'docs - TBD\'"
+                releaseLabelToAdd = '"docs - TBD"'
                 break;
               case 'No':
                 releaseLabelToAdd = "'docs - NA'"
