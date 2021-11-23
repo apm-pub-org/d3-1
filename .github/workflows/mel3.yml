@@ -58,13 +58,13 @@ jobs:
             let releaseLabelToAdd
             switch (docsAnswer) {
               case 'TBD':
-                releaseLabelToAdd = 'docs - TBD'
+                releaseLabelToAdd = "'docs - TBD'"
                 break;
               case 'No':
-                releaseLabelToAdd = 'docs - NA'
+                releaseLabelToAdd = "'docs - NA'"
                 break;
               default:
-                releaseLabelToAdd = 'docs'
+                releaseLabelToAdd = "'docs'"
             }
             const ghesApplicable =
               getStringBetween(
@@ -156,6 +156,6 @@ jobs:
         env:
           GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
           RELEASE_ISSUE: ${{ github.event.issue.html_url }}
-          LABEL: ${{ toJSON(fromJSON(needs.parse_release_issue.outputs.output).releaseLabelToAdd) }}
+          LABEL: ${{ fromJSON(needs.parse_release_issue.outputs.output).releaseLabelToAdd }}
         run: |
           gh issue edit $RELEASE_ISSUE --add-label $LABEL
