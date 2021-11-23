@@ -151,6 +151,8 @@ jobs:
   label_release_issue:
     runs-on: ubuntu-latest
     needs: parse_release_issue
+    permissions:
+      issues: write
     steps:
       - name: Label release issue with docs if applicable
         env:
