@@ -174,7 +174,7 @@ jobs:
     steps:
       - name: Create an issue in the docs-content repo # todo change repo name back and secrets back
         run: |
-          new_issue_url="$(gh issue create --title "$ISSUE_TITLE" --body "$ISSUE_BODY" --repo ske-test-org/test-org-repo)"
+          new_issue_url="$(gh issue create --title "$ISSUE_TITLE" --body "$ISSUE_BODY" --repo ske-test-org/second-repo)"
           echo 'NEW_ISSUE='$new_issue_url >> $GITHUB_ENV
         env:
           GITHUB_TOKEN: ${{secrets.PERSONAL_ACCESS_TOKEN}}
