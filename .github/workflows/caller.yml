@@ -1,0 +1,9 @@
+name: Call a reusable workflow
+
+on:
+ push:
+ workflow_dispatch:
+
+jobs:
+  call-workflow-passing-data:
+    uses: ske-test-org/test-org-repo/.github/workflows/called.yml@main
