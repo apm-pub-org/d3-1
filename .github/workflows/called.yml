@@ -1,0 +1,16 @@
+name: Reusable workflow example
+
+on:
+  workflow_call:
+
+jobs:
+  example_job:
+    name: Print input and secrets to STDOUT
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node: [10, 12, 14]
+
+    steps:
+      - name: Print
+        run: echo "done"
