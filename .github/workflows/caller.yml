@@ -6,12 +6,11 @@ on:
 
 jobs:
   call-workflow-passing-data:
+    uses: ske-test-org/test-org-repo/.github/workflows/called.yml@main
+    
+  example_job:
     name: Print input and secrets to STDOUT
     runs-on: ubuntu-latest
     strategy:
       matrix:
         node: [10, 12, 14]
-
-    steps:
-      - name: Print
-        uses: ske-test-org/test-org-repo/.github/workflows/called.yml@main
