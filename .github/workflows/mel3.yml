@@ -1,17 +1,19 @@
-name: NEW Automatically open a docs-content tracking issue # todo
+name: NEW Automatically open a docs-content tracking issue
 on:
   issues:
     types:
       - opened
-      - reopened #todo
 
 jobs:
   parse_release_issue:
     runs-on: ubuntu-latest
 
+    outputs:
+      output: ${{ steps.parse_issue.outputs.result }}
+
     steps:
       - name: Parse release issue
-        uses: actions/github-script@v5
+        uses: actions/github-script@2b34a689ec86a68d8ab9478298f91d5401337b7d
         id: parse_issue
         with:
           script: |
@@ -145,46 +147,62 @@ jobs:
               tier: tier,
             }
 
-      - name: Create and label an issue in the docs-content repo # todo change repo name back and secrets back
-        if: fromJSON(needs.parse_release_issue.outputs.output).openDocsIssue
-        uses: actions/github-script@v5
+  label_release_issue:
+    runs-on: ubuntu-latest
+    needs: parse_release_issue
+    permissions:
+      issues: write
+    steps:
+      - name: Label release issue with relevant docs label
         env:
-          LABEL: ${{ fromJSON(steps.parse_issue.outputs.result).releaseLabelToAdd }}
-          PARSED_DATA: ${{ steps.parse_issue.outputs.result }}
+          GITHUB_TOKEN: ${{secrets.PERSONAL_ACCESS_TOKEN}}
+          RELEASE_ISSUE: ${{ github.event.issue.html_url }}
+          LABEL: ${{ fromJSON(needs.parse_release_issue.outputs.output).releaseLabelToAdd }}
+        run: |
+          gh issue edit $RELEASE_ISSUE --add-label "$LABEL"
 
-        with:
-          github-token: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
-          script: |
-            const parsedData = JSON.parse(process.env.PARSED_DATA)
+  open_docs_issue:
+    runs-on: ubuntu-latest
+    needs: parse_release_issue
+    if: fromJSON(needs.parse_release_issue.outputs.output).openDocsIssue
+    steps:
+      - name: Create an issue in the docs-content repo 
+        run: |
+          new_issue_url="$(gh issue create --title "$ISSUE_TITLE" --body "$ISSUE_BODY" --repo github/docs-content)"
+          echo 'NEW_ISSUE='$new_issue_url >> $GITHUB_ENV
+        env:
+          GITHUB_TOKEN: ${{secrets.PERSONAL_ACCESS_TOKEN}}
+          ISSUE_BODY: ${{ fromJSON(needs.parse_release_issue.outputs.output).newBody }}
+          ISSUE_TITLE: ${{ fromJSON(needs.parse_release_issue.outputs.output).newTitle }}
 
-            let labels = []
-            if (parsedData.ghaeApplicable) {
-              labels.push("GHAE")
-            }
-            if (parsedData.releaseLabelToAdd === 'docs - TBD') {
-              labels.push("docs - TBD")
-            }
-            switch (parsedData.tier) {
-              case 'Tier 1':
-                labels.push("Tier 1 or tier 2")
-                break;
-              case 'Tier 2':
-                labels.push("Tier 1 or tier 2")
-                break;
-              case 'Tier 3':
-                labels.push("Tier 3 or tier 4")
-                break;
-              case 'Tier 4':
-                labels.push("Tier 3 or tier 4")
-                break;
-              default:
-                console.log("Tier not identified.")
-            }
+      - name: Label docs-content issue with GHAE if applicable
+        if: fromJSON(needs.parse_release_issue.outputs.output).ghaeApplicable
+        env:
+          GITHUB_TOKEN: ${{secrets.PERSONAL_ACCESS_TOKEN}}
+          NEW_ISSUE: ${{ env.NEW_ISSUE }}
+        run: |
+          gh issue edit $NEW_ISSUE --add-label "GHAE"
 
-            github.rest.issues.create({
-              owner: context.repo.owner,
-              repo: "ske-test-org/second-repo",
-              title: parsedData.newTitle,
-              body: parsedData.newBody,
-              labels: labels
-            })
+      - name: Label docs-content issue with tier 3/4 label if applicable
+        if: fromJSON(needs.parse_release_issue.outputs.output).tier=='Tier 3' || fromJSON(needs.parse_release_issue.outputs.output).tier=='Tier 4'
+        env:
+          GITHUB_TOKEN: ${{secrets.PERSONAL_ACCESS_TOKEN}}
+          NEW_ISSUE: ${{ env.NEW_ISSUE }}
+        run: |
+          gh issue edit $NEW_ISSUE --add-label "Tier 3 or tier 4"
+
+      - name: Label docs-content issue with tier 1/2 label if applicable
+        if: fromJSON(needs.parse_release_issue.outputs.output).tier=='Tier 1' || fromJSON(needs.parse_release_issue.outputs.output).tier=='Tier 2'
+        env:
+          GITHUB_TOKEN: ${{secrets.PERSONAL_ACCESS_TOKEN}}
+          NEW_ISSUE: ${{ env.NEW_ISSUE }}
+        run: |
+          gh issue edit $NEW_ISSUE --add-label "Tier 1 or tier 2"
+
+      - name: Label docs-content issue with docs TBD if applicable
+        if: ${{ fromJSON(needs.parse_release_issue.outputs.output).releaseLabelToAdd == 'docs - TBD'}}
+        env:
+          GITHUB_TOKEN: ${{secrets.PERSONAL_ACCESS_TOKEN}}
+          NEW_ISSUE: ${{ env.NEW_ISSUE }}
+        run: |
+          gh issue edit $NEW_ISSUE --add-label "docs - TBD"
