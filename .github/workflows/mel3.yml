@@ -177,7 +177,7 @@ jobs:
           LABEL: ${{ fromJSON(needs.parse_release_issue.outputs.output).releaseLabelToAdd }}
           ISSUE_BODY: ${{ fromJSON(needs.parse_release_issue.outputs.output).newBody }}
           ISSUE_TITLE: ${{ fromJSON(needs.parse_release_issue.outputs.output).newTitle }}
-          PARSED_DATA: ${{ fromJSON(needs.parse_release_issue.outputs.output) }}
+# #           PARSED_DATA: ${{ fromJSON(needs.parse_release_issue.outputs.output) }}
           PARSED_DATA2: ${{ needs.parse_release_issue.outputs.output }}
 
         with:
@@ -185,7 +185,6 @@ jobs:
           script: |
             let labels = []
             console.log("from json:")
-            console.log(process.env.PARSED_DATA)
             console.log("raw:")
             console.log(process.env.PARSED_DATA2)
             console.log("---")
