@@ -153,6 +153,7 @@ jobs:
     steps:
       - uses: actions/github-script@v5
         with:
+          github-token: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
           script: |
             github.rest.issues.createComment({
               issue_number: context.issue.number,
@@ -171,6 +172,7 @@ jobs:
         env:
           LABEL: ${{ fromJSON(needs.parse_release_issue.outputs.output).releaseLabelToAdd }}
         with:
+          github-token: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
           script: |
             github.rest.issues.addLabels({
               issue_number: context.issue.number,
