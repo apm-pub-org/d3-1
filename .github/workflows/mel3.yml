@@ -159,7 +159,7 @@ jobs:
         with:
           github-token: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
           script: |
-            github.rest.issues.addLabels({
+            await github.rest.issues.addLabels({
               issue_number: context.issue.number,
               owner: context.repo.owner,
               repo: context.repo.repo,
@@ -206,7 +206,7 @@ jobs:
                 console.log("Tier not identified.")
             }
 
-            github.rest.issues.create({
+            await github.rest.issues.create({
               owner: "ske-test-org",
               repo: "second-repo",
               title: parsedData.newTitle,
