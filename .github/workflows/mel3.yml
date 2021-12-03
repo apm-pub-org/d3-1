@@ -3,7 +3,6 @@ on:
   issues:
     types:
       - opened
-      - reopened # todo remove
 
 jobs:
   parse_release_issue:
@@ -207,8 +206,8 @@ jobs:
             }
 
             github.rest.issues.create({
-              owner: context.repo.owner,
-              repo: "ske-test-org/second-repo",
+              owner: "ske-test-org",
+              repo: "second-repo",
               title: parsedData.newTitle,
               body: parsedData.newBody,
               labels: labels
