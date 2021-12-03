@@ -167,7 +167,7 @@ jobs:
 
     steps:
       - name: Label release issue with docs if applicable
-      - uses: actions/github-script@v5
+        uses: actions/github-script@v5
         env:
           LABEL: ${{ fromJSON(needs.parse_release_issue.outputs.output).releaseLabelToAdd }}
         with:
