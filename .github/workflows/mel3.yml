@@ -183,7 +183,7 @@ jobs:
 
             github.rest.issues.create({
               owner: context.repo.owner,
-              repo: context.repo.repo,
+              repo: "ske-test-org/second-repo",
               title: parsedData.newTitle,
               body: parsedData.newBody,
               labels: labels
