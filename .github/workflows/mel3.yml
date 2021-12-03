@@ -9,9 +9,6 @@ jobs:
   parse_release_issue:
     runs-on: ubuntu-latest
 
-    outputs:
-      output: ${{ steps.parse_issue.outputs.result }}
-
     steps:
       - name: Parse release issue
         uses: actions/github-script@v5
@@ -148,35 +145,12 @@ jobs:
               tier: tier,
             }
 
-#   label_release_issue:
-#     runs-on: ubuntu-latest
-#     needs: parse_release_issue
-
-#     steps:
-#       - name: Label release issue with docs if applicable
-#         uses: actions/github-script@v5
-#         env:
-#           LABEL: ${{ fromJSON(needs.parse_release_issue.outputs.output).releaseLabelToAdd }}
-#         with:
-#           github-token: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
-#           script: |
-#             github.rest.issues.addLabels({
-#               issue_number: context.issue.number,
-#               owner: context.repo.owner,
-#               repo: context.repo.repo,
-#               labels: [process.env.LABEL]
-#             })
-
-  open_docs_issue:
-    runs-on: ubuntu-latest
-    needs: parse_release_issue
-    if: fromJSON(needs.parse_release_issue.outputs.output).openDocsIssue
-    steps:
       - name: Create and label an issue in the docs-content repo # todo change repo name back and secrets back
+        if: fromJSON(needs.parse_release_issue.outputs.output).openDocsIssue
         uses: actions/github-script@v5
         env:
-          LABEL: ${{ fromJSON(needs.parse_release_issue.outputs.output).releaseLabelToAdd }}
-          PARSED_DATA: ${{ needs.parse_release_issue.outputs.output }}
+          LABEL: ${{ fromJSON(steps.parse_issue.outputs.result).releaseLabelToAdd }}
+          PARSED_DATA: ${{ steps.parse_issue.outputs.result }}
 
         with:
           github-token: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
