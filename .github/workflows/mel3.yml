@@ -148,12 +148,26 @@ jobs:
               tier: tier,
             }
 
+  comment:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/github-script@v5
+        with:
+          script: |
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: '👋 Thanks for reporting!'
+            })
+
   label_release_issue:
     runs-on: ubuntu-latest
     needs: parse_release_issue
+
     steps:
       - name: Label release issue with docs if applicable
-        uses: actions/github-script@2b34a689ec86a68d8ab9478298f91d5401337b7d
+      - uses: actions/github-script@v5
         env:
           LABEL: ${{ fromJSON(needs.parse_release_issue.outputs.output).releaseLabelToAdd }}
         with:
