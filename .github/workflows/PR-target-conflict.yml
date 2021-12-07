@@ -1,0 +1,11 @@
+name: PR conflict test
+
+on:
+  pull_request_target:
+    types: [labeled]
+
+jobs:
+  pr_target:
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo "I ran"
