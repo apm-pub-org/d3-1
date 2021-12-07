@@ -5,7 +5,7 @@ on:
     types: [labeled]
 
 jobs:
-  request_doc_review:
+  pr:
     runs-on: ubuntu-latest
     steps:
       - run: echo "I ran"
