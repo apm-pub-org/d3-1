@@ -10,35 +10,40 @@ on:
     types: [labeled]
 
 jobs:
-  context:
+  print_context:
     runs-on: ubuntu-latest
     steps:
-      - name: event
+      - env:
+          EVENT_CONTEXT: ${{ toJSON(github.event) }}
         run: |
-          echo $GITHUB_EVENT_NAME
-      - name: action
-        run: |
-          echo ${{ github.server_url }}
-      - name: context
-        env:
-          GITHUB_CONTEXT: ${{ toJSON(github) }}
-        run: |
-          echo $GITHUB_CONTEXT
-      - name: if issue
-        if: ${{ github.event_name == 'issues' }}
-        run: |
-          echo "it's an issue"
-      - name: if pr
-        if: ${{ github.event_name == 'pull_request' }}
-        run: |
-          echo "it's a pr"
-      - name: Run script
-        run: |
-          echo $PR_NODE_ID
-          echo $AUTHOR_LOGIN
-          echo $REPO
-        env:
-          PR_NODE_ID: ${{ github.event.pull_request.node_id || github.event.issue.node_id }} # todo rename var
-          AUTHOR_LOGIN: ${{ github.event.pull_request.user.login || github.event.issue.user.login }}
-          REPO: ${{ github.repository }} # todo REPO not PR_REPO
+          echo $EVENT_CONTEXT
+
+#       - name: event
+#         run: |
+#           echo $GITHUB_EVENT_NAME
+#       - name: action
+#         run: |
+#           echo ${{ github.server_url }}
+#       - name: context
+#         env:
+#           GITHUB_CONTEXT: ${{ toJSON(github) }}
+#         run: |
+#           echo $GITHUB_CONTEXT
+#       - name: if issue
+#         if: ${{ github.event_name == 'issues' }}
+#         run: |
+#           echo "it's an issue"
+#       - name: if pr
+#         if: ${{ github.event_name == 'pull_request' }}
+#         run: |
+#           echo "it's a pr"
+#       - name: Run script
+#         run: |
+#           echo $PR_NODE_ID
+#           echo $AUTHOR_LOGIN
+#           echo $REPO
+#         env:
+#           PR_NODE_ID: ${{ github.event.pull_request.node_id || github.event.issue.node_id }} # todo rename var
+#           AUTHOR_LOGIN: ${{ github.event.pull_request.user.login || github.event.issue.user.login }}
+#           REPO: ${{ github.repository }} # todo REPO not PR_REPO
 
