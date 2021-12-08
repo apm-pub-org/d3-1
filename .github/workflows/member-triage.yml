@@ -2,7 +2,7 @@ name: Memeber triage
 
 on:
   issues:
-    types: [opened]
+    types: [opened, reopened]
 jobs:
   triage_issue:
     runs-on: ubuntu-latest
@@ -10,7 +10,7 @@ jobs:
       - name: label incoming issue
         env:
          ORG: ${{ github.event.organization.login }}
-         TOKEN: ${{ secrets.GITHUB_TOKEN }}
+         TOKEN: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
          ISSUE_NUMBER: ${{ github.event.issue.number }}
          ISSUE_AUTHOR: ${{ github.event.issue.user.login }}
         run: |
