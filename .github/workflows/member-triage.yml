@@ -1,0 +1,20 @@
+name: Memeber triage
+
+on:
+  issues:
+    types: [opened]
+jobs:
+  triage_issue:
+    runs-on: ubuntu-latest
+    steps:
+      - name: label incoming issue
+        env:
+         ORG: ${{ github.event.organization.login }}
+         TOKEN: ${{ secrets.GITHUB_TOKEN }}
+         ISSUE_NUMBER: ${{ github.event.issue.number }}
+         ISSUE_AUTHOR: ${{ github.event.issue.user.login }}
+        run: |
+          if ! gh api orgs/$ORG/members/$ISSUE_NUMBER --silent 2>/dev/null
+          then
+            gh issue edit $ISSUE_AUTHOR --add-label "needs-triage"
+          fi
