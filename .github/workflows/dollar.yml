@@ -6,35 +6,35 @@ on:
 jobs:
   specific_review_requested:
     runs-on: ubuntu-latest
-    if: >
+    if: >-
       ${{ contains(github.event.pull_request.requested_reviewers.*.login, 'octo-org/octo-team') }}
-    steps:
-      - run: echo 'A review from octo-team was requested'
-
-  me:
-    runs-on: ubuntu-latest
-    if: >
-      ${{ github.event.requested_reviewer.login == 'sketest'}}
     steps:
       - run: echo 'A review from octo-team was requested'
 
   ske:
     runs-on: ubuntu-latest
-    if: >
+    if: >-
+      ${{ github.event.requested_reviewer.login == 'sketest'}}
+    steps:
+      - run: echo 'A review from octo-team was requested'
+
+  me:
+    runs-on: ubuntu-latest
+    if: >-
       ${{ github.event.requested_reviewer.login == 'me'}}
     steps:
       - run: echo 'A review from octo-team was requested'
 
   ske2:
     runs-on: ubuntu-latest
-    if: >
+    if: >-
       ${{ contains(github.event.pull_request.requested_reviewers.*.login, 'sketest') }}
     steps:
       - run: echo 'A review from octo-team was requested'
 
   me2:
     runs-on: ubuntu-latest
-    if: >
+    if: >-
       ${{ contains(github.event.pull_request.requested_reviewers.*.login, 'me') }}
     steps:
       - run: echo 'A review from octo-team was requested'
