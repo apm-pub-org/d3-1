@@ -13,7 +13,7 @@ jobs:
   team-c-t:
     runs-on: ubuntu-latest
     if: >-
-      ${{ contains(github.event.pull_request.requested_teams.*.login, 'ske-test-org/test-team') }}
+      ${{ contains(github.event.pull_request.requested_teams.*.name, 'ske-test-org/test-team') }}
     steps:
       - run: echo 'A review from octo-team was requested'
 
@@ -40,7 +40,7 @@ jobs:
   team-i-t:
     runs-on: ubuntu-latest
     if: >-
-      ${{ github.event.requested_team.login == 'ske-test-org/test-team'}}
+      ${{ github.event.requested_team.name == 'ske-test-org/test-team'}}
     steps:
       - run: echo 'A review from octo-team was requested'
 
