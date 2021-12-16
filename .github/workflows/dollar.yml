@@ -10,6 +10,12 @@ jobs:
       ${{ contains(github.event.pull_request.requested_reviewers.*.login, 'ske-test-org/test-team') }}
     steps:
       - run: echo 'A review from octo-team was requested'
+  team-c-t:
+    runs-on: ubuntu-latest
+    if: >-
+      ${{ contains(github.event.pull_request.requested_teams.*.login, 'ske-test-org/test-team') }}
+    steps:
+      - run: echo 'A review from octo-team was requested'
 
   ske-c:
     runs-on: ubuntu-latest
@@ -29,6 +35,12 @@ jobs:
     runs-on: ubuntu-latest
     if: >-
       ${{ github.event.requested_reviewer.login == 'ske-test-org/test-team'}}
+    steps:
+      - run: echo 'A review from octo-team was requested'
+  team-i-t:
+    runs-on: ubuntu-latest
+    if: >-
+      ${{ github.event.requested_team.login == 'ske-test-org/test-team'}}
     steps:
       - run: echo 'A review from octo-team was requested'
 
