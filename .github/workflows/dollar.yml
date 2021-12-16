@@ -45,3 +45,11 @@ jobs:
       ${{ github.event.requested_reviewer.login == 'me'}}
     steps:
       - run: echo 'A review from octo-team was requested'
+
+  context:
+    runs-on: ubuntu-latest
+    steps:
+      - env:
+          EVENT_CONTEXT: ${{ toJSON(github.event) }}
+        run: |
+          echo $EVENT_CONTEXT
