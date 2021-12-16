@@ -4,37 +4,44 @@ on:
   pull_request:
     types: [review_requested]
 jobs:
-  specific_review_requested:
+  team-c:
     runs-on: ubuntu-latest
     if: >-
-      ${{ contains(github.event.pull_request.requested_reviewers.*.login, 'octo-org/octo-team') }}
+      ${{ contains(github.event.pull_request.requested_reviewers.*.login, 'ske-test-org/test-team') }}
     steps:
       - run: echo 'A review from octo-team was requested'
 
-  ske:
-    runs-on: ubuntu-latest
-    if: >-
-      ${{ github.event.requested_reviewer.login == 'sketest'}}
-    steps:
-      - run: echo 'A review from octo-team was requested'
-
-  me:
-    runs-on: ubuntu-latest
-    if: >-
-      ${{ github.event.requested_reviewer.login == 'me'}}
-    steps:
-      - run: echo 'A review from octo-team was requested'
-
-  ske2:
+  ske-c:
     runs-on: ubuntu-latest
     if: >-
       ${{ contains(github.event.pull_request.requested_reviewers.*.login, 'sketest') }}
     steps:
       - run: echo 'A review from octo-team was requested'
 
-  me2:
+  me-c:
     runs-on: ubuntu-latest
     if: >-
       ${{ contains(github.event.pull_request.requested_reviewers.*.login, 'me') }}
+    steps:
+      - run: echo 'A review from octo-team was requested'
+
+  team-i:
+    runs-on: ubuntu-latest
+    if: >-
+      ${{ github.event.requested_reviewer.login == 'ske-test-org/test-team'}}
+    steps:
+      - run: echo 'A review from octo-team was requested'
+
+  ske-i:
+    runs-on: ubuntu-latest
+    if: >-
+      ${{ github.event.requested_reviewer.login == 'sketest'}}
+    steps:
+      - run: echo 'A review from octo-team was requested'
+
+  me-i:
+    runs-on: ubuntu-latest
+    if: >-
+      ${{ github.event.requested_reviewer.login == 'me'}}
     steps:
       - run: echo 'A review from octo-team was requested'
