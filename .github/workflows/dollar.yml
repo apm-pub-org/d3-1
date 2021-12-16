@@ -7,16 +7,15 @@ jobs:
   team-c:
     runs-on: ubuntu-latest
     if: >-
-      ${{ contains(github.event.pull_request.requested_reviewers.*.login, 'ske-test-org/test-team') }}
+      ${{ contains(github.event.pull_request.requested_reviewers.*.login, 'test-team') }}
     steps:
       - run: echo 'A review from octo-team was requested'
   team-c-t:
     runs-on: ubuntu-latest
     if: >-
-      ${{ contains(github.event.pull_request.requested_teams.*.name, 'ske-test-org/test-team') }}
+      ${{ contains(github.event.pull_request.requested_teams.*.name, 'test-team') }}
     steps:
       - run: echo 'A review from octo-team was requested'
-
   ske-c:
     runs-on: ubuntu-latest
     if: >-
@@ -34,13 +33,13 @@ jobs:
   team-i:
     runs-on: ubuntu-latest
     if: >-
-      ${{ github.event.requested_reviewer.login == 'ske-test-org/test-team'}}
+      ${{ github.event.requested_reviewer.login == 'test-team'}}
     steps:
       - run: echo 'A review from octo-team was requested'
   team-i-t:
     runs-on: ubuntu-latest
     if: >-
-      ${{ github.event.requested_team.name == 'ske-test-org/test-team'}}
+      ${{ github.event.requested_team.name == 'test-team'}}
     steps:
       - run: echo 'A review from octo-team was requested'
 
@@ -65,3 +64,7 @@ jobs:
           EVENT_CONTEXT: ${{ toJSON(github.event) }}
         run: |
           echo $EVENT_CONTEXT
+      - name: req-teams
+        run: echo ${{github.event.pull_request.requested_teams}}
+      - name: req-teams
+        run: echo ${{github.event.requested_team.name}}
