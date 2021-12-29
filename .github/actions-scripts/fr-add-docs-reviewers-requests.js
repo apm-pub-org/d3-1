@@ -111,7 +111,7 @@ async function run() {
                 id
               }
             }
-            fields(first: 20) {
+            fields(first: 100) {
               nodes {
                 id
                 name
