@@ -55,7 +55,7 @@ async function getAllOpenPRs() {
       `,
       {
         organization: process.env.ORGANIZATION,
-        organization: process.env.REPO,
+        repo: process.env.REPO,
         headers: {
           authorization: `token ${process.env.TOKEN}`
         },
