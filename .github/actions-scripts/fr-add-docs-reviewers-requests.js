@@ -141,18 +141,18 @@ async function run() {
   const existingItemIDs = project_data.organization.projectNext.items.nodes.map((node) => node.id)
 
   // Get the ID of the fields that we want to populate
-  const datePostedID = findFieldID('Date posted', data)
-  const reviewDueDateID = findFieldID('Review due date', data)
-  const statusID = findFieldID('Status', data)
-  const featureID = findFieldID('Feature', data)
-  const contributorTypeID = findFieldID('Contributor type', data)
-  const sizeTypeID = findFieldID('Size', data)
-  const authorID = findFieldID('Contributor', data)
+  const datePostedID = findFieldID('Date posted', project_data)
+  const reviewDueDateID = findFieldID('Review due date', project_data)
+  const statusID = findFieldID('Status', project_data)
+  const featureID = findFieldID('Feature', project_data)
+  const contributorTypeID = findFieldID('Contributor type', project_data)
+  const sizeTypeID = findFieldID('Size', project_data)
+  const authorID = findFieldID('Contributor', project_data)
 
   // Get the ID of the single select values that we want to set
-  const readyForReviewID = findSingleSelectID('Ready for review', 'Status', data)
-  const hubberTypeID = findSingleSelectID('Hubber or partner', 'Contributor type', data)
-  const docsMemberTypeID = findSingleSelectID('Docs team', 'Contributor type', data)
+  const readyForReviewID = findSingleSelectID('Ready for review', 'Status', project_data)
+  const hubberTypeID = findSingleSelectID('Hubber or partner', 'Contributor type', project_data)
+  const docsMemberTypeID = findSingleSelectID('Docs team', 'Contributor type', project_data)
 
   // Add the PRs to the project
   const itemIDs = await addItemsToProject(prIDs, projectID)
