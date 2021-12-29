@@ -31,6 +31,3 @@ jobs:
           ORGANIZATION: "ske-test-org" # TODO change to "github"
           REPO: "test-org-repo"  # TODO change to "github"
           REVIEWER: "test-team" # TODO change to "docs-reviewers"
-          # This is an educated guess of how many PRs are opened in a day on the github/github repo
-          # If we are missing PRs, either increase this number or increase the frequency at which this script is run
-          NUM_PRS: 100
