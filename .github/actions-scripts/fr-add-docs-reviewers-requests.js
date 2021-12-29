@@ -17,7 +17,7 @@ async function getAllOpenPRs() {
       `
         query ($organization: String!, $repo: String!) {
           repository(name: $repo, owner: $organization) {
-            pullRequests(last: 100, states: OPEN${cursor ? ` before:"${cursor}"`: ""}) {
+            pullRequests(last: 10, states: OPEN${cursor ? ` before:"${cursor}"`: ""}) {
               pageInfo{startCursor, hasPreviousPage},
               nodes {
                 id
