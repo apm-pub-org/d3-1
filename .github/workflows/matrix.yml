@@ -1,0 +1,16 @@
+on: workflow_dispatch
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        node: [12, 12.22.9, 16]
+    steps:
+      # Configures the node version used on GitHub-hosted runners
+      - uses: actions/setup-node@v2
+        with:
+          # The Node.js version to configure
+          node-version: ${{ matrix.node }}
+      - run: node -v
