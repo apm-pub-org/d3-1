@@ -1,0 +1,27 @@
+# Creates a new docs friction sync issue when requested or when an issue with the docs friction sync label is closed
+
+name: Docs friction sync
+on:
+  workflow_dispatch:
+  issues:
+    types: [closed]
+
+jobs:
+  if: ${{ contains(github.event.issue.labels.*.name, 'docs-office-hours') || github.event_name == "workflow_dispatch" }}
+  create_issue:
+    runs-on: ubuntu-latest
+    permissions:
+      issues: write
+    steps:
+      - name: Store issue template in variable
+        run: |
+          TEMPLATE=$(cat .github/office-hours-template.md)
+          echo "TEMPLATE<<EOF" >> $GITHUB_ENV
+          echo "$TEMPLATE" >> $GITHUB_ENV
+          echo "EOF" >> $GITHUB_ENV
+
+      - name: Create issue
+        run: |
+          gh issue create --title "Docs office hours" --body "$TEMPLATE" --repo $GITHUB_REPOSITORY
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
