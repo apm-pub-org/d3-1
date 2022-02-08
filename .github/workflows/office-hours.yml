@@ -32,6 +32,9 @@ jobs:
           echo "TEMPLATE<<EOF" >> $GITHUB_ENV
           echo "$TEMPLATE" >> $GITHUB_ENV
           echo "EOF" >> $GITHUB_ENV
+          with: 
+            path: './'      
+
 
       - name: Create issue
         run: |
