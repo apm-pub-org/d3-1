@@ -7,12 +7,25 @@ on:
     types: [closed]
 
 jobs:
-  if: ${{ contains(github.event.issue.labels.*.name, 'docs-office-hours') || github.event_name == "workflow_dispatch" }}
   create_issue:
+    if: ${{ contains(github.event.issue.labels.*.name, 'docs-office-hours') || github.event_name == "workflow_dispatch" }}
     runs-on: ubuntu-latest
     permissions:
       issues: write
     steps:
+      - env:
+          EVENT_CONTEXT: ${{ toJSON(github.event) }}
+        run: |
+          echo $EVENT_CONTEXT
+      - env:
+          EVENT_CONTEXT: ${{ toJSON(github.event.issue.labels) }}
+        run: |
+          echo $EVENT_CONTEXT
+      - env:
+          EVENT_CONTEXT: ${{ toJSON(github.event_name) }}
+        run: |
+          echo $EVENT_CONTEXT
+
       - name: Store issue template in variable
         run: |
           TEMPLATE=$(cat .github/office-hours-template.md)
