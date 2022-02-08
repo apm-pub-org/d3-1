@@ -13,37 +13,14 @@ jobs:
     permissions:
       issues: write
     steps:
-      - name: Download the template file
-        uses: Bhacaz/checkout-files@c8f01756bfd894ba746d5bf48205e19000b0742b
-        with:
-          files: .github/office-hours-template.md
-          token: ${{ secrets.GITHUB_TOKEN }}
-
-      - env:
-          EVENT_CONTEXT: ${{ toJSON(github.event) }}
-        run: |
-          echo $EVENT_CONTEXT
-      - env:
-          EVENT_CONTEXT: ${{ toJSON(github.event.issue.labels) }}
-        run: |
-          echo $EVENT_CONTEXT
-      - env:
-          EVENT_CONTEXT: ${{ toJSON(github.event_name) }}
-        run: |
-          echo $EVENT_CONTEXT
-
-      - name: Store issue template in variable
-        run: |
-          TEMPLATE=$(cat .github/office-hours-template.md)
-          echo "TEMPLATE<<EOF" >> $GITHUB_ENV
-          echo "$TEMPLATE" >> $GITHUB_ENV
-          echo "EOF" >> $GITHUB_ENV
-          with: 
-            path: './'      
-
-
       - name: Create issue
         run: |
-          gh issue create --title "Docs office hours" --body "$TEMPLATE" --repo $GITHUB_REPOSITORY
+          gh issue create --title "Docs office hours" --body "Yo there
+          
+          hi! some stuff:
+          
+          - [ ] a
+          - [ ] b
+          " --repo $GITHUB_REPOSITORY
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
