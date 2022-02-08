@@ -7,13 +7,14 @@ on:
     types: [closed]
 
 jobs:
+  if: ${{ contains(github.event.issue.labels.*.name, 'docs-office-hours') || github.event_name == 'workflow_dispatch'' }}
+  
   create_issue:
-    if: ${{ contains(github.event.issue.labels.*.name, 'docs-office-hours') || github.event_name == 'workflow_dispatch' }}
-#     if: ${{ github.event_name == 'workflow_dispatch' }}
     runs-on: ubuntu-latest
     permissions:
       issues: write
     steps:
+
       - name: Create issue
         run: |
           gh issue create --title "Docs office hours" --body "Yo there
@@ -22,6 +23,6 @@ jobs:
           
           - [ ] a
           - [ ] b
-          " --repo $GITHUB_REPOSITORY
+          " --repo $GITHUB_REPOSITORY --label "docs-office-hours"
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
