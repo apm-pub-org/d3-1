@@ -13,6 +13,12 @@ jobs:
     permissions:
       issues: write
     steps:
+      - name: Download the template file
+        uses: Bhacaz/checkout-files@c8f01756bfd894ba746d5bf48205e19000b0742b
+        with:
+          files: .github/office-hours-template.md
+          token: ${{ secrets.GITHUB_TOKEN }}
+
       - env:
           EVENT_CONTEXT: ${{ toJSON(github.event) }}
         run: |
