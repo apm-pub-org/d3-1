@@ -17,12 +17,26 @@ jobs:
 
       - name: Create issue
         run: |
-          gh issue create --title "Docs office hours" --body "Yo there
-          
-          hi! some stuff:
-          
-          - [ ] a
-          - [ ] b
+          gh issue create --title "Docs office hours" --body "Previous meeting notes: https://github.com/github/docs-team/labels/docs-friction-sync
+
+          Zoom recoding of this meeting: 
+
+          ## Agenda
+            - [ ] Remind people to attend on Slack: #docs-content, #docs, #docs-engineering
+            - [ ] Designate note taker
+            - [ ] Start Zoom recording
+            - [ ] Share Screen of EasyRetro board
+            - [ ] In Settings, Show Comments, and sort by vote count and go through the highest impact card
+            - [ ] Delete cards that have been lingering for a couple weeks and have no vote count
+
+          ## Post-Meeting
+            - [ ] Post notes in this issue
+            - [ ] Share the recording on Slack
+            - [ ] Add the Zoom recording to this issue
+            - [ ] Remove cards that are not high impact or no longer need discussion
+
+          /cc @skedwards88
+
           " --repo $GITHUB_REPOSITORY --label "docs-office-hours"
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
