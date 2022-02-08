@@ -17,7 +17,7 @@ jobs:
 
       - name: Create issue
         run: |
-          gh issue create --title "Docs office hours" --body "Previous meeting notes: https://github.com/github/docs-team/labels/docs-friction-sync
+          gh issue create --title "Docs office hours" --body "Previous meeting notes: https://github.com/github/docs-team/labels/docs-office-hours
 
           Zoom recoding of this meeting: 
 
@@ -25,15 +25,15 @@ jobs:
             - [ ] Remind people to attend on Slack: #docs-content, #docs, #docs-engineering
             - [ ] Designate note taker
             - [ ] Start Zoom recording
-            - [ ] Share Screen of EasyRetro board
-            - [ ] In Settings, Show Comments, and sort by vote count and go through the highest impact card
-            - [ ] Delete cards that have been lingering for a couple weeks and have no vote count
+            - [ ] Add discussion items here :point_down:
+              - [ ] ...
 
           ## Post-Meeting
+            - [ ] Create follow up issues if needed with the `friction` label in the docs-engineering repo
+            - [ ] Create follow up discussions if needed to get consensus from docs-content. Advertise on the [docs-content](https://github.com/github/docs-team/labels/hangout-product-docs) sync agenda and in #docs-content.
             - [ ] Post notes in this issue
-            - [ ] Share the recording on Slack
             - [ ] Add the Zoom recording to this issue
-            - [ ] Remove cards that are not high impact or no longer need discussion
+            - [ ] Share the notes and recording on Slack
 
           /cc @skedwards88
 
