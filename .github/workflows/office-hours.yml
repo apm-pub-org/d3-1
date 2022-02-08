@@ -9,6 +9,7 @@ on:
 jobs:
   create_issue:
 #     if: ${{ contains(github.event.issue.labels.*.name, 'docs-office-hours') || github.event_name == "workflow_dispatch" }}
+    if: ${{ github.event_name == "workflow_dispatch" }}
     runs-on: ubuntu-latest
     permissions:
       issues: write
