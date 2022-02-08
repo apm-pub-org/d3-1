@@ -7,7 +7,7 @@ on:
     types: [closed]
 
 jobs:
-  if: ${{ contains(github.event.issue.labels.*.name, 'docs-office-hours') || github.event_name == 'workflow_dispatch'' }}
+  if: ${{ contains(github.event.issue.labels.*.name, 'docs-office-hours') || (github.event_name == 'workflow_dispatch') }}
   
   create_issue:
     runs-on: ubuntu-latest
