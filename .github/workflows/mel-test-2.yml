@@ -1,4 +1,4 @@
-name: Automatically open a docs-content tracking issue
+name: A Automatically open a docs-content tracking issue
 on:
   issues:
     types:
