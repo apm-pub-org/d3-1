@@ -105,19 +105,22 @@ jobs:
             const author = context.payload.issue.user.login
             const issue = context.payload.issue.html_url
             const newTitle = `[${shipDate}]: ${title} (${phase})`
-            const newBody = `### Link to the release issue
-            - ${issue}
+            const newBody = `
+            ### Link to the release issue
+            
+            ${issue}
 
             ${
               tier === 'Tier 3' || tier === 'Tier 4'
-                ? `### If this release has a small docs impact, are you able to make the docs update yourself in the docs-internal repo?
+                ? `
+            ### If this release has a small docs impact, are you able to make the docs update yourself in the docs-internal repo?
 
             Please select one, @${author}:
 
             - [ ] Yes!
             - [ ] Yes, but with support
             - [ ] No, I'm not able
-            - [ ] No, but I know someone who can (ping them in the next section)`
+            - [ ] No, but I know someone who can (👉 ping them here: _username_)`
                 : ''
             }
 
@@ -126,10 +129,11 @@ jobs:
             Please answer all questions with checkboxes or 👉 _placeholders_, @${author}. Once you answer the questions, you can unassign yourself from this issue. The docs team will review the issue and either write a plan to help you open a PR (if you indicated that you will open a PR) or will triage it for a writer to pick up.
             ${
               tier === 'Tier 3' || tier === 'Tier 4'
-                ? `- Do you think we'll need to create any new articles to document this release?
-                     - [ ] Yes
-                     - [ ] No
-                     - [ ] I'm not sure
+                ? `
+            - Do you think we'll need to create any new articles to document this release?
+              - [ ] Yes
+              - [ ] No
+              - [ ] I'm not sure
             - If you know of existing documentation that needs updates for this release, please share links and what should change. 
               
               👉 _Documentation to update and overview of changes to make_`
@@ -150,13 +154,6 @@ jobs:
             - Will any content require security review?
               - [ ] Yes
               - [ ] No 
-              ${
-                tier === 'Tier 3' || tier === 'Tier 4'
-                  ? `- @${author}, if you answered that you can't open the PR but you know someone who can, ping them here.
-                     
-                       👉 @username`
-                  : ''
-              }
             `
 
             return {
