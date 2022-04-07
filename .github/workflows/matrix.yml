@@ -4,54 +4,54 @@ on: [workflow_dispatch, push]
 
 jobs:
 
-  includes_only:
-    runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        include:
-          - color: red
-            shape: square
-            fruit: apple
-          - color: blue
-            shape: circle
-          - animal: cow
-    steps:
-      - env:
-          FRUIT: ${{ matrix.fruit }}
-          ANIMAL: ${{ matrix.animal }}
-        run: echo $FRUIT $ANIMAL
+#   includes_only:
+#     runs-on: ubuntu-latest
+#     strategy:
+#       matrix:
+#         include:
+#           - color: red
+#             shape: square
+#             fruit: apple
+#           - color: blue
+#             shape: circle
+#           - animal: cow
+#     steps:
+#       - env:
+#           FRUIT: ${{ matrix.fruit }}
+#           ANIMAL: ${{ matrix.animal }}
+#         run: echo $FRUIT $ANIMAL
         
-  key_no_match:
-    runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        fruit: [apple, orange]
-        animal: [dog]
-        include:
-          - color: red
-            shape: square
-    steps:
-      - env:
-          FRUIT: ${{ matrix.fruit }}
-          ANIMAL: ${{ matrix.animal }}
-        run: echo $FRUIT $ANIMAL
+#   key_no_match:
+#     runs-on: ubuntu-latest
+#     strategy:
+#       matrix:
+#         fruit: [apple, orange]
+#         animal: [dog]
+#         include:
+#           - color: red
+#             shape: square
+#     steps:
+#       - env:
+#           FRUIT: ${{ matrix.fruit }}
+#           ANIMAL: ${{ matrix.animal }}
+#         run: echo $FRUIT $ANIMAL
 
-  key_full_match_value_partial_match:
-    runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        fruit: [apple, orange]
-        animal: [dog]
-        include:
-          - fruit: apple
-            animal: cow
-          - fruit: apple
-            animal: horse
-    steps:
-      - env:
-          FRUIT: ${{ matrix.fruit }}
-          ANIMAL: ${{ matrix.animal }}
-        run: echo $FRUIT $ANIMAL
+#   key_full_match_value_partial_match:
+#     runs-on: ubuntu-latest
+#     strategy:
+#       matrix:
+#         fruit: [apple, orange]
+#         animal: [dog]
+#         include:
+#           - fruit: apple
+#             animal: cow
+#           - fruit: apple
+#             animal: horse
+#     steps:
+#       - env:
+#           FRUIT: ${{ matrix.fruit }}
+#           ANIMAL: ${{ matrix.animal }}
+#         run: echo $FRUIT $ANIMAL
 
   key_partial_match:
     runs-on: ubuntu-latest
@@ -64,6 +64,12 @@ jobs:
             color: red
           - fruit: banana
             color: green
+          - fruit: peach
+            color: yellow
+          - fruit: orange
+            color: purple
+            animal: dog
+
     steps:
       - env:
           FRUIT: ${{ matrix.fruit }}
