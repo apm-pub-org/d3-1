@@ -7,13 +7,17 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-#         fruit: [apple, orange]
-#         animal: [dog]
+        fruit: [apple, orange]
+        animal: [dog]
         include:
           - color: red
             shape: square
+            fruit: apple
           - color: blue
             shape: circle
+          - color: blue
+            shape: circle
+            fruit: pear
 
 
 
