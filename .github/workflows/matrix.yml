@@ -1,19 +1,14 @@
+name: Matrix
+
 on: workflow_dispatch
 
 jobs:
-  build:
-
+  example_matrix:
     runs-on: ubuntu-latest
     strategy:
-      fail-fast: false
       matrix:
-        python-version: [3.9, 3.10, 3.10.1]
-
+        fruit: ["apple", "orange", "banana"]
     steps:
-      - name: Set up Python ${{ matrix.python-version }}
-        uses: actions/setup-python@v2
-        with:
-          python-version: ${{ matrix.python-version }}
-      - run: python --version
-
-
+      - env:
+          FRUIT: ${{ matrix.fruit }}
+        run: echo $FRUIT
