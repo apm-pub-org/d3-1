@@ -15,6 +15,14 @@ jobs:
           - color: pink
           - fruit: apple
             shape: circle
+          - fruit: banana
+          - fruit: peach
+            animal: snake
+            color: red
+            shape: square
+          - fruit: plum
+            animal: cat
+
     steps:
       - run: echo ${{ matrix.color }}
       - run: echo ${{ matrix.fruit }}
