@@ -10,8 +10,10 @@ jobs:
       fail-fast: false
       matrix:
         experimental: [true, false]
+        delay: [0, 20]
     steps:
       - run: echo ${{ matrix.experimental }}
+      - run: sleep ${{ matrix.delay }}
       - if: ${{ matrix.experimental }}
         run: exit 1
 
