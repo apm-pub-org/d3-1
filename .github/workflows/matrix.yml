@@ -1,14 +1,17 @@
 name: Matrix
 
-on: workflow_dispatch
+on: [workflow_dispatch, push]
 
 jobs:
   example_matrix:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        fruit: ["apple", "orange", "banana"]
+        fruit: [apple, orange, banana]
+        include:
+          - fruit: apple
+            animal: cow
     steps:
       - env:
           FRUIT: ${{ matrix.fruit }}
-        run: echo $FRUIT
+        run: echo $FRUIT ${{ matrix.animal }}
