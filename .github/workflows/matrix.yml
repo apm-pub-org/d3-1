@@ -20,7 +20,7 @@ jobs:
     strategy:
       matrix:
 #         os: [macos-latest, windows-latest, ubuntu-latest]
-        os: [macos-latest, windows-latest]
+        os: [windows-latest]
         node: [14, 16]
         include:
           - os: windows-latest
@@ -33,7 +33,7 @@ jobs:
           node-version: ${{ matrix.node }}
       - run: npm --version
       
-      - run: npm install npm@${{ matrix.npm }}
+      - run: npm install -g npm@${{ matrix.npm }}
         if: ${{ matrix.npm }}
       
       - run: npm --version
