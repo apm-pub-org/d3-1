@@ -4,37 +4,36 @@ on: [workflow_dispatch, push]
 
 jobs:
   example_matrix:
-#     runs-on: ubuntu-latest
-#     strategy:
-#       matrix:
-#         fruit: [apple, orange, banana]
-#         include:
-#           - fruit: apple
-#             animal: cow
-#     steps:
-#       - env:
-#           FRUIT: ${{ matrix.fruit }}
-#           ANIMAL: ${{ matrix.animal }}
-#         run: echo $FRUIT $ANIMAL
-
+    runs-on: ubuntu-latest
     strategy:
       matrix:
-#         os: [macos-latest, windows-latest, ubuntu-latest]
-        os: [windows-latest]
-        node: [14, 16]
+        fruit: [apple, orange]
         include:
-          - os: windows-latest
-            node: 16
-            npm: 6
-    runs-on: ${{ matrix.os }}
+          - animal: cow
     steps:
-      - uses: actions/setup-node@v3
-        with:
-          node-version: ${{ matrix.node }}
-      - run: npm --version
+      - env:
+          FRUIT: ${{ matrix.fruit }}
+          ANIMAL: ${{ matrix.animal }}
+        run: echo $FRUIT $ANIMAL
+
+#     strategy:
+#       matrix:
+# #         os: [macos-latest, windows-latest, ubuntu-latest]
+#         os: [windows-latest]
+#         node: [14, 16]
+#         include:
+#           - os: windows-latest
+#             node: 16
+#             npm: 6
+#     runs-on: ${{ matrix.os }}
+#     steps:
+#       - uses: actions/setup-node@v3
+#         with:
+#           node-version: ${{ matrix.node }}
+#       - run: npm --version
       
-      - run: npm install -g npm@${{ matrix.npm }}
-        if: ${{ matrix.npm }}
+#       - run: npm install -g npm@${{ matrix.npm }}
+#         if: ${{ matrix.npm }}
       
-      - run: npm --version
-      - run: echo npm value is ${{ matrix.npm }}
+#       - run: npm --version
+#       - run: echo npm value is ${{ matrix.npm }}
