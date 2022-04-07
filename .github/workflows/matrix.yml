@@ -10,8 +10,8 @@ jobs:
         fruit: [apple, orange]
         animal: [dog]
         include:
-          - fruit: apple
-            animal: cow
+          - color: red
+            shape: square
 
 
 
