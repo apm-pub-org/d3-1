@@ -8,8 +8,13 @@ jobs:
     strategy:
       matrix:
         fruit: [apple, orange]
+        animal: [dog]
         include:
-          - animal: cow
+          - fruit: apple
+            animal: cow
+
+
+
     steps:
       - env:
           FRUIT: ${{ matrix.fruit }}
