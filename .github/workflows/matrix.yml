@@ -14,4 +14,5 @@ jobs:
     steps:
       - env:
           FRUIT: ${{ matrix.fruit }}
-        run: echo $FRUIT ${{ matrix.animal }}
+          ANIMAL: ${{ matrix.animal }}
+        run: echo $FRUIT $ANIMAL
