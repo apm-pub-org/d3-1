@@ -3,7 +3,25 @@ name: Matrix
 on: [workflow_dispatch, push]
 
 jobs:
-  example_matrix:
+
+  includes_only:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        include:
+          - color: red
+            shape: square
+            fruit: apple
+          - color: blue
+            shape: circle
+          - animal: cow
+    steps:
+      - env:
+          FRUIT: ${{ matrix.fruit }}
+          ANIMAL: ${{ matrix.animal }}
+        run: echo $FRUIT $ANIMAL
+        
+  key_no_match:
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -12,39 +30,42 @@ jobs:
         include:
           - color: red
             shape: square
-            fruit: apple
-          - color: blue
-            shape: circle
-          - color: blue
-            shape: circle
-            fruit: pear
-
-
-
     steps:
       - env:
           FRUIT: ${{ matrix.fruit }}
           ANIMAL: ${{ matrix.animal }}
         run: echo $FRUIT $ANIMAL
 
-#     strategy:
-#       matrix:
-# #         os: [macos-latest, windows-latest, ubuntu-latest]
-#         os: [windows-latest]
-#         node: [14, 16]
-#         include:
-#           - os: windows-latest
-#             node: 16
-#             npm: 6
-#     runs-on: ${{ matrix.os }}
-#     steps:
-#       - uses: actions/setup-node@v3
-#         with:
-#           node-version: ${{ matrix.node }}
-#       - run: npm --version
-      
-#       - run: npm install -g npm@${{ matrix.npm }}
-#         if: ${{ matrix.npm }}
-      
-#       - run: npm --version
-#       - run: echo npm value is ${{ matrix.npm }}
+  key_full_match_value_partial_match:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        fruit: [apple, orange]
+        animal: [dog]
+        include:
+          - fruit: apple
+            animal: cow
+          - fruit: apple
+            animal: horse
+    steps:
+      - env:
+          FRUIT: ${{ matrix.fruit }}
+          ANIMAL: ${{ matrix.animal }}
+        run: echo $FRUIT $ANIMAL
+
+  key_partial_match:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        fruit: [apple, orange]
+        animal: [dog]
+        include:
+          - fruit: apple
+            color: red
+          - fruit: banana
+            color: green
+    steps:
+      - env:
+          FRUIT: ${{ matrix.fruit }}
+          ANIMAL: ${{ matrix.animal }}
+        run: echo $FRUIT $ANIMAL
