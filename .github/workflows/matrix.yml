@@ -19,17 +19,22 @@ jobs:
 
     strategy:
       matrix:
-        os: [macos-latest, windows-latest, ubuntu-18.04]
-        node: [8, 10]
+#         os: [macos-latest, windows-latest, ubuntu-latest]
+        os: [macos-latest, windows-latest]
+        node: [14, 16]
         include:
           - os: windows-latest
-            node: 8
+            node: 16
             npm: 6
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/setup-node@v3
         with:
           node-version: ${{ matrix.node }}
+      - run: npm --version
+      
       - run: npm install npm@${{ matrix.npm }}
+        if: ${{ matrix.npm }}
+      
       - run: npm --version
       - run: echo npm value is ${{ matrix.npm }}
