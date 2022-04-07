@@ -99,4 +99,6 @@ jobs:
             node: 16
             npm: 6
     steps:
-      - run: echo ${{ matrix }}
+      - run: echo ${{ matrix.os }}
+      - run: echo ${{ matrix.node }}
+      - run: echo ${{ matrix.npm }}
