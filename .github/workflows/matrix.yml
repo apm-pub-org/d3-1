@@ -5,7 +5,7 @@ on: [workflow_dispatch, push]
 jobs:
   test:
     runs-on: ubuntu-latest
-    continue-on-error: ${{ matrix.experimental }}
+#     continue-on-error: ${{ matrix.experimental }}
     strategy:
       fail-fast: false
       matrix:
