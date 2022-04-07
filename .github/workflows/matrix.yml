@@ -4,15 +4,32 @@ on: [workflow_dispatch, push]
 
 jobs:
   example_matrix:
-    runs-on: ubuntu-latest
+#     runs-on: ubuntu-latest
+#     strategy:
+#       matrix:
+#         fruit: [apple, orange, banana]
+#         include:
+#           - fruit: apple
+#             animal: cow
+#     steps:
+#       - env:
+#           FRUIT: ${{ matrix.fruit }}
+#           ANIMAL: ${{ matrix.animal }}
+#         run: echo $FRUIT $ANIMAL
+
     strategy:
       matrix:
-        fruit: [apple, orange, banana]
+        os: [macos-latest, windows-latest, ubuntu-18.04]
+        node: [8, 10]
         include:
-          - fruit: apple
-            animal: cow
+          - os: windows-latest
+            node: 8
+            npm: 6
+    runs-on: ${{ matrix.os }}
     steps:
-      - env:
-          FRUIT: ${{ matrix.fruit }}
-          ANIMAL: ${{ matrix.animal }}
-        run: echo $FRUIT $ANIMAL
+      - uses: actions/setup-node@v3
+        with:
+          node-version: ${{ matrix.node }}
+      - run: npm install npm@${{ matrix.npm }}
+      - run: npm --version
+      - run: echo npm value is ${{ matrix.npm }}
