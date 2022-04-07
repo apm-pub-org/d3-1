@@ -3,31 +3,43 @@ name: Matrix
 on: [workflow_dispatch, push]
 
 jobs:
-
-  kpm:
+  test:
     runs-on: ubuntu-latest
+    continue-on-error: ${{ matrix.experimental }}
     strategy:
+      fail-fast: false
       matrix:
-        fruit: [apple, pear]
-        animal: [cat, dog]
-        include:
-          - color: green
-          - color: pink
-          - fruit: apple
-            shape: circle
-          - fruit: banana
-          - fruit: peach
-            animal: snake
-            color: red
-            shape: square
-          - fruit: plum
-            animal: cat
-
+        experimental: [true, false]
     steps:
-      - run: echo ${{ matrix.color }}
-      - run: echo ${{ matrix.fruit }}
-      - run: echo ${{ matrix.animal }}
-      - run: echo ${{ matrix.shape }}
+      - run: echo ${{ matrix.experimental }}
+      - if: ${{ matrix.experimental }}
+        run: exit 1
+
+
+#   kpm:
+#     runs-on: ubuntu-latest
+#     strategy:
+#       matrix:
+#         fruit: [apple, pear]
+#         animal: [cat, dog]
+#         include:
+#           - color: green
+#           - color: pink
+#           - fruit: apple
+#             shape: circle
+#           - fruit: banana
+#           - fruit: peach
+#             animal: snake
+#             color: red
+#             shape: square
+#           - fruit: plum
+#             animal: cat
+
+#     steps:
+#       - run: echo ${{ matrix.color }}
+#       - run: echo ${{ matrix.fruit }}
+#       - run: echo ${{ matrix.animal }}
+#       - run: echo ${{ matrix.shape }}
 
 
 #   includes_only:
