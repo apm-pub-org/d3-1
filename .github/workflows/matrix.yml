@@ -75,3 +75,28 @@ jobs:
           FRUIT: ${{ matrix.fruit }}
           ANIMAL: ${{ matrix.animal }}
         run: echo $FRUIT $ANIMAL
+
+  example_matrix:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        os: [macos-latest, windows-latest, ubuntu-latest]
+        node: [12, 14, 16]
+        include:
+          - os: windows-latest
+            node: 17
+    steps:
+      - run: echo 1
+
+  ex2:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        os: [macos-latest, windows-latest, ubuntu-latest]
+        node: [12, 14, 16]
+        include:
+          - os: windows-latest
+            node: 16
+            npm: 6
+    steps:
+      - run: echo 1
