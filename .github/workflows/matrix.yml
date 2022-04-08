@@ -3,27 +3,35 @@ name: Matrix
 on: [workflow_dispatch, push]
 
 jobs:
-  test:
+  example_matrix:
     runs-on: ubuntu-latest
-    continue-on-error: ${{ matrix.experimental }}
     strategy:
-      fail-fast: false
       matrix:
-        include:
-          - version: 1
-            experimental: true
-            fail: true
-          - version: 1
-            experimental: false
-            fail: true
-          - version: 1
-            experimental: false
-            fail: false
-    steps:
-      - run: sleep ${{ matrix.version }}
-      - if: ${{ matrix.fail }}
-        run: exit 1
-      - run: echo more
+        version: [10, 12, 14]
+        os: [ubuntu-18.04, ubuntu-20.04]
+
+# jobs:
+#   test:
+#     runs-on: ubuntu-latest
+#     continue-on-error: ${{ matrix.experimental }}
+#     strategy:
+#       fail-fast: false
+#       matrix:
+#         include:
+#           - version: 1
+#             experimental: true
+#             fail: true
+#           - version: 1
+#             experimental: false
+#             fail: true
+#           - version: 1
+#             experimental: false
+#             fail: false
+#     steps:
+#       - run: sleep ${{ matrix.version }}
+#       - if: ${{ matrix.fail }}
+#         run: exit 1
+#       - run: echo more
 
 
 #     runs-on: ubuntu-latest
