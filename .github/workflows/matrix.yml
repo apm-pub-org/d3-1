@@ -9,6 +9,8 @@ jobs:
       matrix:
         version: [10, 12, 14]
         os: [ubuntu-18.04, ubuntu-20.04]
+    steps:
+      - run: echo hi
 
 # jobs:
 #   test:
