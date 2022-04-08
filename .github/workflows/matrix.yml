@@ -13,6 +13,7 @@ jobs:
         include:
           - color: green
           - color: pink
+            animal: cat
           - fruit: apple
             shape: circle
           - shape: triangle # will this overwrite cricel
