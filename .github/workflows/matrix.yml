@@ -10,19 +10,10 @@ jobs:
       matrix:
         fruit: [apple, pear]
         animal: [cat, dog]
-        include:
-          - color: green
-          - color: pink
-            animal: cat
+        exclude:
+          - fruit: pear
           - fruit: apple
-            shape: circle
-          - shape: triangle # will this overwrite cricel
-          - fruit: banana
-          - fruit: peach
-            animal: cat
-          - fruit: peach
-            shape: square # will this combine wiht othoer includes?
-
+            animal: dog
     steps:
       - run: echo ${{ matrix.color }}
       - run: echo ${{ matrix.fruit }}
