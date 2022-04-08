@@ -9,16 +9,19 @@ jobs:
     strategy:
       fail-fast: true
       matrix:
-        version: [10, 20]
-        pass: [true, true]
-        experimental: [false]
         include:
           - version: 2
             experimental: true
-            pass: false
+            fail: true
+          - version: 20
+            experimental: false
+            fail: false
+          - version: 10
+            experimental: false
+            fail: false
     steps:
       - run: sleep ${{ matrix.version }}
-      - if: ${{ matrix.pass }}
+      - if: ${{ matrix.fail }}
         run: exit 1
 
 
