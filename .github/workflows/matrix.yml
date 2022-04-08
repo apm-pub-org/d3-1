@@ -5,17 +5,33 @@ on: [workflow_dispatch, push]
 jobs:
   test:
     runs-on: ubuntu-latest
-#     continue-on-error: ${{ matrix.experimental }}
+    continue-on-error: ${{ matrix.experimental }}
     strategy:
       fail-fast: true
       matrix:
-        experimental: [true, false]
-        delay: [0, 20]
+        version: [2, 10, 20]
+        include:
+          - version: 2
+            experimental: true
     steps:
       - run: echo ${{ matrix.experimental }}
-      - run: sleep ${{ matrix.delay }}
-      - if: ${{ matrix.experimental }}
+      - run: sleep ${{ matrix.version }}
+      - if: ${{ matrix.version }} == 2
         run: exit 1
+
+
+#     runs-on: ubuntu-latest
+# #     continue-on-error: ${{ matrix.experimental }}
+#     strategy:
+#       fail-fast: true
+#       matrix:
+#         experimental: [true, false]
+#         delay: [0, 20]
+#     steps:
+#       - run: echo ${{ matrix.experimental }}
+#       - run: sleep ${{ matrix.delay }}
+#       - if: ${{ matrix.experimental }}
+#         run: exit 1
 
 
 #   kpm:
