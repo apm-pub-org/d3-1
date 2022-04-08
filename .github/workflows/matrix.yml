@@ -3,77 +3,30 @@ name: Matrix
 on: [workflow_dispatch, push]
 
 jobs:
-  example_matrix:
+
+  kpm:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        version: [10, 12, 14]
-        os: [ubuntu-18.04, ubuntu-20.04]
+        fruit: [apple, pear]
+        animal: [cat, dog]
+        include:
+          - color: green
+          - color: pink
+          - fruit: apple
+            shape: circle
+          - shape: triangle # will this overwrite cricel
+          - fruit: banana
+          - fruit: peach
+            animal: cat
+          - fruit: peach
+            shape: square # will this combine wiht othoer includes?
+
     steps:
-      - run: echo hi
-
-# jobs:
-#   test:
-#     runs-on: ubuntu-latest
-#     continue-on-error: ${{ matrix.experimental }}
-#     strategy:
-#       fail-fast: false
-#       matrix:
-#         include:
-#           - version: 1
-#             experimental: true
-#             fail: true
-#           - version: 1
-#             experimental: false
-#             fail: true
-#           - version: 1
-#             experimental: false
-#             fail: false
-#     steps:
-#       - run: sleep ${{ matrix.version }}
-#       - if: ${{ matrix.fail }}
-#         run: exit 1
-#       - run: echo more
-
-
-#     runs-on: ubuntu-latest
-# #     continue-on-error: ${{ matrix.experimental }}
-#     strategy:
-#       fail-fast: true
-#       matrix:
-#         experimental: [true, false]
-#         delay: [0, 20]
-#     steps:
-#       - run: echo ${{ matrix.experimental }}
-#       - run: sleep ${{ matrix.delay }}
-#       - if: ${{ matrix.experimental }}
-#         run: exit 1
-
-
-#   kpm:
-#     runs-on: ubuntu-latest
-#     strategy:
-#       matrix:
-#         fruit: [apple, pear]
-#         animal: [cat, dog]
-#         include:
-#           - color: green
-#           - color: pink
-#           - fruit: apple
-#             shape: circle
-#           - fruit: banana
-#           - fruit: peach
-#             animal: snake
-#             color: red
-#             shape: square
-#           - fruit: plum
-#             animal: cat
-
-#     steps:
-#       - run: echo ${{ matrix.color }}
-#       - run: echo ${{ matrix.fruit }}
-#       - run: echo ${{ matrix.animal }}
-#       - run: echo ${{ matrix.shape }}
+      - run: echo ${{ matrix.color }}
+      - run: echo ${{ matrix.fruit }}
+      - run: echo ${{ matrix.animal }}
+      - run: echo ${{ matrix.shape }}
 
 
 #   includes_only:
