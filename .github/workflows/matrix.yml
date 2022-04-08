@@ -10,14 +10,15 @@ jobs:
       fail-fast: true
       matrix:
         version: [10, 20]
+        pass: [true, true]
         experimental: [false]
         include:
           - version: 2
             experimental: true
+            pass: false
     steps:
-      - run: echo ${{ matrix.experimental }}
       - run: sleep ${{ matrix.version }}
-      - if: ${{ matrix.version }} == 2
+      - if: ${{ matrix.pass }}
         run: exit 1
 
 
