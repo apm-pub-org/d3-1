@@ -7,10 +7,6 @@ on:
       - test
  
 jobs:
-  print_dispatch:
-    runs-on: ubuntu-latest
-    steps:
-      - run: echo ${{ github.event.client_payload.versions }}
 
   test_dispatch:
     runs-on: ubuntu-latest
