@@ -3,6 +3,7 @@ name: Matrix
 on: push
 jobs:
   example_matrix:
+    runs-on: ubuntu-latest
     strategy:
       matrix:
         os: [macos-latest, windows-latest, ubuntu-latest]
