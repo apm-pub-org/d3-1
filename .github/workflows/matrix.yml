@@ -1,91 +1,39 @@
 name: Matrix
 
-on: [workflow_dispatch, push]
-
+# on: [workflow_dispatch, push]
+on:
+  repository_dispatch:
+    types:
+      - test
+ 
 jobs:
+  print_dispatch:
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo ${{ github.event.client_payload.versions }}
 
-  kpm:
+  test_dispatch:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        fruit: [apple, pear]
-        animal: [cat, dog]
-        exclude:
-          - fruit: pear
-          - fruit: apple
-            animal: dog
+        version: ${{ github.event.client_payload.versions }}
     steps:
-      - run: echo ${{ matrix.color }}
-      - run: echo ${{ matrix.fruit }}
-      - run: echo ${{ matrix.animal }}
-      - run: echo ${{ matrix.shape }}
+      - run: echo ${{ matrix.version }}
 
-
-#   includes_only:
-#     runs-on: ubuntu-latest
-#     strategy:
-#       matrix:
-#         include:
-#           - color: red
-#             shape: square
-#             fruit: apple
-#           - color: blue
-#             shape: circle
-#           - animal: cow
-#     steps:
-#       - run: echo ${{ matrix.color }}
-#       - run: echo ${{ matrix.shape }}
-#       - run: echo ${{ matrix.fruit }}
-#       - run: echo ${{ matrix.animal }}
-        
-#   knm:
-#     runs-on: ubuntu-latest
-#     strategy:
-#       matrix:
-#         fruit: [apple, orange]
-#         animal: [dog]
-#         include:
-#           - color: red
-#             shape: square
-#     steps:
-#       - run: echo ${{ matrix.color }}
-#       - run: echo ${{ matrix.shape }}
-#       - run: echo ${{ matrix.fruit }}
-#       - run: echo ${{ matrix.animal }}
-
-#   kfp_vpm:
-#     runs-on: ubuntu-latest
-#     strategy:
-#       matrix:
-#         fruit: [apple, orange]
-#         animal: [dog]
-#         include:
-#           - fruit: apple
-#             animal: cow
-#           - fruit: apple
-#             animal: horse
-#     steps:
-#       - run: echo ${{ matrix.fruit }}
-#       - run: echo ${{ matrix.animal }}
 
 #   kpm:
 #     runs-on: ubuntu-latest
 #     strategy:
 #       matrix:
-#         fruit: [apple, orange]
-#         animal: [dog]
-#         include:
+#         fruit: [apple, pear]
+#         animal: [cat, dog]
+#         exclude:
+#           - fruit: pear
 #           - fruit: apple
-#             color: red
-#           - fruit: banana
-#             color: green
-#           - fruit: peach
-#             color: yellow
-#           - fruit: orange
-#             color: purple
 #             animal: dog
-
 #     steps:
 #       - run: echo ${{ matrix.color }}
 #       - run: echo ${{ matrix.fruit }}
 #       - run: echo ${{ matrix.animal }}
+#       - run: echo ${{ matrix.shape }}
+
