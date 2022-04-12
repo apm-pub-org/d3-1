@@ -14,7 +14,7 @@ jobs:
       VERSIONS: ${{ github.event.client_payload.versions }}
     strategy:
       matrix:
-        version: $VERSIONS
+        version: ${{ env.VERSIONS }}
     steps:
       - run: echo ${{ matrix.version }}
 
