@@ -2,24 +2,16 @@ name: Matrix
 
 on: push
 jobs:
-  get_supported_versions:
-    runs-on: ubuntu-latest
-    steps:
-      - id: set-matrix
-        run: echo "::set-output name=version_matrix::$(curl https://endoflife.date/api/nodejs.json | jq -c '[.[] | select(.eol > (now | strftime("%Y-%m-%d"))) | .cycle]')"
-    outputs:
-      version_matrix: ${{ steps.set-matrix.outputs.version_matrix }}
-  ci:
-    needs: get_supported_versions
-    runs-on: ubuntu-latest
+  example_matrix:
     strategy:
       matrix:
-        version: ${{ needs.get_supported_versions.outputs.version_matrix }}
+        os: [macos-latest, windows-latest, ubuntu-latest]
+        version: [12, 14, 16]
+        include:
+          - os: windows-latest
+            version: 17
     steps:
       - run: echo ${{ matrix.version }}
-      - uses: actions/setup-node@v3
-        with:
-          node-version: ${{ matrix.version }}
 
 #   kpm:
 #     runs-on: ubuntu-latest
