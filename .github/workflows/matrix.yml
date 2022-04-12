@@ -1,24 +1,25 @@
 name: Matrix
 
-# on: [workflow_dispatch, push]
-on:
-  repository_dispatch:
-    types:
-      - test
- 
+on: push
 jobs:
-
-  test_dispatch:
+  get_supported_versions:
     runs-on: ubuntu-latest
-    env:
-      VERSIONS: ${{ github.event.client_payload.versions }}
+    steps:
+      - id: set-matrix
+        run: echo "::set-output name=version_matrix::$(curl https://endoflife.date/api/nodejs.json | jq -c '[.[] | select(.eol > (now | strftime("%Y-%m-%d"))) | .cycle]')"
+    outputs:
+      version_matrix: ${{ steps.set-matrix.outputs.version_matrix }}
+  ci:
+    needs: get_supported_versions
+    runs-on: ubuntu-latest
     strategy:
       matrix:
-        version: ${{ env.VERSIONS }}
+        version: ${{ fromJSON(needs.get_supported_versions.outputs.version_matrix) }}
     steps:
       - run: echo ${{ matrix.version }}
-
-
+      - uses: actions/setup-node@v3
+        with:
+          node-version: ${{ matrix.version }}
 
 #   kpm:
 #     runs-on: ubuntu-latest
