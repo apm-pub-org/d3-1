@@ -14,11 +14,14 @@ jobs:
 
   test_dispatch:
     runs-on: ubuntu-latest
+    env:
+      VERSIONS: ${{ github.event.client_payload.versions }}
     strategy:
       matrix:
-        version: ${{ github.event.client_payload.versions }}
+        version: $VERSIONS
     steps:
       - run: echo ${{ matrix.version }}
+
 
 
 #   kpm:
