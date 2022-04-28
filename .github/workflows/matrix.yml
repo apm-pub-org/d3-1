@@ -14,7 +14,7 @@ on:
 jobs:
   deploy:
     runs-on: ubuntu-latest
-    if: ${{ inputs.perform_deploy == "true"}}
+    if: ${{ inputs.perform_deploy == 'true'}}
     steps:
       - name: Deploy build to target
         run: echo deploy --build ${{ inputs.build_id }} --target ${{ inputs.deploy_target }}
