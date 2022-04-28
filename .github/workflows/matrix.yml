@@ -1,32 +1,20 @@
-name: Matrix
+on:
+  workflow_dispatch:
+    inputs:
+      build_id:
+        required: true
+        type: number
+      deploy_target:
+        required: true
+        type: string
+      perform_deploy:
+        required: true
+        type: boolean
 
-on: push
 jobs:
-  example_matrix:
+  deploy:
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        os: [macos-latest, windows-latest, ubuntu-latest]
-        version: [12, 14, 16]
-        include:
-          - os: windows-latest
-            version: 17
+    if: ${{ inputs.perform_deploy == "true"}}
     steps:
-      - run: echo ${{ matrix.version }}
-
-#   kpm:
-#     runs-on: ubuntu-latest
-#     strategy:
-#       matrix:
-#         fruit: [apple, pear]
-#         animal: [cat, dog]
-#         exclude:
-#           - fruit: pear
-#           - fruit: apple
-#             animal: dog
-#     steps:
-#       - run: echo ${{ matrix.color }}
-#       - run: echo ${{ matrix.fruit }}
-#       - run: echo ${{ matrix.animal }}
-#       - run: echo ${{ matrix.shape }}
-
+      - name: Deploy build to target
+        run: echo deploy --build ${{ inputs.build_id }} --target ${{ inputs.deploy_target }}
