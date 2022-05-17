@@ -1,26 +1,15 @@
 on:
   workflow_dispatch:
-    inputs:
-      build_id:
-        required: true
-        type: number
-      deploy_target:
-        required: true
-        type: string
-      perform_deploy:
-        required: true
-        type: boolean
 
 jobs:
   echo:
     runs-on: ubuntu-latest
     steps:
-      - name: Deploy build to target
-        run: echo ${{ inputs.perform_deploy }} ${{ inputs.build_id }} ${{ inputs.deploy_target }}
-
-  deploy:
-    runs-on: ubuntu-latest
-    if: ${{ inputs.perform_deploy == 'true'}}
-    steps:
-      - name: Deploy build to target
-        run: echo deploy --build ${{ inputs.build_id }} --target ${{ inputs.deploy_target }}
+      - shell: bash
+        run: |
+          expr 1 + 1 > output.log
+      - name: Upload output file
+        uses: actions/upload-artifact@v3
+        with:
+          name: output-log-file
+          path: output.log
