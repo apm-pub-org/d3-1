@@ -1,0 +1,15 @@
+name : rerun test
+
+on:
+  workflow_dispatch:
+  push:
+
+jobs:
+  passes:
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo passed
+  fails:
+    runs-on: ubuntu-latest
+    steps:
+      - run: exit 1
