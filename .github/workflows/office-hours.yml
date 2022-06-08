@@ -1,42 +1,49 @@
-# Creates a new docs friction sync issue when requested or when an issue with the docs friction sync label is closed
-
-name: Docs friction sync
+name: Public interfaces office hours agenda
 on:
   workflow_dispatch:
-  issues:
-    types: [closed]
+  schedule:
+  - cron: 10 2 * * 4
 
 jobs:
-  
   create_issue:
-    if: ${{ contains(github.event.issue.labels.*.name, 'docs-office-hours') || (github.event_name == 'workflow_dispatch') }}
     runs-on: ubuntu-latest
     permissions:
       issues: write
+      contents: read
     steps:
-
+      - name: Get date
+        run: echo "DATE=$(date -d next-monday '+%b %d, %Y')" >> $GITHUB_ENV
       - name: Create issue
         run: |
-          gh issue create --title "Docs office hours" --body "Previous meeting notes: https://github.com/github/docs-team/labels/docs-office-hours
+          gh issue create --title "Public Interfaces Office Hours for week of ${{ env.DATE }}" --body "<!--
+A guide on our Office Hours can be found here: https://github.com/github/ecosystem-api/blob/master/docs/api-office-hours.md
+-->
 
-          Zoom recoding of this meeting: 
+Link to previous meetings: https://github.com/github/public-interfaces/labels/office-hours
+  
+Link to Zoom: <Link here>
 
-          ## Agenda
-            - [ ] Remind people to attend on Slack: #docs-content, #docs, #docs-engineering
-            - [ ] Designate note taker
-            - [ ] Start Zoom recording
-            - [ ] Add discussion items here :point_down:
-              - [ ] ...
+Meeting time: <Time here>
 
-          ## Post-Meeting
-            - [ ] Create follow up issues if needed with the `friction` label in the docs-engineering repo
-            - [ ] Create follow up discussions if needed to get consensus from docs-content. Advertise on the [docs-content](https://github.com/github/docs-team/labels/hangout-product-docs) sync agenda and in #docs-content.
-            - [ ] Post notes in this issue
-            - [ ] Add the Zoom recording to this issue
-            - [ ] Share the notes and recording on Slack
+## Agenda
 
-          /cc @skedwards88
+  - [ ] Remind people to attend on Slack: #engineering, #ecosystem-api, #ce-apps, #ecosystem-events, #pi
+  - [ ] Who is taking notes?
+  - [ ] Record the meeting on Zoom
+  - [ ] Add agenda items here 👈 
 
-          " --repo $GITHUB_REPOSITORY --label "docs-office-hours"
+## Attendees
+
+  - your handle here
+
+## Notes
+
+...
+
+## Action Items
+
+  - [ ] Share recording
+  
+          " --repo $GITHUB_REPOSITORY --label "office-hours"
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
