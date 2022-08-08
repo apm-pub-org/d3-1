@@ -22,7 +22,8 @@ jobs:
         env:
           TOKEN: ${{ secrets.GITHUB_TOkEN }}
         run: |
-          node .github/actions-scripts/use-the-api.js# jobs:
+          node .github/actions-scripts/use-the-api.mjs
+          # jobs:
 #   use_api:
 #     runs-on: ubuntu-latest
 #     permissions: {}
