@@ -1,7 +1,7 @@
 {
   "name": "test-org-repo",
   "version": "1.0.0",
-  "description": "",
+  "description": "tet",
   "type": "module",
   "exports": "./index.js",
   "engines": {
@@ -23,5 +23,6 @@
   "bugs": {
     "url": "https://github.com/ske-test-org/test-org-repo/issues"
   },
-  "homepage": "https://github.com/ske-test-org/test-org-repo#readme"
+  "homepage": "https://github.com/ske-test-org/test-org-repo#readme",
+  "main": "error.js"
 }
