@@ -10,4 +10,4 @@ jobs:
       - env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          gh api repos/{owner}/{repo}/issues
+          gh api repos/octocat/Spoon-Knife/issues
