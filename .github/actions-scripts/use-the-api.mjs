@@ -4,11 +4,11 @@ const octokit = new Octokit({
   auth: process.env.TOKEN
 });
 
-const issueData = await octokit.request("GET /repos/{owner}/{repo}/issues", {
+const result = await octokit.request("GET /repos/{owner}/{repo}/issues", {
      owner: "octocat",
      repo: "Spoon-Knife",
    });
 
-const issueTitles = issueData.map(issue => issue.title);
+const issueTitles = result.data.map(issue => issue.title);
 
 console.log(issueTitles)
