@@ -21,6 +21,6 @@ jobs:
 
       - name: Run script
         run: |
-          node .github/actions-scripts/use-the-api.js
+          node .github/actions-scripts/use-the-api.mjs
         env:
           TOKEN: ${{ secrets.GITHUB_TOkEN }}
