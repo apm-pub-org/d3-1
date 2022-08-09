@@ -1,7 +1,7 @@
 on:
   workflow_dispatch:
 jobs:
-  use_api:
+  track_pr:
     runs-on: ubuntu-latest
     steps:
       - name: Generate token
@@ -15,7 +15,4 @@ jobs:
         env:
           GH_TOKEN: ${{ steps.generate_token.outputs.token }}
         run: |
-          curl --request GET \
-          --url "https://api.github.com/repos/octocat/Spoon-Knife/issues" \
-          --header "Accept: application/vnd.github.v3+json" \
-          --header "Authorization: Bearer $GH_TOKEN"
+          gh api repos/octocat/Spoon-Knife/issues
