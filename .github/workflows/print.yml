@@ -1,0 +1,15 @@
+name: Print context
+
+on:
+  issues:
+    types:
+      - closed
+
+jobs:
+  print:
+    runs-on: ubuntu-latest
+    steps:
+      - name: print context
+        env:
+          GITHUB_CONTEXT: ${{ toJSON(github) }}
+        run: echo "$GITHUB_CONTEXT"
