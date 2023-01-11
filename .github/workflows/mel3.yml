@@ -146,13 +146,14 @@ jobs:
               newBody: newBody,
               ghaeApplicable: ghaeApplicable,
               tier: tier,
+              author: author,
             }
 
   label_release_issue:
     runs-on: ubuntu-latest
     needs: parse_release_issue
     steps:
-      - name: Label release issue with docs if applicable
+      - name: Label release issue with relevant docs label
         uses: actions/github-script@v5
         env:
           LABEL: ${{ fromJSON(needs.parse_release_issue.outputs.output).releaseLabelToAdd }}
@@ -171,7 +172,7 @@ jobs:
     needs: parse_release_issue
     if: fromJSON(needs.parse_release_issue.outputs.output).openDocsIssue
     steps:
-      - name: Create and label an issue in the docs-content repo # todo change repo name back and secrets back
+      - name: Create and label an issue in the docs-content repo
         uses: actions/github-script@v5
         env:
           LABEL: ${{ fromJSON(needs.parse_release_issue.outputs.output).releaseLabelToAdd }}
@@ -182,7 +183,7 @@ jobs:
           script: |
             const parsedData = JSON.parse(process.env.PARSED_DATA)
 
-            let labels = []
+            let labels = ['missing info']
             if (parsedData.ghaeApplicable) {
               labels.push("GHAE")
             }
@@ -211,5 +212,6 @@ jobs:
               repo: "second-repo",
               title: parsedData.newTitle,
               body: parsedData.newBody,
-              labels: labels
+              labels: labels,
+              assignees: [parsedData.author]
             })
