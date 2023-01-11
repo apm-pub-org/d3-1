@@ -1,0 +1,11 @@
+name: syncronize test
+
+on:
+  pull_request:
+    types: [synchronize]
+
+jobs:
+  pr:
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo "I ran"
