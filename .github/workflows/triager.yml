@@ -12,6 +12,12 @@ jobs:
         env:
           GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
 
+      - name: test
+        run: |
+          gh projects -h
+        env:
+          GITHUB_TOKEN: ${{secrets.TEMP_PROJECTS}}
+          
       - name: Get data
         run: |
           gh projects item-list 13 --org ske-test-org --format=json --limit=all | jq '[.items[] | select(.status=="Triage")] | length'
