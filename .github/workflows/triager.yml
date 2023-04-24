@@ -5,8 +5,6 @@ on:
 jobs:
   triager:
     runs-on: ubuntu-latest
-    permissions:
-      repository-projects: read
     steps:
       - name: Install gh-projects extension
         run: |
@@ -18,6 +16,6 @@ jobs:
         run: |
           gh projects item-list 13 --org ske-test-org --format=json --limit=all | jq '[.items[] | select(.status=="Triage")] | length'
         env:
-          GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
+          GITHUB_TOKEN: ${{secrets.TEMP_PROJECTS}}
     
   
