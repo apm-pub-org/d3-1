@@ -5,6 +5,8 @@ on:
 jobs:
   triager:
     runs-on: ubuntu-latest
+    permissions:
+      repository-projects: read
     steps:
       - name: Install gh-projects extension
         run: |
