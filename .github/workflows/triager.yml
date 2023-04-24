@@ -1,1 +1,21 @@
+name: API/events/apps triager
+on:
+  workflow_dispatch:
+  push:
+jobs:
+  triager:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Install gh-projects extension
+        run: |
+          gh extension install github/gh-projects
+        env:
+          GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
 
+      - name: Get data
+        run: |
+          gh projects item-list 13 --org ske-test-org --format=json --limit=all | jq '[.items[] | select(.status=="Triage")] | length'
+        env:
+          GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
+    
+  
