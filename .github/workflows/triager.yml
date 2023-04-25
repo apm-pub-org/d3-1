@@ -13,8 +13,8 @@ jobs:
         run: |
           NUMBER_TO_TRIAGE=$(gh api graphql -f query='
             query{
-            organization(login: "ske-test-org") {
-              projectV2(number: 13) {
+            organization(login: "github") {
+              projectV2(number: 5618) {
                 items(last:100) {
                   nodes {
                     fieldValues(first: 100) {
