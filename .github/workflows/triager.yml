@@ -41,12 +41,12 @@ jobs:
         run: echo $NUMBER_TO_TRIAGE
 
       - name: If more than zero
-        if: $NUMBER_TO_TRIAGE > 0
+        if: ${{ $NUMBER_TO_TRIAGE > 0 }}
         run: echo "greater than zero"
 
 
       - name: If  zero
-        if: $NUMBER_TO_TRIAGE == 0
+        if: ${{ $NUMBER_TO_TRIAGE == 0 }}
         run: echo " zero"
 
 #  - name: My first step
