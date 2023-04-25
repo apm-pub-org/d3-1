@@ -6,21 +6,10 @@ jobs:
   triager:
     runs-on: ubuntu-latest
     steps:
-#       - name: Install gh-projects extension
-#         run: |
-#           gh extension install github/gh-projects
-#         env:
-#           GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
-
-#       - name: test
-#         run: |
-#           gh projects -h
-#         env:
-#           GITHUB_TOKEN: ${{secrets.TEMP_PROJECTS}}
           
       - name: Count how many of the most recent 100 items have a status of "triage"
         run: |
-          gh api graphql -f query='
+          NUMBER_TO_TRIAGE=$(gh api graphql -f query='
             query{
             organization(login: "ske-test-org") {
               projectV2(number: 13) {
@@ -42,8 +31,24 @@ jobs:
                 }
               }
             }
-          }' | jq '[.data.organization.projectV2.items.nodes[] | select(.fieldValues.nodes[] | select(.name == "Triage" and .field.name == "Status"))] | length'
+          }' | jq '[.data.organization.projectV2.items.nodes[] | select(.fieldValues.nodes[] | select(.name == "Triage" and .field.name == "Status"))] | length')
+          
+          echo 'NUMBER_TO_TRIAGE='$NUMBER_TO_TRIAGE >> $GITHUB_ENV
         env:
           GITHUB_TOKEN: ${{secrets.TEMP_PROJECTS}}
     
-  
+      - name: Echo count
+        run: echo $NUMBER_TO_TRIAGE
+
+      - name: If more than zero
+        if: $NUMBER_TO_TRIAGE > 0
+        run: echo "greater than zero"
+
+
+      - name: If  zero
+        if: $NUMBER_TO_TRIAGE == 0
+        run: echo " zero"
+
+#  - name: My first step
+#    if: ${{ github.event_name == 'pull_request' && github.event.action == 'unassigned' }}
+#    run: echo This event is a pull request that had an assignee removed.
