@@ -6,21 +6,43 @@ jobs:
   triager:
     runs-on: ubuntu-latest
     steps:
-      - name: Install gh-projects extension
-        run: |
-          gh extension install github/gh-projects
-        env:
-          GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
+#       - name: Install gh-projects extension
+#         run: |
+#           gh extension install github/gh-projects
+#         env:
+#           GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
 
-      - name: test
-        run: |
-          gh projects -h
-        env:
-          GITHUB_TOKEN: ${{secrets.TEMP_PROJECTS}}
+#       - name: test
+#         run: |
+#           gh projects -h
+#         env:
+#           GITHUB_TOKEN: ${{secrets.TEMP_PROJECTS}}
           
-      - name: Get data
+      - name: Count how many of the most recent 100 items have a status of "triage"
         run: |
-          gh projects item-list 13 --org ske-test-org --format=json --limit=all | jq '[.items[] | select(.status=="Triage")] | length'
+          gh api graphql -f query='
+            query{
+            organization(login: "ske-test-org") {
+              projectV2(number: 13) {
+                items(last:100) {
+                  nodes {
+                    fieldValues(first: 100) {
+                      nodes {
+                        ... on ProjectV2ItemFieldSingleSelectValue {
+                          name
+                          field {
+                            ... on ProjectV2FieldCommon {
+                              name
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }' | jq '[.data.organization.projectV2.items.nodes[] | select(.fieldValues.nodes[] | select(.name == "Triage" and .field.name == "Status"))] | length'
         env:
           GITHUB_TOKEN: ${{secrets.TEMP_PROJECTS}}
     
