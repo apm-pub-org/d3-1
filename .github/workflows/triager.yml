@@ -2,11 +2,13 @@ name: API/events/apps triager
 on:
   workflow_dispatch:
   push:
+#   to do remove push, add cron
 jobs:
   triager:
     runs-on: ubuntu-latest
     steps:
           
+#           todo change org login and project number
       - name: Count how many of the most recent 100 items have a status of "triage"
         run: |
           NUMBER_TO_TRIAGE=$(gh api graphql -f query='
@@ -40,15 +42,10 @@ jobs:
       - name: Echo count
         run: echo $NUMBER_TO_TRIAGE
 
-      - name: If more than zero
+      - name: If more than zero # TODO post in slack
         if: ${{ env.NUMBER_TO_TRIAGE > 0 }}
         run: echo "greater than zero"
 
-
-      - name: If  zero
+      - name: If zero
         if: ${{ env.NUMBER_TO_TRIAGE == 0 }}
-        run: echo " zero"
-
-#  - name: My first step
-#    if: ${{ github.event_name == 'pull_request' && github.event.action == 'unassigned' }}
-#    run: echo This event is a pull request that had an assignee removed.
+        run: echo "No items to triage"
