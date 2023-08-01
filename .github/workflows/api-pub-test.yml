@@ -48,14 +48,14 @@ jobs:
         git config --global user.name "docs-bot"
         git config --global user.email "77750099+docs-bot@users.noreply.github.com"
         git checkout $BRANCH_NAME 2>/dev/null || git checkout -b $BRANCH_NAME
+      env:
+        BRANCH_NAME: ${{ github.ref_name }}_openapi_docs_preview
 
     - name: Generate the docs data files
       run: |- # todo this only builds rest files; also want to build webhook files
         cd /home/runner/work/test-org-repo/test-org-repo/second-repo
         npm install
         npm run sync-rest
-      env:
-        BRANCH_NAME: ${{ github.ref_name }}_openapi_docs_preview
 
     - run: |- # todo can delete this step
         cd /home/runner/work/test-org-repo/test-org-repo/second-repo
