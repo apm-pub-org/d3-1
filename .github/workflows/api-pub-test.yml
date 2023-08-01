@@ -38,7 +38,7 @@ jobs:
       with:
         repository: "ske-test-org/second-repo"
         path: 'second-repo'
-        token: ${{ secrets.GITHUB_TOKEN }}
+        token: ${{ secrets.PAT_preview }}
 
     # - name: Shallow clone docs-internal # todo change repo name everywhere in this file
     #   run: |-
