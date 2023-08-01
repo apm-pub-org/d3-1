@@ -1,32 +1,33 @@
 
-# **What it does**: When a pull request that edits the OpenAPI schema merges, this workflow comments on the PR with information about the REST API docs publication process.
-# **Why we have it**: The docs team frequently gets questions about when OpenAPI changes will be added to the public docs.
-# **Who does it impact**: Hubbers who make changes to the OpenAPI schema
+# When a pull request that edits the OpenAPI schema is opened, reopened, or synchronized, this workflow todo
 
-name: Inform about REST API docs publication
+name: Build REST API docs preview
 
 on:
+  workflow_dispatch: # todo delete this trigger
   pull_request:
     types:
-      - closed
+      - opened
+      - synchronize
+      - reopened
     paths:
       - 'app/api/description/**'
 
 permissions:
   pull-requests: write
 
+  # check out repo contents
+  # shallow clone docs internal
+  # cd to docs internal
+  # make docs internal branch
+  # generate the rest data files
+  # push to docs internal
 jobs:
-  comment_on_pr:
-    if: github.event.pull_request.merged == true
+  build_docs_preview:
     runs-on: ubuntu-latest
     steps:
+    - name: Check out github/github repo
+      uses: actions/checkout@8e5e7e5ab8b370d6c329ec480221332ada57f0ab
+
     - run: |
-        gh pr comment $PR --body "Congrats on merging changes to the OpenAPI schema! If you made public facing changes, your changes should automatically propogate to the public docs in ~24 hours.
-
-        You can read more about the automated publication process [here](https://thehub.github.com/epd/engineering/products-and-services/public-apis/rest/openapi/openapi-in-the-docs/#propagating-changes-to-the-docs).
-
-        If you need the changes to publish faster, you can [follow these steps](https://thehub.github.com/epd/engineering/products-and-services/public-apis/rest/openapi/openapi-in-the-docs/#manually-running-the-workflow-to-publish-sooner)."
-
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        PR: ${{ github.event.pull_request.html_url }}
+        ls
