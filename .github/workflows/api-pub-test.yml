@@ -34,10 +34,11 @@ jobs:
 
     - run: ls
     - run: |-
-        mkdir repo-di
-        cd repo-di
         git clone https://github.com/ske-test-org/second-repo.git --depth 1 --branch main
         ls
-    - run: ls
+    - run: |-
+        ls
+        cd second-repo
+        ls
     - run: cd ..
     - run: ls
