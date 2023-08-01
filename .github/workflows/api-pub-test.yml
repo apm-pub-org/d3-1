@@ -27,6 +27,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - run: pwd
+
     - name: Check out the github/github repo
       uses: actions/checkout@8e5e7e5ab8b370d6c329ec480221332ada57f0ab
       with:
@@ -43,16 +44,19 @@ jobs:
 
     - name: Generate the docs data files # todo build the branch name based on gh branch
       run: |-
-        cd second-repo
+        cd /home/runner/work/test-org-repo/test-org-repo/second-repo
         git checkout -b test1
         npm install
         npm run sync-rest
 
     - run: |-
+        cd /home/runner/work/test-org-repo/test-org-repo/second-repo
         pwd
         git status
 
     - name: Push the docs data files
-      run: git push
+      run: |-
+        cd /home/runner/work/test-org-repo/test-org-repo/second-repo
+        git push
     - run: cd ..
     - run: ls
