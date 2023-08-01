@@ -64,6 +64,8 @@ jobs:
     - name: Push the docs data files
       run: |-
         cd /home/runner/work/test-org-repo/test-org-repo/second-repo
+        git config --global user.name "docs-bot"
+        git config --global user.email "77750099+docs-bot@users.noreply.github.com"
         git add .
         git commit -m "generate OpenAPI data files"
         git push --set-upstream origin HEAD
