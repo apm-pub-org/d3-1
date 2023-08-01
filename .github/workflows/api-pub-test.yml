@@ -33,9 +33,16 @@ jobs:
       with:
         path: 'github'
 
-    - name: Shallow clone docs-internal # todo change repo name everywhere in this file
-      run: |-
-        git clone https://github.com/ske-test-org/second-repo.git --depth 1 --branch main
+    - name: Check out the github/docs-internal repo # todo change repo name everywhere in this file
+      uses: actions/checkout@8e5e7e5ab8b370d6c329ec480221332ada57f0ab
+      with:
+        repository: "ske-test-org/second-repo"
+        path: 'second-repo'
+        token: ${{ secrets.GITHUB_TOKEN }}
+
+    # - name: Shallow clone docs-internal # todo change repo name everywhere in this file
+    #   run: |-
+    #     git clone https://github.com/ske-test-org/second-repo.git --depth 1 --branch main
 
     - name: Setup Node.js
       uses: actions/setup-node@8c91899e586c5b171469028077307d293428b516
