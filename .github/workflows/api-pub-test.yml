@@ -42,6 +42,10 @@ jobs:
       with:
         node-version: '16'
 
+    - run: |-
+        cd /home/runner/work/test-org-repo/test-org-repo/second-repo
+        cat newFile.txt
+
     - name: Checkout or create a docs branch
       run: |-
         cd /home/runner/work/test-org-repo/test-org-repo/second-repo
@@ -51,6 +55,10 @@ jobs:
       env:
         BRANCH_NAME: ${{ github.ref_name }}_openapi_docs_preview
 
+    - run: |-
+        cd /home/runner/work/test-org-repo/test-org-repo/second-repo
+        cat newFile.txt
+
     - name: Generate the docs data files
       run: |- # todo this only builds rest files; also want to build webhook files
         cd /home/runner/work/test-org-repo/test-org-repo/second-repo
@@ -59,8 +67,10 @@ jobs:
 
     - run: |- # todo can delete this step
         cd /home/runner/work/test-org-repo/test-org-repo/second-repo
+        cat newFile.txt
         git status
 
+    # If there are not changes to commit, this step will fail and the subsequent steps will not run
     - name: Push the docs data files
       run: |-
         cd /home/runner/work/test-org-repo/test-org-repo/second-repo
