@@ -52,7 +52,7 @@ jobs:
     - name: Generate the docs data files # todo build the branch name based on gh branch
       run: |-
         cd /home/runner/work/test-org-repo/test-org-repo/second-repo
-        git checkout -b wkflowtest3
+        git checkout -b wkflowtest4
         npm install
         npm run sync-rest
 
