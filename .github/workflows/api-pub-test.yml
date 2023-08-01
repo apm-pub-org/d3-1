@@ -57,6 +57,6 @@ jobs:
     - name: Push the docs data files
       run: |-
         cd /home/runner/work/test-org-repo/test-org-repo/second-repo
-        git push
+        git push --set-upstream origin HEAD
     - run: cd ..
     - run: ls
