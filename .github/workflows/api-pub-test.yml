@@ -52,7 +52,7 @@ jobs:
     - name: Generate the docs data files # todo build the branch name based on gh branch
       run: |-
         cd /home/runner/work/test-org-repo/test-org-repo/second-repo
-        git checkout -b test1
+        git checkout -b wkflowtest1
         npm install
         npm run sync-rest
 
@@ -64,6 +64,11 @@ jobs:
     - name: Push the docs data files
       run: |-
         cd /home/runner/work/test-org-repo/test-org-repo/second-repo
+        git add .
+        git commit -m "generate OpenAPI data files"
         git push --set-upstream origin HEAD
-    - run: cd ..
-    - run: ls
+
+    - name: Open a docs-internal PR
+      run: gh pr create --title "[FOR PREVIEW ONLY] Preview for todo" --body "todo"
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
