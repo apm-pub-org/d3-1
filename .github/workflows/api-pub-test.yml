@@ -52,7 +52,7 @@ jobs:
     - name: Generate the docs data files # todo build the branch name based on gh branch
       run: |-
         cd /home/runner/work/test-org-repo/test-org-repo/second-repo
-        git checkout -b wkflowtest2
+        git checkout -b wkflowtest3
         npm install
         npm run sync-rest
 
@@ -75,4 +75,4 @@ jobs:
         cd /home/runner/work/test-org-repo/test-org-repo/second-repo
         gh pr create --title "[FOR PREVIEW ONLY] Preview for todo" --body "todo"
       env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        GITHUB_TOKEN: ${{ secrets.PAT_preview }}
