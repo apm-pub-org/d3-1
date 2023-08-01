@@ -48,6 +48,10 @@ jobs:
         npm install
         npm run sync-rest
 
+    - run: |-
+        pwd
+        git status
+
     - name: Push the docs data files
       run: git push
     - run: cd ..
