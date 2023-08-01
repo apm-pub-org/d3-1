@@ -26,13 +26,17 @@ jobs:
   build_docs_preview:
     runs-on: ubuntu-latest
     steps:
+    - run: ls
     - name: Check out github/github repo
       uses: actions/checkout@8e5e7e5ab8b370d6c329ec480221332ada57f0ab
+      with:
+        path: 'repo-gh'
 
     - run: ls
-    # - run: cd ..
-    # - run: ls
-    - run: git clone https://github.com/ske-test-org/second-repo.git ../docs-internal --depth 1 --branch main
+    - run: |-
+        mkdir repo-di
+        cd repo-di
+        git clone https://github.com/ske-test-org/second-repo.git ../docs-internal --depth 1 --branch main
     - run: ls
     - run: cd ..
     - run: ls
