@@ -1,10 +1,11 @@
 
-# When a pull request that edits the OpenAPI schema is opened, reopened, or synchronized, this workflow todo
+# When a pull request that edits the OpenAPI schema is opened, reopened, or synchronized, this workflow will todo
+# todo this creates a new docs pr every time, but we only want one docs pr per gh pr that we continually update
 
 name: Build REST API docs preview
 
 on:
-  workflow_dispatch: # todo delete this trigger
+  workflow_dispatch: # todo delete this trigger once testing is complete
   pull_request:
     types:
       - opened
@@ -14,51 +15,42 @@ on:
       - 'app/api/description/**'
 
 permissions:
+  contents: read
   pull-requests: write
 
-  # check out repo contents
-  # shallow clone docs internal
-  # cd to docs internal
-  # make docs internal branch
-  # generate the rest data files
-  # push to docs internal
 jobs:
   build_docs_preview:
     runs-on: ubuntu-latest
     steps:
     - run: pwd
+      # todo update the hardcoded pwd everywhere in this file, or store this in a variable
 
     - name: Check out the github/github repo
       uses: actions/checkout@8e5e7e5ab8b370d6c329ec480221332ada57f0ab
       with:
         path: 'github'
 
-    - name: Check out the github/docs-internal repo # todo change repo name everywhere in this file
+    - name: Check out the github/docs-internal repo 
       uses: actions/checkout@8e5e7e5ab8b370d6c329ec480221332ada57f0ab
       with:
-        repository: "ske-test-org/second-repo"
+        repository: "ske-test-org/second-repo" # todo change repo name everywhere in this file
         path: 'second-repo'
-        token: ${{ secrets.PAT_preview }}
-
-    # - name: Shallow clone docs-internal # todo change repo name everywhere in this file
-    #   run: |-
-    #     git clone https://github.com/ske-test-org/second-repo.git --depth 1 --branch main
+        token: ${{ secrets.PAT_preview }} # todo need to add this secret to the gh repo and put in docs eng rotation. it is a fg pat with contents write and pr write permissions and access to both repos.
 
     - name: Setup Node.js
       uses: actions/setup-node@8c91899e586c5b171469028077307d293428b516
       with:
         node-version: '16'
 
-    - name: Generate the docs data files # todo build the branch name based on gh branch
-      run: |-
+    - name: Generate the docs data files # todo build the branch name based on the gh branch
+      run: |- # todo this only builds rest files; also want to build webhook files
         cd /home/runner/work/test-org-repo/test-org-repo/second-repo
-        git checkout -b wkflowtest4
+        git checkout -b wkflowtest5
         npm install
         npm run sync-rest
 
-    - run: |-
+    - run: |- # todo can delete this step
         cd /home/runner/work/test-org-repo/test-org-repo/second-repo
-        pwd
         git status
 
     - name: Push the docs data files
