@@ -26,19 +26,30 @@ jobs:
   build_docs_preview:
     runs-on: ubuntu-latest
     steps:
-    - run: ls
-    - name: Check out github/github repo
+    - run: pwd
+    - name: Check out the github/github repo
       uses: actions/checkout@8e5e7e5ab8b370d6c329ec480221332ada57f0ab
       with:
-        path: 'repo-gh'
+        path: 'github'
 
-    - run: ls
-    - run: |-
+    - name: Shallow clone docs-internal # todo change repo name everywhere in this file
+      run: |-
         git clone https://github.com/ske-test-org/second-repo.git --depth 1 --branch main
-        ls
-    - run: |-
-        ls
+
+    - name: Setup Node.js
+      uses: actions/setup-node@8c91899e586c5b171469028077307d293428b516
+      with:
+        node-version-file: 'second-repo/package.json'
+        cache: npm
+
+    - name: Generate the docs data files # todo build the branch name based on gh branch
+      run: |-
         cd second-repo
-        ls
+        git checkout -b test1
+        npm install
+        npm run sync-rest
+
+    - name: Push the docs data files
+      run: git push
     - run: cd ..
     - run: ls
