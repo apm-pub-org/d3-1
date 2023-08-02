@@ -141,7 +141,8 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.PAT_preview }}
         BRANCH_NAME: ${{ steps.docs-branch-name.outputs.DOCS_BRANCH }}
 
-    - name: Comment to share the docs PR on the github PR
+    - if: ${{ env.DOCS_PR }}
+      name: Comment to share the docs PR on the github PR
       run: gh pr comment $GITHUB_PR --body "Todo docs preview is $DOCS_PR"
       env:
         GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
