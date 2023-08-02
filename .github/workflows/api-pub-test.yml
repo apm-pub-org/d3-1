@@ -30,6 +30,25 @@ jobs:
       with:
         path: 'github'
 
+    - name: Determine docs branch name
+      id: docs-branch-name
+      run: |-
+        echo "DOCS_BRANCH=$BRANCH_NAME" >> "$GITHUB_OUTPUT"
+        
+        if git ls-remote --heads https://github.com/ske-test-org/second-repo.git $BRANCH_NAME
+        then
+          echo "DOCS_CHECKOUT=$BRANCH_NAME" >> "$GITHUB_OUTPUT"
+          else
+          echo "DOCS_CHECKOUT=main" >> "$GITHUB_OUTPUT"
+        fi
+      env:
+        BRANCH_NAME: ${{ github.ref_name }}_openapi_docs_preview
+  
+    - name: Print branches
+      run: |-
+        echo "branch is: ${{ steps.docs-branch-name.outputs.DOCS_BRANCH }}"
+        echo "checkout is: ${{ steps.docs-branch-name.outputs.DOCS_CHECKOUT }}"
+
     - name: Check out the github/docs-internal repo 
       uses: actions/checkout@8e5e7e5ab8b370d6c329ec480221332ada57f0ab
       with:
