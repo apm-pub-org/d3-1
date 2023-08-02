@@ -51,7 +51,7 @@ jobs:
           echo "DOCS_CHECKOUT=main" >> "$GITHUB_OUTPUT"
         fi
       env:
-        BRANCH_NAME: ${{ github.ref }}_openapi_docs_preview
+        BRANCH_NAME: ${{ github.head_ref }}_openapi_docs_preview
   
     # todo delete this step
     - name: Print branches
@@ -142,7 +142,7 @@ jobs:
         BRANCH_NAME: ${{ steps.docs-branch-name.outputs.DOCS_BRANCH }}
 
     - name: Comment to share the docs PR on the github PR
-      run: gh issue comment $GITHUB_PR --body "Todo docs preview is $DOCS_PR"
+      run: gh pr comment $GITHUB_PR --body "Todo docs preview is $DOCS_PR"
       env:
         GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
         DOCS_PR: ${{ env.DOCS_PR }}
