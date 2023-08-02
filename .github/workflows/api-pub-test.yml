@@ -121,7 +121,7 @@ jobs:
       run: |-
         cd /home/runner/work/test-org-repo/test-org-repo/second-repo
         pr_exists=$(gh pr list --base "$BRANCH_NAME")
-        if [ -z "$existing_pr" ]
+        if [ -z "$pr_exists" ]
         then
           gh pr create --title "[FOR PREVIEW ONLY] Preview for todo" --body "todo"
         else
