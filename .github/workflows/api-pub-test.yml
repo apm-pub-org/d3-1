@@ -42,12 +42,12 @@ jobs:
     - name: Determine docs branch name
       id: docs-branch-name
       run: |-
-        echo "DOCS_BRANCH=$BRANCH_NAME" >> "$GITHUB_OUTPUT"
+        echo "DOCS_BRANCH=$BRANCH_NAME" >> "$GITHUB_ENV"
         if [[ -n $(git ls-remote --heads https://github.com/ske-test-org/second-repo.git $BRANCH_NAME) ]]
         then
-          echo "DOCS_CHECKOUT=$BRANCH_NAME" >> "$GITHUB_OUTPUT"
+          echo "DOCS_CHECKOUT=$BRANCH_NAME" >> "$GITHUB_ENV"
         else
-          echo "DOCS_CHECKOUT=main" >> "$GITHUB_OUTPUT"
+          echo "DOCS_CHECKOUT=main" >> "$GITHUB_ENV"
         fi
       env:
         BRANCH_NAME: ${{ github.head_ref }}_openapi_docs_preview
@@ -68,7 +68,7 @@ jobs:
         repository: "ske-test-org/second-repo"
         path: 'second-repo'
         token: ${{ secrets.PAT_preview }}
-        ref: ${{ steps.docs-branch-name.outputs.DOCS_CHECKOUT }}
+        ref: ${{ env.DOCS_CHECKOUT }}
 
     - name: Setup Node.js
       uses: actions/setup-node@8c91899e586c5b171469028077307d293428b516
@@ -88,13 +88,13 @@ jobs:
         git config --global user.email "77750099+docs-bot@users.noreply.github.com"
 
     # If we checked out main, create a branch
-    - if: ${{  steps.docs-branch-name.outputs.DOCS_CHECKOUT  == 'main' }}
+    - if: ${{ env.DOCS_CHECKOUT  == 'main' }}
       name: Create a docs branch if needed
       run: |- 
         cd /home/runner/work/test-org-repo/test-org-repo/second-repo
         git checkout -b $BRANCH_NAME
       env:
-        BRANCH_NAME: ${{ steps.docs-branch-name.outputs.DOCS_BRANCH }}
+        BRANCH_NAME: ${{ env.DOCS_BRANCH }}
 
     # todo delete this step
     - name: Check file contents
@@ -140,7 +140,7 @@ jobs:
         fi
       env:
         GITHUB_TOKEN: ${{ secrets.PAT_preview }}
-        BRANCH_NAME: ${{ steps.docs-branch-name.outputs.DOCS_BRANCH }}
+        BRANCH_NAME: ${{ env.DOCS_BRANCH }}
 
     - if: ${{ env.DOCS_PR }}
       name: Comment to share the docs PR on the github PR
