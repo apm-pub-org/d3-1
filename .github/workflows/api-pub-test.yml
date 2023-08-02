@@ -82,7 +82,7 @@ jobs:
     # If we checked out main, create a branch
     - if: ${{  steps.docs-branch-name.outputs.DOCS_CHECKOUT  == 'main' }}
       name: Create a docs branch if needed
-      run: |-
+      run: |- 
         cd /home/runner/work/test-org-repo/test-org-repo/second-repo
         git checkout $BRANCH_NAME 2>/dev/null || git checkout -b $BRANCH_NAME
       env:
@@ -105,15 +105,17 @@ jobs:
         cat newFile.txt
         git status
 
-    # If there are not changes to commit, this step will fail and the subsequent steps will not run
-    - name: Push the docs data files
+    - name: Push the docs data files if there are changes to push
       run: |-
         cd /home/runner/work/test-org-repo/test-org-repo/second-repo
-        git config --global user.name "docs-bot"
-        git config --global user.email "77750099+docs-bot@users.noreply.github.com"
-        git add .
-        git commit -m "generate OpenAPI data files"
-        git push --set-upstream origin HEAD
+        if ! git diff --quiet
+        then
+          git add .
+          git commit -m "generate OpenAPI data files"
+          git push --set-upstream origin HEAD
+        else
+          echo "No changes to commit"
+        fi
 
     - name: Open a docs-internal PR
       run: |-
