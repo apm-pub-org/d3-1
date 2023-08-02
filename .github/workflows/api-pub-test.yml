@@ -8,7 +8,6 @@
 name: Build REST API docs preview
 
 on:
-  workflow_dispatch: # todo delete this trigger once testing is complete
   pull_request:
     types:
       - opened
@@ -58,6 +57,8 @@ jobs:
       run: |-
         echo "branch is: ${{ steps.docs-branch-name.outputs.DOCS_BRANCH }}"
         echo "checkout is: ${{ steps.docs-branch-name.outputs.DOCS_CHECKOUT }}"
+        echo "env branch is: ${{ env.DOCS_BRANCH }}"
+        echo "env checkout is: ${{ env.DOCS_CHECKOUT }}"
 
     # Check out the docs-internal branch corresponding to this PR if one exists,
     # otherwise checkout docs-internal main.
@@ -86,7 +87,7 @@ jobs:
         git config --global user.name "docs-bot"
         git config --global user.email "77750099+docs-bot@users.noreply.github.com"
 
-    # If we checked out main, create a branch now
+    # If we checked out main, create a branch
     - if: ${{  steps.docs-branch-name.outputs.DOCS_CHECKOUT  == 'main' }}
       name: Create a docs branch if needed
       run: |- 
