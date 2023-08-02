@@ -40,7 +40,6 @@ jobs:
     # If this branch doesn't already exist, we will 
     # check out main instead and create the branch later.
     - name: Determine docs branch name
-      id: docs-branch-name
       run: |-
         echo "DOCS_BRANCH=$BRANCH_NAME" >> "$GITHUB_ENV"
         if [[ -n $(git ls-remote --heads https://github.com/ske-test-org/second-repo.git $BRANCH_NAME) ]]
@@ -55,8 +54,6 @@ jobs:
     # todo delete this step
     - name: Print branches
       run: |-
-        echo "branch is: ${{ steps.docs-branch-name.outputs.DOCS_BRANCH }}"
-        echo "checkout is: ${{ steps.docs-branch-name.outputs.DOCS_CHECKOUT }}"
         echo "env branch is: ${{ env.DOCS_BRANCH }}"
         echo "env checkout is: ${{ env.DOCS_CHECKOUT }}"
 
@@ -103,7 +100,7 @@ jobs:
         cat newFile.txt
 
     - name: Generate the docs data files
-      run: |- # todo this only builds rest files; also want to build webhook files
+      run: |- # todo this only builds rest files; also want to build webhook files # todo add include unpublished option
         cd /home/runner/work/test-org-repo/test-org-repo/second-repo
         npm install
         npm run sync-rest
@@ -149,5 +146,3 @@ jobs:
         GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
         DOCS_PR: ${{ env.DOCS_PR }}
         GITHUB_PR: ${{ github.event.pull_request.html_url }}
-
-        # todo can I use env.VAR_NAME instead of outputs?
