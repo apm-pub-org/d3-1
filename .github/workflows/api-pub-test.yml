@@ -1,6 +1,5 @@
 
-# When a pull request that edits the OpenAPI schema is opened, reopened, or synchronized, this workflow will todo
-# todo this creates a new docs pr every time, but we only want one docs pr per gh pr that we continually update
+# When a pull request that edits the OpenAPI schema is opened, reopened, or synchronized, this workflow will generate a docs-internal PR to preview the corresponding docs changes
 
 # todo change repo name everywhere in this file
 
@@ -29,11 +28,18 @@ jobs:
     - run: pwd
       # todo update the hardcoded pwd everywhere in this file, or store this in a variable
 
+    # The github/github repo clone needs to be
+    # at the same level as the docs-internal clone,
+    # so use the `path` parameter
     - name: Check out the github/github repo
       uses: actions/checkout@8e5e7e5ab8b370d6c329ec480221332ada57f0ab
       with:
         path: 'github'
 
+    # Build the docs-internal branch name 
+    # based on the github/github branch name.
+    # If this branch doesn't already exist, we will 
+    # check out main instead and create the branch later.
     - name: Determine docs branch name
       id: docs-branch-name
       run: |-
@@ -47,13 +53,14 @@ jobs:
       env:
         BRANCH_NAME: ${{ github.ref_name }}_openapi_docs_preview
   
+    # todo delete this step
     - name: Print branches
       run: |-
         echo "branch is: ${{ steps.docs-branch-name.outputs.DOCS_BRANCH }}"
         echo "checkout is: ${{ steps.docs-branch-name.outputs.DOCS_CHECKOUT }}"
 
     # Check out the docs-internal branch corresponding to this PR if one exists,
-    # otherwise checkout docs-internal main
+    # otherwise checkout docs-internal main.
     - name: Check out the github/docs-internal repo 
       uses: actions/checkout@8e5e7e5ab8b370d6c329ec480221332ada57f0ab
       with:
@@ -61,13 +68,13 @@ jobs:
         path: 'second-repo'
         token: ${{ secrets.PAT_preview }}
         ref: ${{ steps.docs-branch-name.outputs.DOCS_CHECKOUT }}
-        # ref: "main_openapi_docs_preview"
 
     - name: Setup Node.js
       uses: actions/setup-node@8c91899e586c5b171469028077307d293428b516
       with:
         node-version: '16'
 
+    # todo delete this step
     - name: Check file contents
       run: |-
         cd /home/runner/work/test-org-repo/test-org-repo/second-repo
@@ -79,15 +86,16 @@ jobs:
         git config --global user.name "docs-bot"
         git config --global user.email "77750099+docs-bot@users.noreply.github.com"
 
-    # If we checked out main, create a branch
+    # If we checked out main, create a branch now
     - if: ${{  steps.docs-branch-name.outputs.DOCS_CHECKOUT  == 'main' }}
       name: Create a docs branch if needed
       run: |- 
         cd /home/runner/work/test-org-repo/test-org-repo/second-repo
-        git checkout $BRANCH_NAME 2>/dev/null || git checkout -b $BRANCH_NAME
+        git checkout -b $BRANCH_NAME
       env:
         BRANCH_NAME: ${{ steps.docs-branch-name.outputs.DOCS_BRANCH }}
 
+    # todo delete this step
     - name: Check file contents
       run: |-
         cd /home/runner/work/test-org-repo/test-org-repo/second-repo
@@ -99,6 +107,7 @@ jobs:
         npm install
         npm run sync-rest
 
+    # todo delete this step
     - name: Check file contents and git status
       run: |-
         cd /home/runner/work/test-org-repo/test-org-repo/second-repo
@@ -123,10 +132,20 @@ jobs:
         pr_exists=$(gh pr list --head "$BRANCH_NAME")
         if [ -z "$pr_exists" ]
         then
-          gh pr create --title "[FOR PREVIEW ONLY] Preview for todo" --body "todo"
+          docs_pr_url="$(gh pr create --title "[FOR PREVIEW ONLY] Preview for todo" --body "todo")"
+          echo 'DOCS_PR='$docs_pr_url >> $GITHUB_ENV
         else
           echo "A docs-internal PR already exists for branch $BRANCH_NAME"
         fi
       env:
         GITHUB_TOKEN: ${{ secrets.PAT_preview }}
         BRANCH_NAME: ${{ steps.docs-branch-name.outputs.DOCS_BRANCH }}
+
+    - name: Comment to share the docs PR on the github PR
+      run: gh issue comment $GITHUB_PR --body "Todo docs preview is $DOCS_PR"
+      env:
+        GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
+        DOCS_PR: ${{ env.DOCS_PR }}
+        GITHUB_PR: ${{ github.event.pull_request.html_url }}
+
+        # todo can I use env.VAR_NAME instead of outputs?
