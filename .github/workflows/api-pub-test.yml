@@ -51,7 +51,7 @@ jobs:
           echo "DOCS_CHECKOUT=main" >> "$GITHUB_OUTPUT"
         fi
       env:
-        BRANCH_NAME: ${{ github.ref }}_openapi_docs_preview
+        BRANCH_NAME: ${{ github.head_ref }}_openapi_docs_preview
   
     # todo delete this step
     - name: Print branches
