@@ -36,7 +36,7 @@ jobs:
         repository: "ske-test-org/second-repo" # todo change repo name everywhere in this file
         path: 'second-repo'
         token: ${{ secrets.PAT_preview }} # todo need to add this secret to the gh repo and put in docs eng rotation. it is a fg pat with contents write and pr write permissions and access to both repos.
-        branch: ${{ github.ref_name }}_openapi_docs_preview
+        ref: ${{ github.ref_name }}_openapi_docs_preview
 
     - name: Setup Node.js
       uses: actions/setup-node@8c91899e586c5b171469028077307d293428b516
