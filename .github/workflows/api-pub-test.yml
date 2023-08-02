@@ -120,7 +120,7 @@ jobs:
     - name: Open a docs-internal PR if there isn't one already
       run: |-
         cd /home/runner/work/test-org-repo/test-org-repo/second-repo
-        pr_exists=$(gh pr list --base "$BRANCH_NAME")
+        pr_exists=$(gh pr list --head "$BRANCH_NAME")
         if [ -z "$pr_exists" ]
         then
           gh pr create --title "[FOR PREVIEW ONLY] Preview for todo" --body "todo"
