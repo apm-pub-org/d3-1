@@ -117,9 +117,16 @@ jobs:
           echo "No changes to commit"
         fi
 
-    - name: Open a docs-internal PR
+    - name: Open a docs-internal PR if there isn't one already
       run: |-
         cd /home/runner/work/test-org-repo/test-org-repo/second-repo
-        gh pr create --title "[FOR PREVIEW ONLY] Preview for todo" --body "todo"
+        pr_exists=$(gh pr list --base "$BRANCH_NAME")
+        if [ -z "$existing_pr" ]
+        then
+          gh pr create --title "[FOR PREVIEW ONLY] Preview for todo" --body "todo"
+        else
+          echo "A docs-internal PR already exists for branch $BRANCH_NAME"
+        fi
       env:
         GITHUB_TOKEN: ${{ secrets.PAT_preview }}
+        BRANCH_NAME: ${{ steps.docs-branch-name.outputs.DOCS_BRANCH }}
