@@ -5,7 +5,7 @@
 
 # todo need to add this secret to the gh repo and put in docs eng rotation. it is a fg pat with contents write and pr write permissions and access to both repos.
 
-name: Build REST API docs preview
+name: Docs preview for OpenAPI changes
 
 on:
   pull_request:
@@ -59,7 +59,7 @@ jobs:
         echo "env checkout is: ${{ env.DOCS_CHECKOUT }}"
 
     # Check out the docs-internal branch corresponding to this PR if one exists,
-    # otherwise checkout docs-internal main.
+    # otherwise check out docs-internal main.
     - name: Check out the github/docs-internal repo 
       uses: actions/checkout@8e5e7e5ab8b370d6c329ec480221332ada57f0ab
       with:
@@ -101,10 +101,11 @@ jobs:
         cat newFile.txt
 
     - name: Generate the docs data files
-      run: |- # todo this only builds rest files; also want to build webhook files # todo add include unpublished option
+      run: |-
         cd ${{ env.PWD }}/second-repo
         npm install
-        npm run sync-rest
+        npm run sync-rest --include-unpublished
+        npm run sync-webhooks
 
     # fixme delete this step
     - name: Check file contents and git status
