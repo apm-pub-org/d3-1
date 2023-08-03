@@ -50,7 +50,7 @@ jobs:
           echo "DOCS_CHECKOUT=main" >> "$GITHUB_ENV"
         fi
       env:
-        BRANCH_DOCS_BRANCHNAME: ${{ github.head_ref }}_openapi_docs_preview
+        DOCS_BRANCH: ${{ github.head_ref }}_openapi_docs_preview
   
     # fixme delete this step
     - name: Print branches
