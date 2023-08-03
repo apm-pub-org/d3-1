@@ -1,5 +1,5 @@
 
-# When a pull request that edits the OpenAPI schema is opened, reopened, or synchronized, this workflow will generate a docs-internal PR to preview the corresponding docs changes
+# When a pull request that edits the OpenAPI schema is opened, reopened, or synchronized, this workflow will generate (or update, if one already exists) a docs-internal PR to preview the corresponding docs changes.
 
 # todo change repo name everywhere in this file
 
@@ -52,8 +52,7 @@ jobs:
       env:
         DOCS_BRANCH: ${{ github.head_ref }}_openapi_docs_preview
   
-    # fixme delete this step
-    - name: Print branches
+    - name: Print branches (for troubleshooting aid)
       run: |-
         echo "env branch is: ${{ env.DOCS_BRANCH }}"
         echo "env checkout is: ${{ env.DOCS_CHECKOUT }}"
@@ -73,12 +72,6 @@ jobs:
       with:
         node-version: '16'
 
-    # fixme delete this step
-    - name: Check file contents
-      run: |-
-        cd ${{ env.PWD }}/second-repo
-        cat newFile.txt
-
     - name: Git config
       run: |-
         cd ${{ env.PWD }}/second-repo
@@ -94,12 +87,6 @@ jobs:
       env:
         DOCS_BRANCH: ${{ env.DOCS_BRANCH }}
 
-    # fixme delete this step
-    - name: Check file contents
-      run: |-
-        cd ${{ env.PWD }}/second-repo
-        cat newFile.txt
-
     - name: Generate the docs data files
       run: |-
         cd ${{ env.PWD }}/second-repo
@@ -107,11 +94,9 @@ jobs:
         npm run sync-rest --include-unpublished
         npm run sync-webhooks
 
-    # fixme delete this step
-    - name: Check file contents and git status
+    - name: Git status (for troubleshooting aid)
       run: |-
         cd ${{ env.PWD }}/second-repo
-        cat newFile.txt
         git status
 
     - name: Push the docs data files if there are changes to push
