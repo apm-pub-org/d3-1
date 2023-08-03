@@ -24,8 +24,11 @@ jobs:
   build_docs_preview:
     runs-on: ubuntu-latest
     steps:
-    - run: pwd
-      # todo update the hardcoded pwd everywhere in this file, or store this in a variable
+    - name: Store pwd
+      run: |-
+       pwd
+       echo "PWD=$(pwd)" >> "$GITHUB_ENV"
+       # todo update the hardcoded pwd everywhere in this file, or store this in a variable
 
     # The github/github repo clone needs to be
     # at the same level as the docs-internal clone,
@@ -75,12 +78,12 @@ jobs:
     # todo delete this step
     - name: Check file contents
       run: |-
-        cd /home/runner/work/test-org-repo/test-org-repo/second-repo
+        cd ${{ env.PWD }}/second-repo
         cat newFile.txt
 
     - name: Git config
       run: |-
-        cd /home/runner/work/test-org-repo/test-org-repo/second-repo
+        cd ${{ env.PWD }}/second-repo
         git config --global user.name "docs-bot"
         git config --global user.email "77750099+docs-bot@users.noreply.github.com"
 
@@ -88,7 +91,7 @@ jobs:
     - if: ${{ env.DOCS_CHECKOUT  == 'main' }}
       name: Create a docs branch if needed
       run: |- 
-        cd /home/runner/work/test-org-repo/test-org-repo/second-repo
+        cd ${{ env.PWD }}/second-repo
         git checkout -b $BRANCH_NAME
       env:
         BRANCH_NAME: ${{ env.DOCS_BRANCH }}
@@ -96,25 +99,25 @@ jobs:
     # todo delete this step
     - name: Check file contents
       run: |-
-        cd /home/runner/work/test-org-repo/test-org-repo/second-repo
+        cd ${{ env.PWD }}/second-repo
         cat newFile.txt
 
     - name: Generate the docs data files
       run: |- # todo this only builds rest files; also want to build webhook files # todo add include unpublished option
-        cd /home/runner/work/test-org-repo/test-org-repo/second-repo
+        cd ${{ env.PWD }}/second-repo
         npm install
         npm run sync-rest
 
     # todo delete this step
     - name: Check file contents and git status
       run: |-
-        cd /home/runner/work/test-org-repo/test-org-repo/second-repo
+        cd ${{ env.PWD }}/second-repo
         cat newFile.txt
         git status
 
     - name: Push the docs data files if there are changes to push
       run: |-
-        cd /home/runner/work/test-org-repo/test-org-repo/second-repo
+        cd ${{ env.PWD }}/second-repo
         if ! git diff --quiet
         then
           git add .
@@ -124,11 +127,12 @@ jobs:
           echo "No changes to commit"
         fi
 
+    # todo only do this if there also were changes
     - name: Open a docs-internal PR if there isn't one already
       run: |-
-        cd /home/runner/work/test-org-repo/test-org-repo/second-repo
+        cd ${{ env.PWD }}/second-repo
         pr_exists=$(gh pr list --head "$BRANCH_NAME")
-        if [ -z "$pr_exists" ]
+        if [[ -z "$pr_exists" ]]
         then
           docs_pr_url="$(gh pr create --title "[FOR PREVIEW ONLY] Preview for todo" --body "todo")"
           echo 'DOCS_PR='$docs_pr_url >> $GITHUB_ENV
