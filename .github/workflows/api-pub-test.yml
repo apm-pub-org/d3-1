@@ -135,10 +135,10 @@ jobs:
         then
           docs_pr_url="$(gh pr create --draft --title "[FOR PREVIEW ONLY] Preview for OpenAPI changes from $GH_BRANCH" --body "**This PR is for preview purposes only and should not be merged.** Learn more [here](https://thehub.github.com/epd/engineering/products-and-services/public-apis/rest/openapi/openapi-in-the-docs/#propagating-changes-to-the-docs) about the publication process for OpenAPI-derived docs.
 
-          This PR will render a docs preview for the OpenAPI changes on the github/github branch $GH_BRANCH.
+          This PR will render a docs preview for the OpenAPI changes on the github/github branch \`$GH_BRANCH\`.
 
-          - Any operations or webhooks marked as `published: false` will display in this preview for convenience, but will not be published in the docs.
-          - Any nodes marked as `x-unpublished` will not display in this preview. To see how those nodes will render, you can [manually build a preview](https://thehub.github.com/epd/engineering/products-and-services/public-apis/rest/openapi/openapi-in-the-docs/#previewing-changes-in-the-docs).
+          - Any operations or webhooks marked as \`published: false\` will display in this preview for convenience, but will not be published in the docs.
+          - Any nodes marked as \`x-unpublished\` will not display in this preview. To see how those nodes will render, you can [manually build a preview](https://thehub.github.com/epd/engineering/products-and-services/public-apis/rest/openapi/openapi-in-the-docs/#previewing-changes-in-the-docs).
 
           To view the preview:
           
