@@ -26,9 +26,7 @@ jobs:
     steps:
     - name: Store pwd
       run: |-
-       pwd
-       echo "PWD=$(pwd)" >> "$GITHUB_ENV"
-       # todo update the hardcoded pwd everywhere in this file, or store this in a variable
+        echo "PWD=$(pwd)" >> "$GITHUB_ENV"
 
     # The github/github repo clone needs to be
     # at the same level as the docs-internal clone,
@@ -44,17 +42,17 @@ jobs:
     # check out main instead and create the branch later.
     - name: Determine docs branch name
       run: |-
-        echo "DOCS_BRANCH=$BRANCH_NAME" >> "$GITHUB_ENV"
-        if [[ -n $(git ls-remote --heads https://github.com/ske-test-org/second-repo.git $BRANCH_NAME) ]]
+        echo "DOCS_BRANCH=$DOCS_BRANCH" >> "$GITHUB_ENV"
+        if [[ -n $(git ls-remote --heads https://github.com/ske-test-org/second-repo.git $DOCS_BRANCH) ]]
         then
-          echo "DOCS_CHECKOUT=$BRANCH_NAME" >> "$GITHUB_ENV"
+          echo "DOCS_CHECKOUT=$DOCS_BRANCH" >> "$GITHUB_ENV"
         else
           echo "DOCS_CHECKOUT=main" >> "$GITHUB_ENV"
         fi
       env:
-        BRANCH_NAME: ${{ github.head_ref }}_openapi_docs_preview
+        BRANCH_DOCS_BRANCHNAME: ${{ github.head_ref }}_openapi_docs_preview
   
-    # todo delete this step
+    # fixme delete this step
     - name: Print branches
       run: |-
         echo "env branch is: ${{ env.DOCS_BRANCH }}"
@@ -75,7 +73,7 @@ jobs:
       with:
         node-version: '16'
 
-    # todo delete this step
+    # fixme delete this step
     - name: Check file contents
       run: |-
         cd ${{ env.PWD }}/second-repo
@@ -92,11 +90,11 @@ jobs:
       name: Create a docs branch if needed
       run: |- 
         cd ${{ env.PWD }}/second-repo
-        git checkout -b $BRANCH_NAME
+        git checkout -b $DOCS_BRANCH
       env:
-        BRANCH_NAME: ${{ env.DOCS_BRANCH }}
+        DOCS_BRANCH: ${{ env.DOCS_BRANCH }}
 
-    # todo delete this step
+    # fixme delete this step
     - name: Check file contents
       run: |-
         cd ${{ env.PWD }}/second-repo
@@ -108,7 +106,7 @@ jobs:
         npm install
         npm run sync-rest
 
-    # todo delete this step
+    # fixme delete this step
     - name: Check file contents and git status
       run: |-
         cd ${{ env.PWD }}/second-repo
@@ -123,29 +121,44 @@ jobs:
           git add .
           git commit -m "generate OpenAPI data files"
           git push --set-upstream origin HEAD
+          echo "CHANGES_Q=true" >> "$GITHUB_ENV"
         else
           echo "No changes to commit"
         fi
 
-    # todo only do this if there also were changes
-    - name: Open a docs-internal PR if there isn't one already
+    - name: Open a docs-internal PR if there isn't one already and there were changes
+      if: ${{ env.CHANGES_Q }}
       run: |-
         cd ${{ env.PWD }}/second-repo
-        pr_exists=$(gh pr list --head "$BRANCH_NAME")
+        pr_exists=$(gh pr list --head "$DOCS_BRANCH")
         if [[ -z "$pr_exists" ]]
         then
-          docs_pr_url="$(gh pr create --title "[FOR PREVIEW ONLY] Preview for todo" --body "todo")"
+          docs_pr_url="$(gh pr create --draft --title "[FOR PREVIEW ONLY] Preview for OpenAPI changes from $GH_BRANCH" --body "**This PR is for preview purposes only and should not be merged.** Learn more [here](https://thehub.github.com/epd/engineering/products-and-services/public-apis/rest/openapi/openapi-in-the-docs/#propagating-changes-to-the-docs) about the publication process for OpenAPI-derived docs.
+
+          This PR will render a docs preview for the OpenAPI changes on the github/github branch $GH_BRANCH.
+
+          - Any operations or webhooks marked as `published: false` will display in this preview for convenience, but will not be published in the docs.
+          - Any nodes marked as `x-unpublished` will not display in this preview. To see how those nodes will render, you can [manually build a preview](https://thehub.github.com/epd/engineering/products-and-services/public-apis/rest/openapi/openapi-in-the-docs/#previewing-changes-in-the-docs).
+
+          To view the preview:
+          
+          - Wait for the 'Azure - Deploy Preview Environment' workflow to complete.
+          - Click the 'View Deployment' button in the timeline.
+          - In the deployment preview, navigate to the docs page(s) where you expect your changes.
+
+          If you have questions, ask in #docs-api-and-events.")"
           echo 'DOCS_PR='$docs_pr_url >> $GITHUB_ENV
         else
-          echo "A docs-internal PR already exists for branch $BRANCH_NAME"
+          echo "A docs-internal PR already exists for branch $DOCS_BRANCH"
         fi
       env:
         GITHUB_TOKEN: ${{ secrets.PAT_preview }}
-        BRANCH_NAME: ${{ env.DOCS_BRANCH }}
+        DOCS_BRANCH: ${{ env.DOCS_BRANCH }}
+        GH_BRANCH: ${{ github.head_ref }}
 
     - if: ${{ env.DOCS_PR }}
       name: Comment to share the docs PR on the github PR
-      run: gh pr comment $GITHUB_PR --body "Todo docs preview is $DOCS_PR"
+      run: gh pr comment $GITHUB_PR --body "A preview for the OpenAPI docs changes will be available in $DOCS_PR"
       env:
         GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
         DOCS_PR: ${{ env.DOCS_PR }}
