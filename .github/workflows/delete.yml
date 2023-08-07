@@ -23,7 +23,7 @@ jobs:
         GITHUB_TOKEN: ${{secrets.PAT_preview}}
         DOCS_BRANCH: ${{ github.head_ref }}_openapi_docs_preview
 
-    - if: ${{ env.DOCS_PR != '' }}
+    - if: ${{ env.DOCS_PR != 'null' }}
       name: Close the docs PR
       run: gh pr close $DOCS_PR --delete-branch --comment "The corresponding github/github PR ($GITHUB_PR) was closed or merged, so this preview is no longer necessary."
       env:
