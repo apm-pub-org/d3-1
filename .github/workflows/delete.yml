@@ -1,0 +1,32 @@
+
+# When a pull request that edits the OpenAPI schema is closed, this workflow will close the corresponding docs-internal PR and delete the docs-internal branch (if one was created by .github/workflows/docs-openapi-preview.yaml).
+
+name: Delete docs preview for OpenAPI changes
+
+on:
+  pull_request:
+    types:
+      - closed
+    paths:
+      - 'app/api/description/**'
+
+jobs:
+  build_docs_preview:
+    runs-on: ubuntu-latest
+    steps:
+
+    - name: Find the docs PR if it exists
+      run: |-
+        docs_pr_url="$(gh pr list --base main --head $DOCS_BRANCH --state open --repo ske-test-org/second-repo --json url | jq -r '.[0].url')"
+        echo 'DOCS_PR='$docs_pr_url >> $GITHUB_ENV
+      env:
+        GITHUB_TOKEN: ${{secrets.PAT_preview}}
+        DOCS_BRANCH: ${{ github.head_ref }}_openapi_docs_preview
+
+    - if: ${{ env.DOCS_PR }}
+      name: Close the docs PR
+      run: gh pr close $DOCS_PR --delete-branch --comment "The corresponding github/github PR ($GITHUB_PR) was closed or merged, so this preview is no longer necessary."
+      env:
+        GITHUB_TOKEN: ${{secrets.PAT_preview}}
+        DOCS_PR: ${{ env.DOCS_PR }}
+        GITHUB_PR: ${{ github.event.pull_request.html_url }}
