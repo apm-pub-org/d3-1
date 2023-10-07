@@ -8,8 +8,9 @@ on:
 # This workflow will use the built in `GITHUB_TOKEN` to make API requests. This sets the permissions for `GITHUB_TOKEN`.
 # If you won't use `GITHUB_TOKEN`, you can omit this section.
 # todocs update permissions
-permissions:
-  contents: read
+# permissions:
+  # contents: read
+permissions: write-all
 
 #
 jobs:
