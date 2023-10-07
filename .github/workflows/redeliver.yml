@@ -37,7 +37,7 @@ jobs:
       - name: Run script
         env:
           # This example uses the built in `GITHUB_TOKEN`. If you need to use another token, todocs.
-          TOKEN: ${{ secrets.YOUR_TOKEN }}
+          TOKEN: ${{ secrets.GITHUB_TOKEN }}
           # In this example, this script will redeliver failed repository webhook deliveries.
           # The endpoints that the script will use need the repository name, repository owner, and hook ID.
           # - Replace todocs `YOUR_REPO_OWNER`.
