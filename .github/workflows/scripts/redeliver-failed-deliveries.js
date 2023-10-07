@@ -127,5 +127,7 @@ async function redeliverWebhook(deliveryId) {
 
 // todocs update run time
 console.log('todo')
+console.log(process.env.TOKEN[0]);
+console.log('???')
 
 await checkAndRedeliverWebhooks();
