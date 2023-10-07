@@ -50,4 +50,5 @@ jobs:
           # This workflow will use the value of the `LAST_WEBHOOK_REDELIVERY_TIME` configuration variable to determine how far back to look for failed deliveries. The script that the workflow runs will update this configuration variable, or will set it if the variable has not yet been set. For more information, see "[AUTOTITLE](/actions/learn-github-actions/variables#defining-configuration-variables-for-multiple-workflows)."
           LAST_WEBHOOK_REDELIVERY_TIME: ${{ vars.LAST_WEBHOOK_REDELIVERY_TIME }}
         run: |
-          echo "oh yeah"
+          node .github/workflows/scripts/redeliver-failed-deliveries.js
+
