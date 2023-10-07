@@ -44,9 +44,9 @@ jobs:
           # - ...
           
           # If you are redelivering failed organization or GitHub App webhook deliveries, replace these variables with the variables that the organization or GitHub App endpoints require.
-          REPO_OWNER: 'YOUR_REPO_OWNER'
-          REPO_NAME: 'YOUR_REPO_NAME'
-          HOOK_ID: 'YOUR_HOOK_ID'
+          REPO_OWNER: 'ske-test-org'
+          REPO_NAME: 'test-org-repo'
+          HOOK_ID: '433268612'
           
           # This workflow will use the value of the `LAST_WEBHOOK_REDELIVERY_TIME` configuration variable to determine how far back to look for failed deliveries. The script that the workflow runs will update this configuration variable, or will set it if the variable has not yet been set. For more information, see "[AUTOTITLE](/actions/learn-github-actions/variables#defining-configuration-variables-for-multiple-workflows)."
           LAST_WEBHOOK_REDELIVERY_TIME: ${{ vars.LAST_WEBHOOK_REDELIVERY_TIME }}
