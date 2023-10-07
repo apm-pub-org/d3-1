@@ -128,3 +128,4 @@ async function redeliverWebhook(deliveryId) {
 // todocs update run time
 console.log('todo')
 
+await checkAndRedeliverWebhooks();
