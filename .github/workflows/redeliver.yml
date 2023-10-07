@@ -1,0 +1,53 @@
+#
+name: Redeliver failed webhook deliveries
+
+# This workflow runs every 6 hours or when manually triggered.
+on:
+  workflow_dispatch:
+
+# This workflow will use the built in `GITHUB_TOKEN` to make API requests. This sets the permissions for `GITHUB_TOKEN`.
+# If you won't use `GITHUB_TOKEN`, you can omit this section.
+# todocs update permissions
+permissions:
+  contents: read
+
+#
+jobs:
+  redeliver-failed-deliveries:
+    name: Redeliver failed deliveries
+    runs-on: ubuntu-latest
+    steps:
+      # This workflow will run a script that is stored in the repository. This step checks out the repository contents so that the workflow can access the script.
+      - name: Check out repo content
+        uses: actions/checkout@v4
+
+      # This step sets up Node.js. The script that this workflow will run uses Node.js.
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18.x'
+          cache: npm
+
+      # This step installs the octokit library. The script that this workflow will run uses the octokit library.
+      - name: Install dependencies
+        run: npm install octokit
+
+      # This step sets some environment variables, then runs a script to find and redeliver failed webhook deliveries.
+      - name: Run script
+        env:
+          # This example uses the built in `GITHUB_TOKEN`. If you need to use another token, todocs.
+          TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          # In this example, this script will redeliver failed repository webhook deliveries.
+          # The endpoints that the script will use need the repository name, repository owner, and hook ID.
+          # - Replace todocs `YOUR_REPO_OWNER`.
+          # - ...
+          
+          # If you are redelivering failed organization or GitHub App webhook deliveries, replace these variables with the variables that the organization or GitHub App endpoints require.
+          REPO_OWNER: 'YOUR_REPO_OWNER'
+          REPO_NAME: 'YOUR_REPO_NAME'
+          HOOK_ID: 'YOUR_HOOK_ID'
+          
+          # This workflow will use the value of the `LAST_WEBHOOK_REDELIVERY_TIME` configuration variable to determine how far back to look for failed deliveries. The script that the workflow runs will update this configuration variable, or will set it if the variable has not yet been set. For more information, see "[AUTOTITLE](/actions/learn-github-actions/variables#defining-configuration-variables-for-multiple-workflows)."
+          LAST_WEBHOOK_REDELIVERY_TIME: ${{ vars.LAST_WEBHOOK_REDELIVERY_TIME }}
+        run: |
+          echo "oh yeah"
