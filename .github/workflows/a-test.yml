@@ -25,7 +25,7 @@ jobs:
               --repo "$REPO" \
               --label "$LABELS" \
               --json number \
-              --jq .[1].number)
+              --jq '.[1].number')
             gh issue close "$previous_issue_number" --repo "$REPO"
           fi
         env:
