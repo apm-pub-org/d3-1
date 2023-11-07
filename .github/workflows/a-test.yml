@@ -46,5 +46,5 @@ jobs:
             Add things to discuss below
 
             - [Work this week](https://github.com/orgs/github/projects/3)
-          PINNED: false
-          CLOSE_PREVIOUS: false
+          PINNED: true
+          CLOSE_PREVIOUS: true
