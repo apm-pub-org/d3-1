@@ -1,13 +1,50 @@
-name: A test
-
+name: Weekly Team Sync
 on:
-  pull_request:
-    types: [edited]
+  workflow_dispatch:
 
 jobs:
-  test:
+  create_issue:
+    name: Create team sync issue
     runs-on: ubuntu-latest
+    permissions:
+      issues: write
     steps:
-      - name: print
+      - name: Create team sync issue
         run: |
-          echo "done"
+          new_issue_url=$(gh issue create \
+            --repo "$REPO" \
+            --title "$TITLE" \
+            --assignee "$ASSIGNEES" \
+            --label "$LABELS" \
+            --body "$BODY")
+          if [[ $PINNED == true ]]; then
+            gh issue pin "$new_issue_url" --repo "$REPO"
+          fi
+          if [[ $CLOSE_PREVIOUS == true ]]; then
+            previous_issue_number=$(gh issue list \
+              --repo "$REPO" \
+              --label "$LABELS" \
+              --json number \
+              --jq .[1].number)
+            gh issue close "$previous_issue_number" --repo "$REPO"
+          fi
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          REPO: ${{ github.repository }}
+          TITLE: Team sync
+          ASSIGNEES: monalisa,doctocat,hubot
+          LABELS: weekly sync,docs-team
+          BODY: |
+            ### Agenda
+
+            - [ ] Start the recording
+            - [ ] Check-ins
+            - [ ] Discussion points
+            - [ ] Post the recording
+
+            ### Discussion Points
+            Add things to discuss below
+
+            - [Work this week](https://github.com/orgs/github/projects/3)
+          PINNED: false
+          CLOSE_PREVIOUS: false
