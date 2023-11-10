@@ -1,6 +1,7 @@
 name: Weekly Team Sync
 on:
-  workflow_dispatch:
+  schedule:
+    - cron: 20 07 * * 1
 
 jobs:
   create_issue:
@@ -11,26 +12,27 @@ jobs:
     steps:
       - name: Create team sync issue
         run: |
+          if [[ $CLOSE_PREVIOUS == true ]]; then
+            previous_issue_number=$(gh issue list \
+              --label "$LABELS" \
+              --json number \
+              --jq '.[0].number')
+            if [[ -n $previous_issue_number ]]; then
+              gh issue close "$previous_issue_number"
+              gh issue unpin "$previous_issue_number"
+            fi
+          fi
           new_issue_url=$(gh issue create \
-            --repo "$REPO" \
             --title "$TITLE" \
             --assignee "$ASSIGNEES" \
             --label "$LABELS" \
             --body "$BODY")
           if [[ $PINNED == true ]]; then
-            gh issue pin "$new_issue_url" --repo "$REPO"
-          fi
-          if [[ $CLOSE_PREVIOUS == true ]]; then
-            previous_issue_number=$(gh issue list \
-              --repo "$REPO" \
-              --label "$LABELS" \
-              --json number \
-              --jq '.[1].number')
-            gh issue close "$previous_issue_number" --repo "$REPO"
+            gh issue pin "$new_issue_url"
           fi
         env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          REPO: ${{ github.repository }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_REPO: ${{ github.repository }}
           TITLE: Team sync
           ASSIGNEES: skedwards88,sketest
           LABELS: weekly sync,docs-team
