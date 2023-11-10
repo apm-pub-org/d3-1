@@ -1,7 +1,6 @@
 name: Weekly Team Sync
 on:
-  schedule:
-    - cron: 20 07 * * 1
+  workflow_dispatch:
 
 jobs:
   create_issue:
