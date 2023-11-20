@@ -36,7 +36,7 @@ jobs:
         run: node automation/docsParseReleaseIssue.js
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
+  
   open_docs_issue:
     runs-on: ubuntu-latest
     needs: parse_release_issue
@@ -45,60 +45,23 @@ jobs:
       output: ${{ steps.create_docs_issue.outputs.result }}
 
     steps:
+      - name: Check out repo content
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+
+      - name: Install dependencies
+        run: npm install @actions/github @actions/core
+
       - name: Create and label an issue in the docs-content repo
         id: create_docs_issue
-        # uses: actions/github-script@v6
+        run: node automation/docsOpenDocsIssue.js
         env:
           NEW_TITLE: ${{ needs.parse_release_issue.outputs.newTitle }}
           NEW_BODY: ${{ needs.parse_release_issue.outputs.newBody }}
           GHES_LABELS: ${{ needs.parse_release_issue.outputs.ghesLabels }}
           TIER: ${{ needs.parse_release_issue.outputs.tier }}
-
-        # with:
-        #   github-token: ${{ secrets.DOCS_BOT_PAT_READPUBLICKEY }}
-        #   script: |
-        run: echo $NEW_TITLE
-
-  # update_release_issue_checklist:
-  #   runs-on: ubuntu-latest
-  #   needs: open_docs_issue
-  #   steps:
-  #     - name: Link docs-content issue in release checklist
-  #       uses: actions/github-script@v6
-  #       env:
-  #         DOCS_CONTENT_ISSUE_NUMBER: ${{ fromJSON(needs.open_docs_issue.outputs.output).docsIssueNumber }}
-
-  #       with:
-  #         github-token: ${{ secrets.DOCS_BOT_PAT_READPUBLICKEY }}
-  #         script: |
-  #           const checklistDocsUnlinkedText = '- [ ] 📘 **Docs ([docs][docs-content]):** \\<link to docs-content issue or write "N/A"\\>';
-  #           const updatedDocsItemText = `- [ ] 📘 **Docs ([docs][docs-content]):** ${context.repo.owner}/docs-content/issues/${process.env.DOCS_CONTENT_ISSUE_NUMBER}`;
-
-  #           if (context.payload.issue.body.includes(checklistDocsUnlinkedText)) {
-  #             // Re-fetch the release issue to minimise the time between reading
-  #             // it and updating it
-  #             const issue = await github.rest.issues.get({
-  #               issue_number: context.issue.number,
-  #               owner: context.repo.owner,
-  #               repo: context.repo.repo,
-  #             });
-  #             const releaseIssueBody = issue.data.body;
-
-  #             // Check again whether the text includes the standard unlinked text
-  #             if (releaseIssueBody.includes(checklistDocsUnlinkedText)) {
-  #               const updatedReleaseIssueText = releaseIssueBody.replace(checklistDocsUnlinkedText, updatedDocsItemText);
-
-  #               await github.rest.issues.update({
-  #                 issue_number: context.issue.number,
-  #                 owner: context.repo.owner,
-  #                 repo: context.repo.repo,
-  #                 body: updatedReleaseIssueText,
-  #               });
-
-  #               console.log('Successfully updated release issue text.');
-  #             } else {
-  #               console.log(`The string '${checklistDocsUnlinkedText}' was not found. This is usually because a link was already added manually.`);
-  #             }
-  #           } else {
-  #             console.log(`The string '${checklistDocsUnlinkedText}' was not found. This is usually because a link was already added manually.`);
-  #           }
+          DOCS_TOKEN: ${{ secrets.DOCS_BOT_PAT_READPUBLICKEY }}
