@@ -1,234 +1,103 @@
-name: A Automatically open a docs-content tracking issue
+name: Automatically open a docs-content tracking issue
 on:
   issues:
     types:
       - opened
-      - reopened
+
+permissions:
+  issues: write
+  contents: read
 
 jobs:
   parse_release_issue:
     runs-on: ubuntu-latest
 
     outputs:
-      output: ${{ steps.parse_issue.outputs.result }}
+      newTitle: ${{ steps.parse_issue.outputs.newTitle }}
+      newBody: ${{ steps.parse_issue.outputs.newBody }}
+      ghesLabels: ${{ steps.parse_issue.outputs.ghesLabels }}
+      tier: ${{ steps.parse_issue.outputs.tier }}
 
     steps:
+      - name: Check out repo content
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+
+      - name: Install dependencies
+        run: npm install @actions/github @actions/core
+
       - name: Parse release issue
-        uses: actions/github-script@2b34a689ec86a68d8ab9478298f91d5401337b7d
         id: parse_issue
-        with:
-          script: |
-            const labels = context.payload.issue.labels
-
-            let tier = 'unknown'
-            for (const label of labels) {
-              if (['Tier 1', 'Tier 2', 'Tier 3', 'Tier 4'].includes(label.name)) {
-                tier = label.name
-                break
-              }
-            }
-
-            let phase = 'unknown'
-            for (const label of labels) {
-              if (['Alpha', 'Private Beta', 'Public Beta', 'Limited Public Beta', 'GA'].includes(label.name)) {
-                phase = label.name
-                break
-              }
-            }
-
-            function getStringBetween(input, before, after) {
-              // i = case insensitive, s = match newlines
-              const re = new RegExp(before + '(.*?)' + after, 'is')
-              const result = input.match(re)
-              if (result) {
-                return result[1].trim()
-              } else {
-                console.log(
-                  `String between ${before} and ${after} was not found. Check if the release template changed.`
-                )
-                return result
-              }
-            }
-
-            // Pull out info from the release issue body
-            const body = context.payload.issue.body
-            const shipDate = getStringBetween(body, 'Expected ship date', '###')
-            const docsAnswer = getStringBetween(body, 'Will this feature require documentation\\?', '###')
-            const openDocsIssue = (docsAnswer === 'TBD' || docsAnswer === 'Yes--Automatically create a docs issue for me')
-            let releaseLabelToAdd
-            switch (docsAnswer) {
-              case 'TBD':
-                releaseLabelToAdd = "docs - TBD"
-                break;
-              case 'No':
-                releaseLabelToAdd = "docs - NA"
-                break;
-              default:
-                releaseLabelToAdd = "docs"
-            }
-
-            const ghaeAnswer =
-              getStringBetween(
-                body,
-                'Will this feature, in its current release phase, flow into GitHub AE\\?',
-                '###'
-              )
-            let ghaeLabels = []
-            if (ghaeAnswer.startsWith('Yes')) {
-              ghaeLabels.push('GHAE')
-              try {
-                ghaeVersion = ghaeAnswer.match(/[+-]?\d+(\.\d+)?/g)[0]
-                ghaeLabels.push(`GHAE ${ghaeVersion}`)
-              } catch (error) {
-                console.log("GHAE version could not be determined")
-              }
-            }
-
-            const ghesAnswer =
-              getStringBetween(
-                body,
-                'Will this feature, in its current release phase, flow into GitHub Enterprise Server\\?',
-                '###'
-              )
-            let ghesLabels = []
-            if (ghesAnswer.startsWith('Yes')) {
-              ghesLabels.push('GHES')
-              try {
-                ghesVersion = ghesAnswer.match(/[+-]?\d+(\.\d+)?/g)[0]
-                ghesLabels.push(`GHES ${ghesVersion}`)
-              } catch (error) {
-                console.log("GHES version could not be determined")
-              }
-            }
-
-            const title = context.payload.issue.title
-            const author = context.payload.issue.user.login
-            const issue = context.payload.issue.html_url
-            const newTitle = `[${shipDate}]: ${title} (${phase})`
-            const newBody = `
-            ### Link to the release issue
-            
-            ${issue}
-
-            ${
-              tier === 'Tier 3' || tier === 'Tier 4'
-                ? `
-            ### If this release has a small docs impact, are you able to make the docs update yourself in the docs-internal repo?
-
-            Please select one, @${author}:
-
-            - [ ] Yes!
-            - [ ] Yes, but with support
-            - [ ] No, I'm not able
-            - [ ] No, but I know someone who can (👉 ping them here: _username_)`
-                : ''
-            }
-
-            ### Outstanding questions for the release DRI
-
-            Please answer all questions with checkboxes or 👉 _placeholders_, @${author}. Once you answer the questions, you can unassign yourself from this issue. The docs team will review the issue and either write a plan to help you open a PR (if you indicated that you will open a PR) or will triage it for a writer to pick up.
-            ${
-              tier === 'Tier 3' || tier === 'Tier 4'
-                ? `
-            - Do you think we'll need to create any new articles to document this release?
-              - [ ] Yes
-              - [ ] No
-              - [ ] I'm not sure
-            - If you know of existing documentation that needs updates for this release, please share links and what should change. 
-              
-              👉 _Documentation to update and overview of changes to make_`
-                : ''
-            } 
-            - How would a docs team member access this feature for testing and screenshots?
-              
-              👉 _Testing details (feature flags, links to existing demos or source material...)_
-            
-            - What is the relevant Slack channel?
-            
-              👉 _#your-slack-channel-here_
-            
-            - Will any content require legal review?
-              - [ ] Yes
-              - [ ] No
-            
-            - Will any content require security review?
-              - [ ] Yes
-              - [ ] No 
-            `
-
-            return {
-              newTitle: newTitle,
-              openDocsIssue: openDocsIssue,
-              releaseLabelToAdd: releaseLabelToAdd,
-              newBody: newBody,
-              ghaeLabels: ghaeLabels,
-              ghesLabels: ghesLabels,
-              tier: tier,
-              author: author,
-            }
-
-  label_release_issue:
-    runs-on: ubuntu-latest
-    needs: parse_release_issue
-    steps:
-      - name: Label release issue with relevant docs label
-        uses: actions/github-script@v5
+        run: node automation/docsParseReleaseIssue.js
         env:
-          LABEL: ${{ fromJSON(needs.parse_release_issue.outputs.output).releaseLabelToAdd }}
-        with:
-          github-token: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
-          script: |
-            await github.rest.issues.addLabels({
-              issue_number: context.issue.number,
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              labels: [process.env.LABEL]
-            })
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
   open_docs_issue:
     runs-on: ubuntu-latest
     needs: parse_release_issue
-    if: fromJSON(needs.parse_release_issue.outputs.output).openDocsIssue
+
+    outputs:
+      output: ${{ steps.create_docs_issue.outputs.result }}
+
     steps:
       - name: Create and label an issue in the docs-content repo
-        uses: actions/github-script@v5
+        id: create_docs_issue
+        # uses: actions/github-script@v6
         env:
-          LABEL: ${{ fromJSON(needs.parse_release_issue.outputs.output).releaseLabelToAdd }}
-          PARSED_DATA: ${{ needs.parse_release_issue.outputs.output }}
+          NEW_TITLE: ${{ needs.parse_release_issue.outputs.newTitle }}
+          NEW_BODY: ${{ needs.parse_release_issue.outputs.newBody }}
+          GHES_LABELS: ${{ needs.parse_release_issue.outputs.ghesLabels }}
+          TIER: ${{ needs.parse_release_issue.outputs.tier }}
 
-        with:
-          github-token: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
-          script: |
-            const parsedData = JSON.parse(process.env.PARSED_DATA)
+        # with:
+        #   github-token: ${{ secrets.DOCS_BOT_PAT_READPUBLICKEY }}
+        #   script: |
+        run: echo $NEW_TITLE
 
-            let labels = ['missing info', 'priority-5']
-            labels = labels.concat(parsedData.ghaeLabels)
-            labels = labels.concat(parsedData.ghesLabels)
-            if (parsedData.releaseLabelToAdd === 'docs - TBD') {
-              labels.push("docs - TBD")
-            }
-            switch (parsedData.tier) {
-              case 'Tier 1':
-                labels.push("Tier 1 or tier 2")
-                break;
-              case 'Tier 2':
-                labels.push("Tier 1 or tier 2")
-                break;
-              case 'Tier 3':
-                labels.push("Tier 3 or tier 4")
-                break;
-              case 'Tier 4':
-                labels.push("Tier 3 or tier 4")
-                break;
-              default:
-                console.log("Tier not identified.")
-            }
+  # update_release_issue_checklist:
+  #   runs-on: ubuntu-latest
+  #   needs: open_docs_issue
+  #   steps:
+  #     - name: Link docs-content issue in release checklist
+  #       uses: actions/github-script@v6
+  #       env:
+  #         DOCS_CONTENT_ISSUE_NUMBER: ${{ fromJSON(needs.open_docs_issue.outputs.output).docsIssueNumber }}
 
-            await github.rest.issues.create({
-              owner: context.repo.owner,
-              repo: "second-repo",
-              title: parsedData.newTitle,
-              body: parsedData.newBody,
-              labels: labels,
-              assignees: [parsedData.author]
-            })
+  #       with:
+  #         github-token: ${{ secrets.DOCS_BOT_PAT_READPUBLICKEY }}
+  #         script: |
+  #           const checklistDocsUnlinkedText = '- [ ] 📘 **Docs ([docs][docs-content]):** \\<link to docs-content issue or write "N/A"\\>';
+  #           const updatedDocsItemText = `- [ ] 📘 **Docs ([docs][docs-content]):** ${context.repo.owner}/docs-content/issues/${process.env.DOCS_CONTENT_ISSUE_NUMBER}`;
+
+  #           if (context.payload.issue.body.includes(checklistDocsUnlinkedText)) {
+  #             // Re-fetch the release issue to minimise the time between reading
+  #             // it and updating it
+  #             const issue = await github.rest.issues.get({
+  #               issue_number: context.issue.number,
+  #               owner: context.repo.owner,
+  #               repo: context.repo.repo,
+  #             });
+  #             const releaseIssueBody = issue.data.body;
+
+  #             // Check again whether the text includes the standard unlinked text
+  #             if (releaseIssueBody.includes(checklistDocsUnlinkedText)) {
+  #               const updatedReleaseIssueText = releaseIssueBody.replace(checklistDocsUnlinkedText, updatedDocsItemText);
+
+  #               await github.rest.issues.update({
+  #                 issue_number: context.issue.number,
+  #                 owner: context.repo.owner,
+  #                 repo: context.repo.repo,
+  #                 body: updatedReleaseIssueText,
+  #               });
+
+  #               console.log('Successfully updated release issue text.');
+  #             } else {
+  #               console.log(`The string '${checklistDocsUnlinkedText}' was not found. This is usually because a link was already added manually.`);
+  #             }
+  #           } else {
+  #             console.log(`The string '${checklistDocsUnlinkedText}' was not found. This is usually because a link was already added manually.`);
+  #           }
