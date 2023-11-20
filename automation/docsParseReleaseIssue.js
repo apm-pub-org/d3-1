@@ -1,5 +1,5 @@
 import { getInput, setOutput, setFailed } from "@actions/core";
-import { getOctokit, context as _context } from "@actions/github";
+import { getOctokit, context } from "@actions/github";
 
 function getStringBetween(input, before, after) {
   // i = case insensitive, s = match newlines
@@ -65,11 +65,10 @@ function compileIssueBody(shipDate, issue) {
 }
 
 async function docsParseReleaseIssue() {
+  console.log("Parsing the release issue...")
+
   const token = process.env.GITHUB_TOKEN;
   const octokit = getOctokit(token);
-  const context = _context;
-
-  console.log(`context: ${context}`)
 
   const labels = context.payload.issue.labels;
 
