@@ -65,3 +65,24 @@ jobs:
           GHES_LABELS: ${{ needs.parse_release_issue.outputs.ghesLabels }}
           TIER: ${{ needs.parse_release_issue.outputs.tier }}
           DOCS_TOKEN: ${{ secrets.DOCS_BOT_PAT_READPUBLICKEY }}
+
+  update_release_issue_checklist:
+    runs-on: ubuntu-latest
+    needs: open_docs_issue
+    steps:
+      - name: Check out repo content
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+
+      - name: Install dependencies
+        run: npm install @actions/github @actions/core
+
+      - name: Link docs-content issue in release checklist
+        run: node automation/docsUpdateReleaseChecklist.js
+        env:
+          DOCS_CONTENT_ISSUE_NUMBER: ${{ needs.open_docs_issue.outputs.issueNumber }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
