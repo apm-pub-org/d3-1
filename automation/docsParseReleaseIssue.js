@@ -1,5 +1,5 @@
-import { getInput, setOutput, setFailed } from "@actions/core";
-import { getOctokit, context } from "@actions/github";
+import {setOutput, setFailed} from "@actions/core";
+import {getOctokit, context} from "@actions/github";
 
 function getStringBetween(input, before, after) {
   // i = case insensitive, s = match newlines
@@ -15,22 +15,22 @@ function getStringBetween(input, before, after) {
   }
 }
 
-  // Function to check for GHES pattern in comments
-  async function checkGHESInComments({owner, repo, issue_number, octokit}) {
-    const comments = await octokit.rest.issues.listComments({
-      owner,
-      repo,
-      issue_number,
-    });
+// Function to check for GHES pattern in comments
+async function checkGHESInComments({owner, repo, issue_number, octokit}) {
+  const comments = await octokit.rest.issues.listComments({
+    owner,
+    repo,
+    issue_number,
+  });
 
-    const ghesCheckboxChecked = "- [x] Is this Shipping to GHES?";
-    for (const comment of comments.data) {
-      if (comment.body.includes(ghesCheckboxChecked)) {
-        return "Yes";
-      }
+  const ghesCheckboxChecked = "- [x] Is this Shipping to GHES?";
+  for (const comment of comments.data) {
+    if (comment.body.includes(ghesCheckboxChecked)) {
+      return "Yes";
     }
-    return "No"; // Default to 'No' if pattern is not found in any comment
   }
+  return "No"; // Default to 'No' if pattern is not found in any comment
+}
 
 function compileIssueBody(shipDate, issue) {
   return `
@@ -65,15 +65,14 @@ function compileIssueBody(shipDate, issue) {
 }
 
 async function docsParseReleaseIssue() {
-  console.log("Parsing the release issue...")
+  console.log("Parsing the release issue...");
 
   const token = process.env.GITHUB_TOKEN;
   const octokit = getOctokit(token);
 
   const labels = context.payload.issue.labels;
 
-  console.log(JSON.stringify(labels));
-
+  // todo it looks like phase isn't used anywhere
   let phase = "unknown";
   for (const label of labels) {
     if (
@@ -90,6 +89,7 @@ async function docsParseReleaseIssue() {
       break;
     }
   }
+  console.log(`Found phase of ${phase}`);
 
   let tier = "unknown";
   for (const label of labels) {
@@ -98,12 +98,12 @@ async function docsParseReleaseIssue() {
       break;
     }
   }
+  console.log(`Found tier of ${tier}`);
 
-  // Pull out info from the release issue body
   const body = context.payload.issue.body;
-  const shipDate = getStringBetween(body, "Expected ship date", "###");
 
-  console.log(JSON.stringify(`shipDate ${shipDate}`))
+  const shipDate = getStringBetween(body, "Expected ship date", "###");
+  console.log(`Found shipDate of ${shipDate}`);
 
   // Existing method to determine GHES shipping status
   let ghesAnswer = getStringBetween(
@@ -112,25 +112,30 @@ async function docsParseReleaseIssue() {
     "###",
   );
 
-  console.log(JSON.stringify(`ghesAnswer ${ghesAnswer}`))
+  console.log(`Found ghesAnswer (in the body) of ${ghesAnswer}`);
 
   // If existing pattern not found, check the first comment
+  // todo I don't think this will work unless the comment was added between the time that the workflow started due to the issue.opened trigger and the time that this block is executed
   if (!ghesAnswer) {
+    console.log("Attempting to get GHES info from comments...")
     ghesAnswer = await checkGHESInComments({
       owner: context.repo.owner,
       repo: context.repo.repo,
       issue_number: context.issue.number,
       octokit,
     });
+    console.log(`Found ghesAnswer (in the comments) of ${ghesAnswer}`);
   }
 
   let ghesLabels = [];
   if (ghesAnswer.startsWith("Yes")) {
     ghesLabels.push("GHES");
     try {
-      ghesVersion = body.match(/[+-]?\d+(\.\d+)?/g)
+      console.log("Attempting to get GHES version...")
+      const ghesVersion = body.match(/[+-]?\d+(\.\d+)?/g)
         ? body.match(/[+-]?\d+(\.\d+)?/g)[0]
         : null;
+        console.log(`Found ghesVersion of ${ghesVersion}`);
       if (ghesVersion) {
         ghesLabels.push(`GHES ${ghesVersion}`);
       }
@@ -138,25 +143,20 @@ async function docsParseReleaseIssue() {
       console.log("GHES version could not be determined");
     }
   }
+  console.log(`ghesLabels: ${JSON.stringify(ghesLabels)}`);
 
   const title = context.payload.issue.title;
-  console.log(JSON.stringify(`title: ${title}`));
 
   const issue = context.payload.issue.html_url;
   const newTitle = `${title}`;
   const newBody = compileIssueBody(shipDate, issue);
-  console.log("setting output...")
   setOutput("newTitle", newTitle);
-  console.log(111)
   setOutput("newBody", newBody);
-  console.log(222)
   setOutput("tier", tier);
-  console.log(333)
   // Since this is an array, need to stringify it
   setOutput("ghesLabels", JSON.stringify(ghesLabels));
-  console.log(444)
 }
 
 docsParseReleaseIssue().catch((error) => {
-  setFailed(`Action failed with error: ${error}`);
+  setFailed(`docsParseReleaseIssue failed with error: ${error}`);
 });
