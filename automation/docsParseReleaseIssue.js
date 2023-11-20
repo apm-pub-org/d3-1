@@ -1,5 +1,5 @@
-const core = require("@actions/core");
-const github = require("@actions/github");
+import { getInput, setOutput, setFailed } from "@actions/core";
+import { getOctokit, context as _context } from "@actions/github";
 
 function getStringBetween(input, before, after) {
   // i = case insensitive, s = match newlines
