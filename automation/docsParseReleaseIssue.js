@@ -16,11 +16,11 @@ function getStringBetween(input, before, after) {
 }
 
   // Function to check for GHES pattern in comments
-  async function checkGHESInComments() {
+  async function checkGHESInComments({owner, repo, issue_number, octokit}) {
     const comments = await octokit.rest.issues.listComments({
-      owner: context.repo.owner,
-      repo: context.repo.repo,
-      issue_number: context.issue.number,
+      owner,
+      repo,
+      issue_number,
     });
 
     const ghesCheckboxChecked = "- [x] Is this Shipping to GHES?";
@@ -65,11 +65,15 @@ function compileIssueBody(shipDate, issue) {
 }
 
 async function docsParseReleaseIssue() {
-  const token = core.getInput("github-token", { required: true });
-  const octokit = github.getOctokit(token);
-  const context = github.context;
+  const token = getInput("github-token", { required: true });
+  const octokit = getOctokit(token);
+  const context = _context;
+
+  console.log(`context: ${context}`)
 
   const labels = context.payload.issue.labels;
+
+  console.log(JSON.stringify(labels));
 
   let phase = "unknown";
   for (const label of labels) {
@@ -100,6 +104,8 @@ async function docsParseReleaseIssue() {
   const body = context.payload.issue.body;
   const shipDate = getStringBetween(body, "Expected ship date", "###");
 
+  console.log(JSON.stringify(`shipDate ${shipDate}`))
+
   // Existing method to determine GHES shipping status
   let ghesAnswer = getStringBetween(
     body,
@@ -107,9 +113,16 @@ async function docsParseReleaseIssue() {
     "###",
   );
 
+  console.log(JSON.stringify(`ghesAnswer ${ghesAnswer}`))
+
   // If existing pattern not found, check the first comment
   if (!ghesAnswer) {
-    ghesAnswer = await checkGHESInComments();
+    ghesAnswer = await checkGHESInComments({
+      owner: context.repo.owner,
+      repo: context.repo.repo,
+      issue_number: context.issue.number,
+      octokit,
+    });
   }
 
   let ghesLabels = [];
@@ -128,17 +141,23 @@ async function docsParseReleaseIssue() {
   }
 
   const title = context.payload.issue.title;
+  console.log(JSON.stringify(`title: ${title}`));
+
   const issue = context.payload.issue.html_url;
   const newTitle = `${title}`;
   const newBody = compileIssueBody(shipDate, issue);
-
-  core.setOutput("newTitle", newTitle);
-  core.setOutput("newBody", newBody);
-  core.setOutput("tier", tier);
+  console.log("setting output...")
+  setOutput("newTitle", newTitle);
+  console.log(111)
+  setOutput("newBody", newBody);
+  console.log(222)
+  setOutput("tier", tier);
+  console.log(333)
   // Since this is an array, need to stringify it
-  core.setOutput("ghesLabels", JSON.stringify(ghesLabels));
+  setOutput("ghesLabels", JSON.stringify(ghesLabels));
+  console.log(444)
 }
 
 docsParseReleaseIssue().catch((error) => {
-  core.setFailed(`Action failed with error: ${error}`);
+  setFailed(`Action failed with error: ${error}`);
 });
