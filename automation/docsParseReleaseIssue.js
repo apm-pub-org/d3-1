@@ -65,7 +65,7 @@ function compileIssueBody(shipDate, issue) {
 }
 
 async function docsParseReleaseIssue() {
-  const token = getInput("github-token", { required: true });
+  const token = process.env.GITHUB_TOKEN;
   const octokit = getOctokit(token);
   const context = _context;
 
