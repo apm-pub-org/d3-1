@@ -3,7 +3,6 @@ on:
   issues:
     types:
       - opened
-      - reopened
 
 permissions:
   issues: write
@@ -36,13 +35,13 @@ jobs:
         run: node automation/docsParseReleaseIssue.js
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-  
+
   open_docs_issue:
     runs-on: ubuntu-latest
     needs: parse_release_issue
 
     outputs:
-      output: ${{ steps.create_docs_issue.outputs.result }}
+      issueNumber: ${{ steps.create_docs_issue.outputs.docsIssueNumber }}
 
     steps:
       - name: Check out repo content
