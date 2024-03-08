@@ -1,32 +1,40 @@
 
 # When a pull request that edits the OpenAPI schema is closed, this workflow will close the corresponding docs-internal PR and delete the docs-internal branch (if one was created by .github/workflows/docs-openapi-preview.yaml).
+# This workflow does not filter on the 'app/api/description/**' path because we observed that many PRs modify files on this path, have a preview PR opened, and then revert the changes to the files on this path. We still want to delete the preview PR in these case.
 
 name: Delete docs preview for OpenAPI changes
+
+# Use the same concurrency group as the workflow to generate the preview (.github/workflows/docs-openapi-preview.yaml) so that this workflow will cancel the preview workflow if it's still running.
+concurrency:
+  group: docs-preview-${{ github.head_ref || inputs.branch }}
+  cancel-in-progress: true
 
 on:
   pull_request:
     types:
       - closed
-    paths:
-      - 'app/api/description/**'
 
 jobs:
-  build_docs_preview:
+  delete_docs_preview:
     runs-on: ubuntu-latest
     steps:
 
     - name: Find the docs PR if it exists
       run: |-
-        docs_pr_url="$(gh pr list --base main --head $DOCS_BRANCH --state open --repo ske-test-org/second-repo --json url | jq -r '.[0].url')"
+        docs_pr_url="$(gh pr list --base main --head $DOCS_BRANCH --state open --repo ske-test-org/test-org-repo --json url | jq -r '.[0].url')"
         echo 'DOCS_PR='$docs_pr_url >> $GITHUB_ENV
       env:
-        GITHUB_TOKEN: ${{secrets.PAT_preview}}
-        DOCS_BRANCH: ${{ github.head_ref }}_openapi_docs_preview
+        GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
+        DOCS_BRANCH: ${{ github.head_ref || inputs.branch }}_openapi_docs_preview
 
-    - if: ${{ env.DOCS_PR != 'null' }}
+    - name: Print
+      run: |-
+        echo "docs pr is ${{ env.DOCS_PR }}"
+
+    - if: ${{ env.DOCS_PR != null }}
       name: Close the docs PR
       run: gh pr close $DOCS_PR --delete-branch --comment "The corresponding github/github PR ($GITHUB_PR) was closed or merged, so this preview is no longer necessary."
       env:
-        GITHUB_TOKEN: ${{secrets.PAT_preview}}
+        GITHUB_TOKEN: ${{secrets.DOCS_BOT_PAT_WRITEORG_PROJECT}}
         DOCS_PR: ${{ env.DOCS_PR }}
         GITHUB_PR: ${{ github.event.pull_request.html_url }}
