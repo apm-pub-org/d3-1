@@ -31,7 +31,7 @@ jobs:
       run: |-
         echo "docs pr is ${{ env.DOCS_PR }}"
 
-    - if: ${{ env.DOCS_PR != null }}
+    - if: ${{ env.DOCS_PR != '' }}
       name: Close the docs PR
       run: gh pr close $DOCS_PR --delete-branch --comment "The corresponding github/github PR ($GITHUB_PR) was closed or merged, so this preview is no longer necessary."
       env:
