@@ -17,6 +17,9 @@ async function getPullRequestSize({ octokit, repo, owner, prNumber }) {
   const numberLinesChanged = prData.deletions + prData.additions;
   const numberFilesChanged = prData.changed_files;
 
+  console.log(`numberLinesChanged: ${numberLinesChanged} (${prData.deletions} + ${prData.additions})`)
+  console.log(`numberFilesChanged: ${numberFilesChanged}`)
+
   let prSize;
   if (numberFilesChanged < 5 && numberLinesChanged < 10) {
     prSize = "tiny";
