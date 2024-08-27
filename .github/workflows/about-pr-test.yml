@@ -1,0 +1,65 @@
+name: Post PR size summary
+
+on:
+  pull_request:
+    types:
+      - review_requested
+
+permissions:
+  contents: read
+  pull-requests: write
+
+jobs:
+  add-to-board:
+    name: Add to review board
+    # if: ${{ github.event.requested_team.name == "TODO" }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Get PR size
+        env:
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          REPO: ${{ github.event.pull_request.base.repo.full_name }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          echo $PR_NUMBER
+          echo $REPO
+
+          prData=$(curl -L \
+            -H "Accept: application/vnd.github+json" \
+            -H "Authorization: Bearer $GITHUB_TOKEN" \
+            -H "X-GitHub-Api-Version: 2022-11-28" \
+            https://api.github.com/repos/$REPO/pulls/$PR_NUMBER | jq '. | {changed_files, additions, deletions}')
+
+          numAdditions=$(echo $prData | jq '.additions')
+          numDeletions=$(echo $prData | jq '.deletions')
+          numChangedFiles=$(echo $prData | jq '.changed_files')
+          numChangedLines=$(($numAdditions + $numDeletions))
+
+          # Determine the size of the PR
+          # - tiny: <10 lines and <5 files
+          # - small: <50 lines and <10 files
+          # - medium: <250 lines and <10 files
+          # - large: everything else
+          if [ $numChangedLines -lt 10 ] && [ $numChangedFiles -lt 5 ]; then
+            prSize="tiny"
+          elif [ $numChangedLines -lt 50 ] && [ $numChangedFiles -lt 10 ]; then
+            prSize="small"
+          elif [ $numChangedLines -lt 250 ] && [ $numChangedFiles -lt 10 ]; then
+            prSize="medium"
+          else
+            prSize="large"
+          fi
+
+          # Store the PR size for use in a later step
+          echo "PR_SIZE=$prSize" >> $GITHUB_ENV
+          echo "first"
+          echo $prSize
+          echo "second"
+          echo $PR_SIZE
+
+      - name: Print
+        run: |
+          echo "first"
+          echo $prSize
+          echo "second"
+          echo $PR_SIZE
