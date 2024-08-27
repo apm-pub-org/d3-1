@@ -14,6 +14,8 @@ async function getPullRequestSize({ octokit, repo, owner, prNumber }) {
     },
   );
 
+  console.log("done calling")
+  console.log(JSON.stringify(prData))
   const numberLinesChanged = prData.deletions + prData.additions;
   const numberFilesChanged = prData.changed_files;
 
