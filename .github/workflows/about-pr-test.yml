@@ -15,6 +15,30 @@ jobs:
     # if: ${{ github.event.requested_team.name == "TODO" }}
     runs-on: ubuntu-latest
     steps:
+      # This workflow will run a script that is stored in the repository. This step checks out the repository contents so that the workflow can access the script.
+      - name: Check out repo content
+        uses: actions/checkout@v4
+
+      # This step sets up Node.js. The script that this workflow will run uses Node.js.
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18.x'
+          cache: npm
+
+      # This step installs the octokit library. The script that this workflow will run uses the octokit library.
+      - name: Install dependencies
+        run: npm install octokit
+
+      - name: Run script
+        env:
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          REPO_NAME: ${{ github.event.pull_request.base.repo.name }}
+          REPO_OWNER: ${{ github.event.pull_request.base.repo.owner.name }}
+          TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: node .github/workflows/scripts/about-pr-test.js
+        # todo change file name
+
       - name: Get PR size
         env:
           PR_NUMBER: ${{ github.event.pull_request.number }}
@@ -67,13 +91,6 @@ jobs:
 
           # Store the PR size for use in a later step
           echo "PR_SIZE=$prSize" >> $GITHUB_ENV
-          echo "first"
-          echo $prSize
-          echo "second"
-          echo $PR_SIZE
-
-      - name: Print
-        run: |
           echo "first"
           echo $prSize
           echo "second"
