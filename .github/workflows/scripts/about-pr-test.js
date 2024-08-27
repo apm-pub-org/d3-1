@@ -2,7 +2,7 @@ import { Octokit } from "octokit";
 
 async function getPullRequestSize({ octokit, repo, owner, prNumber }) {
   console.log(`getPullRequestSize ${repo} ${owner} ${prNumber}`)
-  const prData = await octokit.request(
+  const {data} = await octokit.request(
     "GET /repos/{owner}/{repo}/pulls/{pull_number}",
     {
       owner,
@@ -15,11 +15,11 @@ async function getPullRequestSize({ octokit, repo, owner, prNumber }) {
   );
 
   console.log("done calling")
-  console.log(JSON.stringify(prData))
-  const numberLinesChanged = prData.deletions + prData.additions;
-  const numberFilesChanged = prData.changed_files;
+  console.log(JSON.stringify(data))
+  const numberLinesChanged = data.deletions + data.additions;
+  const numberFilesChanged = data.changed_files;
 
-  console.log(`numberLinesChanged: ${numberLinesChanged} (${prData.deletions} + ${prData.additions})`)
+  console.log(`numberLinesChanged: ${numberLinesChanged} (${data.deletions} + ${data.additions})`)
   console.log(`numberFilesChanged: ${numberFilesChanged}`)
 
   let prSize;
