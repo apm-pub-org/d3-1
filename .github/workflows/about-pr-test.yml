@@ -34,7 +34,7 @@ jobs:
         env:
           PR_NUMBER: ${{ github.event.pull_request.number }}
           REPO_NAME: ${{ github.event.pull_request.base.repo.name }}
-          REPO_OWNER: ${{ github.event.pull_request.base.repo.owner.name }}
+          REPO_OWNER: ${{ github.event.pull_request.base.repo.owner.login }}
           TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: node .github/workflows/scripts/about-pr-test.js
         # todo change file name
