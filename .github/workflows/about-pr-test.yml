@@ -20,7 +20,7 @@ jobs:
   add-to-board:
     name: Add to review board
     # todo change test-team
-    if: ${{ github.event.requested_team.name == "test-team" }}
+    if: ${{ github.event.requested_team.name == 'test-team' }}
     runs-on: ubuntu-latest
     steps:
       # This workflow will run a script that is stored in the repository.
