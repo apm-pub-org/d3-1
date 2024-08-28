@@ -1,10 +1,17 @@
 name: Post PR size summary
 
+# This workflow will run whenever a review is requested on a pull request
+# in the repository where this workflow is stored.
 on:
   pull_request:
     types:
       - review_requested
 
+# This workflow will use the built in `GITHUB_TOKEN` to
+# check out the repository contents,
+# get information about the pull request,
+# and comment on the pull request.
+# This grants `GITHUB_TOKEN` permission to do that.
 permissions:
   contents: read
   pull-requests: write
@@ -15,21 +22,25 @@ jobs:
     # if: ${{ github.event.requested_team.name == "TODO" }}
     runs-on: ubuntu-latest
     steps:
-      # This workflow will run a script that is stored in the repository. This step checks out the repository contents so that the workflow can access the script.
+      # This workflow will run a script that is stored in the repository.
+      # This step checks out the repository contents so that the workflow can access the script.
       - name: Check out repo content
         uses: actions/checkout@v4
 
-      # This step sets up Node.js. The script that this workflow will run uses Node.js.
+      # This step sets up Node.js
+      # The script that this workflow will run uses Node.js.
       - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: '18.x'
-          cache: npm
+          node-version: '20.x'
 
-      # This step installs the octokit library. The script that this workflow will run uses the octokit library.
+      # This step installs the octokit library.
+      # The script that this workflow will run uses the octokit library.
       - name: Install dependencies
         run: npm install octokit
 
+      # This step sets some environment variables,
+      # then runs a script to comment on the pull request with an estimate of the size of the pull request.
       - name: Run script
         env:
           PR_NUMBER: ${{ github.event.pull_request.number }}
@@ -38,60 +49,3 @@ jobs:
           TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: node .github/workflows/scripts/about-pr-test.js
         # todo change file name
-
-      # - name: Get PR size
-      #   env:
-      #     PR_NUMBER: ${{ github.event.pull_request.number }}
-      #     REPO: ${{ github.event.pull_request.base.repo.full_name }}
-      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      #   run: |
-      #     echo $PR_NUMBER
-      #     echo $REPO
-
-      #     prData=$(curl -L \
-      #       -H "Accept: application/vnd.github+json" \
-      #       -H "Authorization: Bearer $GITHUB_TOKEN" \
-      #       -H "X-GitHub-Api-Version: 2022-11-28" \
-      #       https://api.github.com/repos/$REPO/pulls/$PR_NUMBER | jq '. | {changed_files, additions, deletions}')
-
-      #     numAdditions=$(echo $prData | jq '.additions')
-      #     numDeletions=$(echo $prData | jq '.deletions')
-      #     numChangedFiles=$(echo $prData | jq '.changed_files')
-      #     numChangedLines=$(($numAdditions + $numDeletions))
-
-      #     # Determine the size of the PR
-      #     # - tiny: <10 lines and <5 files
-      #     # - small: <50 lines and <10 files
-      #     # - medium: <250 lines and <10 files
-      #     # - large: everything else
-      #     if [ $numChangedLines -lt 10 ] && [ $numChangedFiles -lt 5 ]; then
-      #       prSize="tiny"
-      #     elif [ $numChangedLines -lt 50 ] && [ $numChangedFiles -lt 10 ]; then
-      #       prSize="small"
-      #     elif [ $numChangedLines -lt 250 ] && [ $numChangedFiles -lt 10 ]; then
-      #       prSize="medium"
-      #     else
-      #       prSize="large"
-      #     fi
-
-      #     # Comment on the PR
-      #     curl -L \
-      #       -H "Accept: application/vnd.github+json" \
-      #       -H "Authorization: Bearer $GITHUB_TOKEN" \
-      #       -H "X-GitHub-Api-Version: 2022-11-28" \
-      #       https://api.github.com/repos/$REPO/issues/$PR_NUMBER/comments \
-      #       -d "{'body': 'PR size is "$prSize"'}"
-
-      #     curl -L \
-      #       -H "Accept: application/vnd.github+json" \
-      #       -H "Authorization: Bearer $GITHUB_TOKEN" \
-      #       -H "X-GitHub-Api-Version: 2022-11-28" \
-      #       https://api.github.com/repos/$REPO/issues/$PR_NUMBER/comments \
-      #       -d "{\"body\": \"PR 2 size is $prSize\"}"
-
-      #     # Store the PR size for use in a later step
-      #     echo "PR_SIZE=$prSize" >> $GITHUB_ENV
-      #     echo "first"
-      #     echo $prSize
-      #     echo "second"
-      #     echo $PR_SIZE
