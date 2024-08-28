@@ -19,7 +19,8 @@ permissions:
 jobs:
   add-to-board:
     name: Add to review board
-    # if: ${{ github.event.requested_team.name == "TODO" }}
+    # todo change test-team
+    if: ${{ github.event.requested_team.name == "test-team" }}
     runs-on: ubuntu-latest
     steps:
       # This workflow will run a script that is stored in the repository.
@@ -30,7 +31,7 @@ jobs:
       # This step sets up Node.js
       # The script that this workflow will run uses Node.js.
       - name: Setup Node.js
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
           node-version: "20.x"
 
