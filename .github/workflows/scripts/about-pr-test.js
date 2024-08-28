@@ -1,6 +1,14 @@
 // This script uses GitHub's Octokit SDK to make API requests.
 import { Octokit } from "octokit";
 
+// The size cutoffs for pull requests.
+const sizeCutoffs = {
+  tiny: { maxFiles: 4, maxLines: 9 },
+  small: { maxFiles: 9, maxLines: 49 },
+  medium: { maxFiles: 9, maxLines: 249 },
+  large: { maxFiles: Infinity, maxLines: Infinity },
+};
+
 /**
  * Determines the size of a pull request based on the number of files changed and lines added/deleted.
  *
@@ -9,7 +17,7 @@ import { Octokit } from "octokit";
  * @param {string} params.owner - The owner of the repository where the pull request is located.
  * @param {string} params.repo - The name of the repository where the pull request is located.
  *
- * @returns {Promise<string>} - A promise that resolves to the size of the pull request, which can be "tiny", "small", "medium", or "large".
+ * @returns {Promise<string>} - A promise that resolves to the size of the pull request.
  *
  */
 async function getPullRequestSize({ octokit, prNumber, owner, repo }) {
@@ -28,27 +36,12 @@ async function getPullRequestSize({ octokit, prNumber, owner, repo }) {
   const numberLinesChanged = data.deletions + data.additions;
   const numberFilesChanged = data.changed_files;
 
-  let prSize;
-  if (numberFilesChanged < 5 && numberLinesChanged < 10) {
-    prSize = "tiny";
-  } else if (numberFilesChanged < 10 && numberLinesChanged < 50) {
-    prSize = "small";
-  } else if (numberFilesChanged < 10 && numberLinesChanged < 250) {
-    prSize = "medium";
-  } else {
-    prSize = "large";
+  for (const [size, { maxFiles, maxLines }] of Object.entries(sizeCutoffs)) {
+    if (numberFilesChanged <= maxFiles && numberLinesChanged <= maxLines) {
+      return size;
+    }
   }
-
-  return prSize;
 }
-
-// todo use above
-const sizeCutoffs = {
-  tiny: { maxFiles: 4, maxLines: 9 },
-  small: { maxFiles: 9, maxLines: 49 },
-  medium: { maxFiles: 9, maxLines: 249 },
-  large: { maxFiles: Infinity, maxLines: Infinity },
-};
 
 /**
  * Labels a pull request with a specified size and removes any other size labels.
@@ -63,7 +56,13 @@ const sizeCutoffs = {
  *
  * @returns {Promise<void>} A promise that resolves when the pull request labels have been updated.
  */
-async function labelPullRequestWithSize({ octokit, prNumber, owner, repo, size }) {
+async function labelPullRequestWithSize({
+  octokit,
+  prNumber,
+  owner,
+  repo,
+  size,
+}) {
   const allSizes = Object.keys(sizeCutoffs);
 
   if (!allSizes.includes(size)) {
@@ -71,8 +70,8 @@ async function labelPullRequestWithSize({ octokit, prNumber, owner, repo, size }
   }
 
   // Add the size label to the pull request
-  // and get the labels that are already on the pull request
-  // This endpoint is used to add a label to both pull requests and issues
+  // and get the labels that are already on the pull request.
+  // (This endpoint is used to add a label to both pull requests and issues, even though the path says "issues".)
   const { data } = await octokit.request(
     "POST /repos/{owner}/{repo}/issues/{issue_number}/labels",
     {
@@ -86,10 +85,13 @@ async function labelPullRequestWithSize({ octokit, prNumber, owner, repo, size }
     },
   );
 
-  // Remove any other size labels from the pull request
-  // This endpoint is used to remove a label from both pull requests and issues
-  const currentLabels = data.map(label => label.name);
-  const labelsToRemove = allSizes.filter(potentialSize => potentialSize !== size && currentLabels.includes(potentialSize));
+  // Remove any other size labels from the pull request.
+  // (This endpoint is used to remove a label from both pull requests and issues, even though the path says "issues".)
+  const currentLabels = data.map((label) => label.name);
+  const labelsToRemove = allSizes.filter(
+    (potentialSize) =>
+      potentialSize !== size && currentLabels.includes(potentialSize),
+  );
   for (const label of labelsToRemove) {
     await octokit.request(
       "DELETE /repos/{owner}/{repo}/issues/{issue_number}/labels/{name}",
@@ -133,7 +135,7 @@ async function labelPullRequestWithSize({ octokit, prNumber, owner, repo, size }
       repo: REPO_NAME,
     });
 
-    // Label the pull request with the size.
+    // Label the pull request with the size, and remove any other size labels.
     await labelPullRequestWithSize({
       octokit,
       prNumber: PR_NUMBER,

@@ -39,7 +39,7 @@ jobs:
         run: npm install octokit
 
       # This step sets some environment variables,
-      # then runs a script to comment on the pull request with an estimate of the size of the pull request.
+      # then runs a script label the pull request with an estimate of the size of the pull request.
       - name: Run script
         env:
           PR_NUMBER: ${{ github.event.pull_request.number }}
