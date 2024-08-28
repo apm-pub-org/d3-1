@@ -1,4 +1,4 @@
-name: Post PR size summary
+name: Post size summary for pull request
 
 # This workflow will run whenever a review is requested on a pull request
 # in the repository where this workflow is stored.

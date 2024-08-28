@@ -102,7 +102,7 @@ async function commentOnPR({ octokit, prNumber, owner, repo, comment }) {
       owner: REPO_OWNER,
       repo: REPO_NAME,
       prNumber: PR_NUMBER,
-      comment: `PR size is ${prSize}`,
+      comment: `The estimated size of this pull request is: ${prSize}.`,
     });
   } catch (error) {
     console.error("Error processing the pull request:", error);
