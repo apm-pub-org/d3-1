@@ -42,31 +42,68 @@ async function getPullRequestSize({ octokit, prNumber, owner, repo }) {
   return prSize;
 }
 
+// todo use above
+const sizeCutoffs = {
+  tiny: { maxFiles: 4, maxLines: 9 },
+  small: { maxFiles: 9, maxLines: 49 },
+  medium: { maxFiles: 9, maxLines: 249 },
+  large: { maxFiles: Infinity, maxLines: Infinity },
+};
+
 /**
- * Adds a comment to a pull request.
+ * Labels a pull request with a specified size and removes any other size labels.
  *
  * @param {Object} params.octokit - An Octokit instance for making GitHub API requests. The token used to create the instance must have `write` permission for pull requests.
- * @param {number} params.prNumber - The number of the pull request.
+ * @param {number} params.prNumber - The number of the pull request to label.
  * @param {string} params.owner - The owner of the repository where the pull request is located.
  * @param {string} params.repo - The name of the repository where the pull request is located.
- * @param {string} params.comment - The comment to add to the pull request.
+ * @param {string} params.size - The size label to add to the pull request.
  *
- * @returns {Promise<void>} A promise that resolves when the comment has been added.
+ * @throws {Error} Throws an error if the size label is invalid.
+ *
+ * @returns {Promise<void>} A promise that resolves when the pull request labels have been updated.
  */
-async function commentOnPR({ octokit, prNumber, owner, repo, comment }) {
-  // This endpoint is used to add a comment to both pull requests and issues
-  await octokit.request(
-    "POST /repos/{owner}/{repo}/issues/{issue_number}/comments",
+async function labelPullRequestWithSize({ octokit, prNumber, owner, repo, size }) {
+  const allSizes = Object.keys(sizeCutoffs);
+
+  if (!allSizes.includes(size)) {
+    throw new Error(`Invalid size label: ${size}`);
+  }
+
+  // Add the size label to the pull request
+  // and get the labels that are already on the pull request
+  // This endpoint is used to add a label to both pull requests and issues
+  const { data } = await octokit.request(
+    "POST /repos/{owner}/{repo}/issues/{issue_number}/labels",
     {
       owner,
       repo,
       issue_number: prNumber,
-      body: comment,
+      labels: [size],
       headers: {
         "x-github-api-version": "2022-11-28",
       },
     },
   );
+
+  // Remove any other size labels from the pull request
+  // This endpoint is used to remove a label from both pull requests and issues
+  const currentLabels = data.map(label => label.name);
+  const labelsToRemove = allSizes.filter(potentialSize => potentialSize !== size && currentLabels.includes(potentialSize));
+  for (const label of labelsToRemove) {
+    await octokit.request(
+      "DELETE /repos/{owner}/{repo}/issues/{issue_number}/labels/{name}",
+      {
+        owner,
+        repo,
+        issue_number: prNumber,
+        name: label,
+        headers: {
+          "x-github-api-version": "2022-11-28",
+        },
+      },
+    );
+  }
 }
 
 (async () => {
@@ -91,18 +128,18 @@ async function commentOnPR({ octokit, prNumber, owner, repo, comment }) {
     // Get the size of the pull request.
     const prSize = await getPullRequestSize({
       octokit,
-      repo: REPO_NAME,
-      owner: REPO_OWNER,
       prNumber: PR_NUMBER,
+      owner: REPO_OWNER,
+      repo: REPO_NAME,
     });
 
-    // Comment on the pull request with its size.
-    await commentOnPR({
+    // Label the pull request with the size.
+    await labelPullRequestWithSize({
       octokit,
+      prNumber: PR_NUMBER,
       owner: REPO_OWNER,
       repo: REPO_NAME,
-      prNumber: PR_NUMBER,
-      comment: `The estimated size of this pull request is: ${prSize}.`,
+      size: prSize,
     });
   } catch (error) {
     console.error("Error processing the pull request:", error);

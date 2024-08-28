@@ -1,26 +1,24 @@
-name: Post size summary for pull request
+name: Label pull request with size
 
-# This workflow will run whenever a review is requested on a pull request
-# in the repository where this workflow is stored.
+# This workflow will run whenever a pull request
+# in the repository where this workflow is stored
+# is marked as ready for review.
 on:
   pull_request:
     types:
-      - review_requested
+      - ready_for_review
 
 # This workflow will use the built in `GITHUB_TOKEN` to
 # check out the repository contents,
 # get information about the pull request,
-# and comment on the pull request.
+# and label the pull request.
 # This grants `GITHUB_TOKEN` permission to do that.
 permissions:
   contents: read
   pull-requests: write
 
 jobs:
-  add-to-board:
-    name: Add to review board
-    # todo change test-team
-    if: ${{ github.event.requested_team.name == 'test-team' }}
+  size-pr:
     runs-on: ubuntu-latest
     steps:
       # This workflow will run a script that is stored in the repository.
