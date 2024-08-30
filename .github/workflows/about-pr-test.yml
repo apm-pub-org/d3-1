@@ -50,4 +50,4 @@ jobs:
           REPO_NAME: ${{ github.event.pull_request.base.repo.name }}
           REPO_OWNER: ${{ github.event.pull_request.base.repo.owner.login }}
           TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: node FILE_PATH
+        run: node .github/workflows/scripts/about-pr-test.js
